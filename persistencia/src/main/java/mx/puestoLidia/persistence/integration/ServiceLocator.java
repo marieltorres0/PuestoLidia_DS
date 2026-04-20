@@ -15,9 +15,7 @@ public class ServiceLocator {
     public static ProductoDAO getInstanceProductoDAO(){
         if(productoDAO == null){
             productoDAO = new ProductoDAO(getEntityManager());
-            return productoDAO;
-        } else {
-            return productoDAO;
         }
+        return productoDAO;
     }
 }

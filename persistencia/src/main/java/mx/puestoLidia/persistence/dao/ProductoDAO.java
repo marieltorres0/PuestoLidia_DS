@@ -21,6 +21,8 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         }
     }
 
+    // el método heredado del abstract devuelve Optional
+    // si no existe el producto con el id recibido retorna null
     public Producto buscarProductoPorID(String idBuscar){
         return find(idBuscar).orElse(null);
     }
