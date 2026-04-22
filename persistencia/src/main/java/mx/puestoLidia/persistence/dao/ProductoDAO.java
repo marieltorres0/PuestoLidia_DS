@@ -13,6 +13,20 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         this.entityManager = em;
     }
 
+    public void guardarProducto(Producto nuevoProducto){
+        try {
+            save(nuevoProducto);
+        } catch (Exception e) {
+            throw new RuntimeException("Error DAO: No se pudo guardar en la base de datos.");
+        }
+    }
+
+    // el método heredado del abstract devuelve Optional
+    // si no existe el producto con el id recibido retorna null
+    public Producto buscarProductoPorID(String idBuscar){
+        return find(idBuscar).orElse(null);
+    }
+
     // aquí colocar metodos de sus diagramas (los que necesitan para su US)
 
     @Override

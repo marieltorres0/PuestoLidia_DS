@@ -1,25 +1,111 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:h="jakarta.faces.html"
       xmlns:p="http://primefaces.org/ui">
 
 <h:head>
-    <title>Prueba PrimeFaces - Puesto Lidia</title>
+    <title>Gestión de Productos</title>
+
+    <style>
+
+        /*contenedor */
+        .campo-formulario {
+            margin-bottom: 15px;
+        }
+        .campo-formulario label {
+            display: block;
+            font-weight: bold;
+            color: #4A4A4A;
+            margin-bottom: 5px;
+        }
+
+        /* colores */
+        .modal-estilo .ui-dialog-titlebar {
+            background-color: #5b8df2 !important;
+            color: white !important;
+            text-align: center;
+            border-bottom: 4px solid #3e4a5c;
+        }
+
+        .modal-estilo .ui-dialog-title {
+            float: none !important;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .modal-estilo.ui-dialog {
+            border-radius: 12px !important;
+            overflow: hidden;
+            border: 2px solid #ccc;
+        }
+    </style>
 </h:head>
 
-<h:body>
-    <h:form>
+<h:body style="padding: 30px; background-color: #f4f6f9;">
 
-        <p:panel header="PUESTOLIDIA" style="margin: 50px; text-align: center;">
+    <p:growl id="notificacion" showDetail="true" life="4000" position="top-right">
+        <p:autoUpdate />
+    </p:growl>
 
-            <h:outputText value="si se ve boton azul todo bien ajsjasjj" />
-
-            <br/><br/>
-
-            <p:commandButton value="Botón de Prueba" icon="pi pi-check" type="button" />
-
-        </p:panel>
-
+    <h:form id="formPrincipal">
+        <p:commandButton value="Nuevo Producto" icon="pi pi-plus"
+                         type="button" onclick="PF('wvModalRegistro').show();" />
     </h:form>
+
+    <p:dialog id="modalRegistro" widgetVar="wvModalRegistro" header="Registro de producto"
+              styleClass="modal-estilo" modal="true" resizable="false" closeOnEscape="true"
+              width="450" showEffect="fade" hideEffect="fade">
+
+        <h:form id="formRegistro">
+
+            <div class="ui-fluid">
+
+                <div class="campo-formulario">
+                    <p:outputLabel for="idProd" value="ID" />
+                    <p:inputText id="idProd" value="#{productoBeanUI.idProducto}"
+                                 placeholder="Ejemplo: 0001230600" maxlength="30"/>
+                </div>
+
+                <div class="campo-formulario">
+                    <p:outputLabel for="nombreProd" value="Nombre del producto" />
+                    <p:inputText id="nombreProd" value="#{productoBeanUI.nombre}"
+                                 placeholder="Ejemplo: Coca Cola 600ml" />
+                </div>
+
+                <div class="campo-formulario">
+                    <p:outputLabel for="precioProd" value="Precio ($)" />
+                    <p:inputNumber id="precioProd" value="#{productoBeanUI.precio}"
+                                   symbol="$ " symbolPosition="p"
+                                   decimalSeparator="." thousandSeparator="," decimalPlaces="2"
+                                   placeholder="Ejemplo: 25.00" minValue="0" />
+                </div>
+
+                <div class="campo-formulario">
+                    <p:outputLabel for="cantidadProd" value="Cantidad inicial en inventario" />
+                    <p:inputNumber id="cantidadProd" value="#{productoBeanUI.cantidad}"
+                                   decimalPlaces="0" placeholder="Ejemplo: 50" minValue="0" />
+                </div>
+
+                <div class="campo-formulario">
+                    <p:outputLabel for="umbralProd" value="Cantidad crítica" />
+                    <p:inputNumber id="umbralProd" value="#{productoBeanUI.umbral}"
+                                   decimalPlaces="0" placeholder="Ejemplo: 10 (mínimo antes de alerta)" minValue="0" />
+                </div>
+
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 25px;">
+
+                <p:commandButton value="CANCELAR" type="button"
+                                 styleClass="ui-button-outlined ui-button-secondary"
+                                 onclick="PF('wvModalRegistro').hide();" />
+
+                <p:commandButton value="REGISTRAR" action="#{productoBeanUI.altaProducto}"
+                                 styleClass="ui-button-danger" update="formRegistro : notificacion" />
+
+            </div>
+        </h:form>
+    </p:dialog>
+
 </h:body>
 </html>
