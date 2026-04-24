@@ -4,7 +4,7 @@ import mx.puestoLidia.entity.Producto;
 import mx.puestoLidia.persistence.integration.ServiceLocator;
 import java.util.List;
 
-
+//98
 public class DelegateInventario {
 
     // Obtener todos los productos ordenados

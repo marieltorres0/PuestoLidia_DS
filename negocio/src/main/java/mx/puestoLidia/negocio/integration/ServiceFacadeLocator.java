@@ -6,7 +6,7 @@ import mx.puestoLidia.negocio.facade.FacadeInventario; // <-- NUEVO IMPORT
 public class ServiceFacadeLocator {
 
     private static FacadeProducto facadeProducto;
-
+//98
     // <-- NUEVA VARIABLE -->
     private static FacadeInventario facadeInventario;
 

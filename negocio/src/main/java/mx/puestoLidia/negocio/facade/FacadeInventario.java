@@ -11,7 +11,7 @@ public class FacadeInventario {
     public FacadeInventario() {
         this.delegateInventario = new DelegateInventario();
     }
-
+//98
     public List<Producto> obtenerInventarioOrdenado() {
         return delegateInventario.obtenerInventarioOrdenado();
     }
