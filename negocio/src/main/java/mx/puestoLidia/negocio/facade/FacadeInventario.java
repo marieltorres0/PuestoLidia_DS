@@ -19,4 +19,7 @@ public class FacadeInventario {
     public List<Producto> buscarPorNombre(String filtro) {
         return delegateInventario.buscarPorNombre(filtro);
     }
+    public void actualizarProducto(Producto producto) {
+        delegateInventario.actualizarProducto(producto);
+    }
 }

@@ -16,4 +16,7 @@ public class DelegateInventario {
     public List<Producto> buscarPorNombre(String filtro) {
         return ServiceLocator.getInstanceInventarioDAO().buscarPorNombre(filtro);
     }
+    public void actualizarProducto(Producto producto) {
+        ServiceLocator.getInstanceInventarioDAO().update(producto);
+    }
 }
