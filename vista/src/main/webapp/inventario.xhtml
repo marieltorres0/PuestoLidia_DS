@@ -36,7 +36,7 @@
         /* Ajustes de Tabla con Scroll (CORREGIDO)   */
         /* ========================================= */
         .tabla-lidia .ui-datatable-header { background-color: transparent; border: none; padding-bottom: 15px;}
-
+/*Filtros*/
         /* Pintar solo la cabecera real superior */
         .tabla-lidia .ui-datatable-scrollable-header th { background-color: #5b8df2 !important; color: white !important; text-align: center !important; border: none !important; padding: 10px !important; cursor: pointer; }
         .tabla-lidia .ui-datatable-scrollable-header th:hover { background-color: #4a75c9 !important; }
@@ -95,7 +95,7 @@
                         <p:inputText value="#{inventarioBeanUI.textoBusqueda}" placeholder="Ejemplo: Coca Cola 600ml" styleClass="input-busqueda"/>
                     </div>
 
-                    <p:commandButton value="FILTROS" styleClass="btn-top-rojo" action="#{inventarioBeanUI.buscarProducto}" update="tablaProductos"/>
+                    <p:commandButton value="BUSCAR" styleClass="btn-top-rojo" action="#{inventarioBeanUI.buscarProducto}" update="tablaProductos"/>
                     <p:commandButton value="Entrada" styleClass="btn-top-rojo" actionListener="#{inventarioBeanUI.abrirModalEntrada}" update=":formEntrada"/>
                     <p:commandButton value="Registro" styleClass="btn-top-rojo" type="button" onclick="PF('wvModalRegistro').show();"/>
                     <p:commandButton value="REPORTE" styleClass="btn-top-rojo" type="button"/>
