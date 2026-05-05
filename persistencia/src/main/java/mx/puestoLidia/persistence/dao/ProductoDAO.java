@@ -29,6 +29,15 @@ public class ProductoDAO extends AbstractDAO<Producto> {
 
     // aquí colocar metodos de sus diagramas (los que necesitan para su US)
 
+    // modificación de un producto heredando del abstract
+    public void modificarProducto(Producto productoModificado){
+        try {
+            update(productoModificado);
+        } catch (Exception e) {
+            throw new RuntimeException("Error DAO: No se pudo modificar el producto en la base de datos.");
+        }
+    }
+
     @Override
     public EntityManager getEntityManager(){
         return entityManager;
