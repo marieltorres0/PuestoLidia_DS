@@ -19,4 +19,9 @@ public class FacadeProducto {
     public Producto buscarProductoPorID(String idBuscar){
         return delegateProducto.buscarProductoPorID(idBuscar);
     }
+
+    // modificación de un producto (actualización)
+    public void modificarProducto(Producto productoModificado){
+        delegateProducto.modificarProducto(productoModificado);
+    }
 }
