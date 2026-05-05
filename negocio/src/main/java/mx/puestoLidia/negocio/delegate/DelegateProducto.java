@@ -14,4 +14,9 @@ public class DelegateProducto {
     public Producto buscarProductoPorID(String idBuscar){
         return ServiceLocator.getInstanceProductoDAO().buscarProductoPorID(idBuscar);
     }
+
+    // modificación de un producto (actualizarlo)
+    public void modificarProducto(Producto productoModificado){
+        ServiceLocator.getInstanceProductoDAO().modificarProducto(productoModificado);
+    }
 }
