@@ -24,12 +24,17 @@ public class ProductoBeanUI implements Serializable {
     private Integer cantidad;
     private Integer umbral;
 
+
+
+    // bandera para identificar Alta de Modificación
+    private boolean esEdicion;
+
     public ProductoBeanUI(){
         productoHelper = new ProductoHelper();
     }
 
     // validar campos vacíos primero
-    public boolean validarCamposVaciosAltaProducto() {
+    public boolean validarCamposVacios() {
         List<String> camposVacios = new ArrayList<>();
 
         if (idProducto == null || idProducto.trim().isEmpty()) {
@@ -47,10 +52,9 @@ public class ProductoBeanUI implements Serializable {
         if (umbral == null) {
             camposVacios.add("Cantidad crítica");
         }
-        // Mostrar los campos que quedaron vacios
+        // Mostrar los campos que quedaron vacíos
         if (!camposVacios.isEmpty()) {
             String nombresCampos = String.join(", ", camposVacios);
-
             mostrarError("Campos obligatorios", "Por favor, llena los siguientes campos: " + nombresCampos + ".");
             return false;
         }
@@ -59,11 +63,14 @@ public class ProductoBeanUI implements Serializable {
     }
 
     // validar que los datos sean correctos
-    public boolean validarDatosAltaProducto(){
-        // validar id repetido
-        if(productoHelper.buscarProductoPorID(idProducto)!= null){
-            mostrarError("ID DUPLICADO", "Ya existe un producto con el ID: " + idProducto + ".");
-            return false;
+    public boolean validarDatos(){
+
+        // validar id repetido (sólo si es alta)
+        if(!esEdicion){
+            if(productoHelper.buscarProductoPorID(idProducto)!= null){
+                mostrarError("ID DUPLICADO", "Ya existe un producto con el ID: " + idProducto + ".");
+                return false;
+            }
         }
 
         // validar que no haya valores negativos
@@ -76,32 +83,35 @@ public class ProductoBeanUI implements Serializable {
         return true;
     }
 
-    // dar de alta el producto (aqui se guarda)
-    public void altaProducto(){
+    // dar de alta o actualizar un producto
+    public void guardarProducto(){
         try {
             // validar los datos introducidos
-            if(!validarCamposVaciosAltaProducto() || !validarDatosAltaProducto()){
+            if(!validarCamposVacios() || !validarDatos()){
                 return;
             }
 
             // si los datos son ideales
-            Producto nuevoProducto = new Producto();
-            nuevoProducto.setIdProducto(idProducto);
-            nuevoProducto.setNombre(nombre);
-            nuevoProducto.setPrecio(precio);
-            nuevoProducto.setCantidad(cantidad);
-            nuevoProducto.setUmbral(umbral);
+            Producto producto = new Producto();
+            producto.setIdProducto(idProducto);
+            producto.setNombre(nombre);
+            producto.setPrecio(precio);
+            producto.setCantidad(cantidad);
+            producto.setUmbral(umbral);
 
-            productoHelper.guardarProducto(nuevoProducto);
+            // verificar si es una alta o una modificación
+            if(esEdicion){
 
-            // Mensaje de éxito
-            mostrarInfo("ÉXITO","El producto " + nombre + " se guardó correctamente.");
+                productoHelper.modificarProducto(producto);
+                // Mensaje de éxito
+                mostrarInfo("ÉXITO","El producto " + nombre + " se actualizó correctamente.");
+            } else {
 
-            /*
-             Limpiar los datos (aun no se si sera necesario
-             ya que creo que la alta de un producto se manejará desde un botón
-             y se abrirá como una ventana emergente/modal/dialogo
-            */
+                productoHelper.guardarProducto(producto);
+                // Mensaje de éxito
+                mostrarInfo("ÉXITO","El producto " + nombre + " se guardó correctamente.");
+            }
+
             limpiarDatos();
 
             // Cerrar el diálogo llamando al bean
@@ -109,7 +119,7 @@ public class ProductoBeanUI implements Serializable {
 
         } catch (Exception e) {
             // Si la base de datos se cae o hay un error inesperado
-            mostrarError("Error crítico","No se pudo guardar: " + e.getMessage());
+            mostrarError("Error crítico","No se pudo procesar: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -133,6 +143,7 @@ public class ProductoBeanUI implements Serializable {
         this.precio = null;
         this.cantidad = null;
         this.umbral = null;
+        this.esEdicion = false; // Se resetea por seguridad
     }
 
 
@@ -151,4 +162,8 @@ public class ProductoBeanUI implements Serializable {
 
     public Integer getUmbral() { return umbral; }
     public void setUmbral(Integer umbral) { this.umbral = umbral; }
+
+    public boolean isEsEdicion() { return esEdicion;}
+
+    public void setEsEdicion(boolean esEdicion) { this.esEdicion = esEdicion; }
 }

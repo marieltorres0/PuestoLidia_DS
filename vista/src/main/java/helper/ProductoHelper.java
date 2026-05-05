@@ -16,4 +16,9 @@ public class ProductoHelper implements Serializable {
     public Producto buscarProductoPorID(String id){
         return ServiceFacadeLocator.getInstanceFacadeProducto().buscarProductoPorID(id);
     }
+
+    // modificar un producto
+    public void modificarProducto(Producto productoModificado){
+        ServiceFacadeLocator.getInstanceFacadeProducto().modificarProducto(productoModificado);
+    }
 }

@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
       xmlns:p="http://primefaces.org/ui">
 
 <h:head>
     <title>Gestión de Productos</title>
 
     <style>
-
         /*contenedor */
         .campo-formulario {
             margin-bottom: 15px;
@@ -49,10 +49,26 @@
 
     <h:form id="formPrincipal">
         <p:commandButton value="Nuevo Producto" icon="pi pi-plus"
-                         type="button" onclick="PF('wvModalRegistro').show();" />
+                         update="formRegistro" oncomplete="PF('wvModalRegistro').show();">
+            <f:setPropertyActionListener target="#{productoBeanUI.esEdicion}" value="false" />
+        </p:commandButton>
+
+        <p:commandButton value="Probar Modificación" icon="pi pi-pencil" styleClass="ui-button-warning"
+                         style="margin-left: 15px;"
+                         update="formRegistro" oncomplete="PF('wvModalRegistro').show();">
+            <f:setPropertyActionListener target="#{productoBeanUI.esEdicion}" value="true" />
+
+            <f:setPropertyActionListener target="#{productoBeanUI.idProducto}" value="0123" />
+
+            <f:setPropertyActionListener target="#{productoBeanUI.nombre}" value="Producto Modificado Prueba" />
+            <f:setPropertyActionListener target="#{productoBeanUI.precio}" value="99.50" />
+            <f:setPropertyActionListener target="#{productoBeanUI.cantidad}" value="200" />
+            <f:setPropertyActionListener target="#{productoBeanUI.umbral}" value="15" />
+        </p:commandButton>
     </h:form>
 
-    <p:dialog id="modalRegistro" widgetVar="wvModalRegistro" header="Registro de producto"
+    <p:dialog id="modalRegistro" widgetVar="wvModalRegistro"
+              header="#{productoBeanUI.esEdicion ? 'Modificar Producto' : 'Registro de producto'}"
               styleClass="modal-estilo" modal="true" resizable="false" closeOnEscape="true"
               width="450" showEffect="fade" hideEffect="fade">
 
@@ -63,7 +79,8 @@
                 <div class="campo-formulario">
                     <p:outputLabel for="idProd" value="ID" />
                     <p:inputText id="idProd" value="#{productoBeanUI.idProducto}"
-                                 placeholder="Ejemplo: 0001230600" maxlength="30"/>
+                                 placeholder="Ejemplo: 0001230600" maxlength="30"
+                                 readonly="#{productoBeanUI.esEdicion}"/>
                 </div>
 
                 <div class="campo-formulario">
@@ -100,8 +117,10 @@
                                  styleClass="ui-button-outlined ui-button-secondary"
                                  onclick="PF('wvModalRegistro').hide();" />
 
-                <p:commandButton value="REGISTRAR" action="#{productoBeanUI.altaProducto}"
-                                 styleClass="ui-button-danger" update="formRegistro : notificacion" />
+                <p:commandButton value="#{productoBeanUI.esEdicion ? 'GUARDAR CAMBIOS' : 'REGISTRAR'}"
+                                 action="#{productoBeanUI.guardarProducto}"
+                                 styleClass="#{productoBeanUI.esEdicion ? 'ui-button-warning' : 'ui-button-danger'}"
+                                 update="formRegistro :notificacion" />
 
             </div>
         </h:form>
