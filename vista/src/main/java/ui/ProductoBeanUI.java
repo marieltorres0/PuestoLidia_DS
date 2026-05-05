@@ -83,6 +83,24 @@ public class ProductoBeanUI implements Serializable {
         return true;
     }
 
+    // prepara los datos si se va modificar un producto
+    public void prepararModificacion(String idProductoModificar){
+        Producto productoModificar = productoHelper.buscarProductoPorID(idProductoModificar);
+
+        if(productoModificar != null){
+            // llenar bean con los datos del producto a modificar
+            this.idProducto = productoModificar.getIdProducto();
+            this.nombre = productoModificar.getNombre();
+            this.precio = productoModificar.getPrecio();
+            this.cantidad = productoModificar.getCantidad();
+            this.umbral = productoModificar.getUmbral();
+
+            this.esEdicion = true;
+        } else{
+            mostrarError("Error", "No se encontró el producto que se quiere modificar.");
+        }
+    }
+
     // dar de alta o actualizar un producto
     public void guardarProducto(){
         try {

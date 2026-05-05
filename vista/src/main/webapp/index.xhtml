@@ -6,38 +6,12 @@
 
 <h:head>
     <title>Gestión de Productos</title>
-
     <style>
-        /*contenedor */
-        .campo-formulario {
-            margin-bottom: 15px;
-        }
-        .campo-formulario label {
-            display: block;
-            font-weight: bold;
-            color: #4A4A4A;
-            margin-bottom: 5px;
-        }
-
-        /* colores */
-        .modal-estilo .ui-dialog-titlebar {
-            background-color: #5b8df2 !important;
-            color: white !important;
-            text-align: center;
-            border-bottom: 4px solid #3e4a5c;
-        }
-
-        .modal-estilo .ui-dialog-title {
-            float: none !important;
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .modal-estilo.ui-dialog {
-            border-radius: 12px !important;
-            overflow: hidden;
-            border: 2px solid #ccc;
-        }
+        .campo-formulario { margin-bottom: 15px; }
+        .campo-formulario label { display: block; font-weight: bold; color: #4A4A4A; margin-bottom: 5px; }
+        .modal-estilo .ui-dialog-titlebar { background-color: #5b8df2 !important; color: white !important; text-align: center; border-bottom: 4px solid #3e4a5c; }
+        .modal-estilo .ui-dialog-title { float: none !important; font-size: 1.2rem; font-weight: bold; }
+        .modal-estilo.ui-dialog { border-radius: 12px !important; overflow: hidden; border: 2px solid #ccc; }
     </style>
 </h:head>
 
@@ -55,16 +29,8 @@
 
         <p:commandButton value="Probar Modificación" icon="pi pi-pencil" styleClass="ui-button-warning"
                          style="margin-left: 15px;"
-                         update="formRegistro" oncomplete="PF('wvModalRegistro').show();">
-            <f:setPropertyActionListener target="#{productoBeanUI.esEdicion}" value="true" />
-
-            <f:setPropertyActionListener target="#{productoBeanUI.idProducto}" value="0123" />
-
-            <f:setPropertyActionListener target="#{productoBeanUI.nombre}" value="Producto Modificado Prueba" />
-            <f:setPropertyActionListener target="#{productoBeanUI.precio}" value="99.50" />
-            <f:setPropertyActionListener target="#{productoBeanUI.cantidad}" value="200" />
-            <f:setPropertyActionListener target="#{productoBeanUI.umbral}" value="15" />
-        </p:commandButton>
+                         action="#{productoBeanUI.prepararModificacion('0123')}"
+                         update="formRegistro" oncomplete="PF('wvModalRegistro').show();" />
     </h:form>
 
     <p:dialog id="modalRegistro" widgetVar="wvModalRegistro"
@@ -73,46 +39,39 @@
               width="450" showEffect="fade" hideEffect="fade">
 
         <h:form id="formRegistro">
-
             <div class="ui-fluid">
-
                 <div class="campo-formulario">
                     <p:outputLabel for="idProd" value="ID" />
                     <p:inputText id="idProd" value="#{productoBeanUI.idProducto}"
-                                 placeholder="Ejemplo: 0001230600" maxlength="30"
-                                 readonly="#{productoBeanUI.esEdicion}"/>
+                                 maxlength="30" readonly="#{productoBeanUI.esEdicion}"/>
                 </div>
 
                 <div class="campo-formulario">
                     <p:outputLabel for="nombreProd" value="Nombre del producto" />
-                    <p:inputText id="nombreProd" value="#{productoBeanUI.nombre}"
-                                 placeholder="Ejemplo: Coca Cola 600ml" maxlength="30"/>
+                    <p:inputText id="nombreProd" value="#{productoBeanUI.nombre}" maxlength="30"/>
                 </div>
 
                 <div class="campo-formulario">
                     <p:outputLabel for="precioProd" value="Precio ($)" />
                     <p:inputNumber id="precioProd" value="#{productoBeanUI.precio}"
-                                   symbol="$ " symbolPosition="p"
-                                   decimalSeparator="." thousandSeparator="," decimalPlaces="2"
-                                   placeholder="Ejemplo: 25.00" minValue="0" />
+                                   symbol="$ " symbolPosition="p" decimalSeparator="."
+                                   thousandSeparator="," decimalPlaces="2" minValue="0" />
                 </div>
 
                 <div class="campo-formulario">
-                    <p:outputLabel for="cantidadProd" value="Cantidad inicial en inventario" />
+                    <p:outputLabel for="cantidadProd" value="Cantidad inicial" />
                     <p:inputNumber id="cantidadProd" value="#{productoBeanUI.cantidad}"
-                                   decimalPlaces="0" placeholder="Ejemplo: 50" minValue="0" />
+                                   decimalPlaces="0" minValue="0" />
                 </div>
 
                 <div class="campo-formulario">
                     <p:outputLabel for="umbralProd" value="Cantidad crítica" />
                     <p:inputNumber id="umbralProd" value="#{productoBeanUI.umbral}"
-                                   decimalPlaces="0" placeholder="Ejemplo: 10 (mínimo antes de alerta)" minValue="0" />
+                                   decimalPlaces="0" minValue="0" />
                 </div>
-
             </div>
 
             <div style="display: flex; justify-content: space-between; margin-top: 25px;">
-
                 <p:commandButton value="CANCELAR" type="button"
                                  styleClass="ui-button-outlined ui-button-secondary"
                                  onclick="PF('wvModalRegistro').hide();" />
@@ -121,7 +80,6 @@
                                  action="#{productoBeanUI.guardarProducto}"
                                  styleClass="#{productoBeanUI.esEdicion ? 'ui-button-warning' : 'ui-button-danger'}"
                                  update="formRegistro :notificacion" />
-
             </div>
         </h:form>
     </p:dialog>
