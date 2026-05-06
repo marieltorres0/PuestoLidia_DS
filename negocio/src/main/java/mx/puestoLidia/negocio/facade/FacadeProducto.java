@@ -24,4 +24,9 @@ public class FacadeProducto {
     public void modificarProducto(Producto productoModificado){
         delegateProducto.modificarProducto(productoModificado);
     }
+
+    // eliminar producto
+    public void eliminarProducto(Producto productoEliminar){
+        delegateProducto.eliminarProducto(productoEliminar);
+    }
 }
