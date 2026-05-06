@@ -33,15 +33,15 @@
         .btn-pildora-negro { background-color: #000000 !important; color: white !important; border: 2px solid #a0a0a0 !important; font-weight: bold !important; border-radius: 20px !important; font-size: 0.8rem !important; padding: 2px 10px !important; }
 
         /* ========================================= */
-        /* Ajustes de Tabla con Scroll (CORREGIDO)   */
+        /* Ajustes de Tabla con Scroll y Selección   */
         /* ========================================= */
         .tabla-lidia .ui-datatable-header { background-color: transparent; border: none; padding-bottom: 15px;}
-/*Filtros*/
-        /* Pintar solo la cabecera real superior */
+
+        /* Filtros - Cabecera */
         .tabla-lidia .ui-datatable-scrollable-header th { background-color: #5b8df2 !important; color: white !important; text-align: center !important; border: none !important; padding: 10px !important; cursor: pointer; }
         .tabla-lidia .ui-datatable-scrollable-header th:hover { background-color: #4a75c9 !important; }
 
-        /* Ocultar la cabecera fantasma que duplica PrimeFaces por el Scroll */
+        /* Ocultar la cabecera fantasma */
         .tabla-lidia .ui-datatable-scrollable-body th { padding: 0 !important; border: none !important; height: 0 !important; }
 
         .tabla-lidia td { text-align: center; font-weight: bold; color: #4a4a4a; border-bottom: 1px solid #dee2e6 !important; border-right: none !important; border-left: none !important; padding: 12px 5px !important; }
@@ -51,6 +51,10 @@
         /* Fila de inventario crítico */
         .fila-critica { background-color: #ffb3b3 !important; color: #cc0000 !important; }
         .fila-critica td { color: #cc0000 !important; border-bottom: 1px solid #ff9999 !important; }
+
+        /* ESTILO NUEVO: Color para la fila que seleccionas dándole clic */
+        .tabla-lidia .ui-datatable-data tr.ui-state-highlight { background-color: #cce0ff !important; color: #000 !important; border-left: 4px solid #5b8df2 !important; }
+        .tabla-lidia .ui-datatable-data tr.ui-state-highlight td { color: #000 !important; }
 
         /* Barra Inferior */
         .footer-azul { background-color: #5b8df2; height: 80px; display: flex; align-items: center; padding-left: 30px; border-top: 4px solid #1a1a1a; }
@@ -69,7 +73,6 @@
         <p:autoUpdate />
     </p:growl>
 
-    <!-- COMANDO INVISIBLE: Recarga la tabla de inventario cuando registras un producto nuevo -->
     <h:form>
         <p:remoteCommand name="rcActualizarInventario" action="#{inventarioBeanUI.cargarInventario}" update=":frmInventario:tablaProductos" />
     </h:form>
@@ -89,19 +92,26 @@
             <div class="titulo-consulta">Consulta de productos</div>
 
             <h:form id="frmInventario">
+
+                <!-- ESTO ACTIVA LA BÚSQUEDA CON LA TECLA ENTER -->
+                <p:defaultCommand target="btnBuscarOculto" />
+
                 <div style="display: flex; gap: 15px; align-items: flex-end; margin-bottom: 25px;">
                     <div style="flex-grow: 1;">
                         <p:outputLabel value="Buscar producto" style="font-weight: bold; color: #666; display: block; margin-bottom: 5px;"/>
                         <p:inputText value="#{inventarioBeanUI.textoBusqueda}" placeholder="Ejemplo: Coca Cola 600ml" styleClass="input-busqueda"/>
                     </div>
 
-                    <p:commandButton value="BUSCAR" styleClass="btn-top-rojo" action="#{inventarioBeanUI.buscarProducto}" update="tablaProductos"/>
+                    <!-- BOTÓN OCULTO QUE RECIBE EL ENTER Y HACE LA BÚSQUEDA -->
+                    <p:commandButton id="btnBuscarOculto" action="#{inventarioBeanUI.buscarProducto}" update="tablaProductos" style="display: none;" />
+
+                    <!-- EL BOTÓN "BUSCAR" SE ELIMINÓ DE AQUÍ COMO PEDISTE -->
+
                     <p:commandButton value="Entrada" styleClass="btn-top-rojo" actionListener="#{inventarioBeanUI.abrirModalEntrada}" update=":formEntrada"/>
                     <p:commandButton value="Registro" styleClass="btn-top-rojo" type="button" onclick="PF('wvModalRegistro').show();"/>
                     <p:commandButton value="REPORTE" styleClass="btn-top-rojo" type="button"/>
                 </div>
 
-                <!-- TABLA ACTUALIZADA CON SCROLL Y ORDENAMIENTO -->
                 <p:dataTable id="tablaProductos" var="prod" value="#{inventarioBeanUI.listaProductos}"
                              styleClass="tabla-lidia"
                              scrollable="true" scrollHeight="350"
@@ -159,7 +169,6 @@
                 <div class="campo-formulario">
                     <p:outputLabel for="cantIngreso" value="Cantidad nueva a ingresar:" />
                     <p:inputNumber id="cantIngreso" value="#{inventarioBeanUI.cantidadEntrada}" decimalPlaces="0" minValue="1">
-                        <!-- AJAX para cálculo en tiempo real -->
                         <p:ajax event="change" update="lblNuevoTotal" />
                     </p:inputNumber>
                 </div>
