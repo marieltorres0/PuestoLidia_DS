@@ -38,6 +38,15 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         }
     }
 
+    // eliminación de producto
+    public void eliminarProducto(Producto productoEliminar){
+        try{
+            delete(productoEliminar);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error DAO: No se pudo eliminar el producto de la base de datos.");
+        }
+    }
+
     @Override
     public EntityManager getEntityManager(){
         return entityManager;
