@@ -37,22 +37,18 @@
         /* ========================================= */
         .tabla-lidia .ui-datatable-header { background-color: transparent; border: none; padding-bottom: 15px;}
 
-        /* Filtros - Cabecera */
         .tabla-lidia .ui-datatable-scrollable-header th { background-color: #5b8df2 !important; color: white !important; text-align: center !important; border: none !important; padding: 10px !important; cursor: pointer; }
         .tabla-lidia .ui-datatable-scrollable-header th:hover { background-color: #4a75c9 !important; }
 
-        /* Ocultar la cabecera fantasma */
         .tabla-lidia .ui-datatable-scrollable-body th { padding: 0 !important; border: none !important; height: 0 !important; }
 
         .tabla-lidia td { text-align: center; font-weight: bold; color: #4a4a4a; border-bottom: 1px solid #dee2e6 !important; border-right: none !important; border-left: none !important; padding: 12px 5px !important; }
         .tabla-lidia tr:nth-child(even) { background-color: #f8f9fa !important; }
         .tabla-lidia tr:nth-child(odd) { background-color: #ffffff !important; }
 
-        /* Fila de inventario crítico */
         .fila-critica { background-color: #ffb3b3 !important; color: #cc0000 !important; }
         .fila-critica td { color: #cc0000 !important; border-bottom: 1px solid #ff9999 !important; }
 
-        /* ESTILO NUEVO: Color para la fila que seleccionas dándole clic */
         .tabla-lidia .ui-datatable-data tr.ui-state-highlight { background-color: #cce0ff !important; color: #000 !important; border-left: 4px solid #5b8df2 !important; }
         .tabla-lidia .ui-datatable-data tr.ui-state-highlight td { color: #000 !important; }
 
@@ -61,14 +57,15 @@
         .flecha-regreso { color: white; font-size: 3rem; font-weight: bold; cursor: pointer; text-decoration: none; }
 
         /* Estilos Modales */
-        .modal-estilo .ui-dialog-titlebar { background-color: #5b8df2 !important; color: white !important; text-align: center;}
-        .modal-estilo.ui-dialog { border-radius: 12px !important; overflow: hidden; border: 2px solid #ccc;}
+        .modal-estilo .ui-dialog-titlebar { background-color: #5b8df2 !important; color: white !important; text-align: center; border-bottom: 4px solid #3e4a5c; }
+        .modal-estilo.ui-dialog { border-radius: 12px !important; overflow: hidden; border: 2px solid #ccc; }
         .campo-formulario { margin-bottom: 15px; }
         .campo-formulario label { display: block; font-weight: bold; color: #4A4A4A; margin-bottom: 5px; }
     </style>
 </h:head>
 
 <h:body>
+    <!-- Notificador global en la esquina. Aquí saldrán los avisos. -->
     <p:growl id="notificacion" showDetail="true" life="4000">
         <p:autoUpdate />
     </p:growl>
@@ -93,7 +90,6 @@
 
             <h:form id="frmInventario">
 
-                <!-- ESTO ACTIVA LA BÚSQUEDA CON LA TECLA ENTER -->
                 <p:defaultCommand target="btnBuscarOculto" />
 
                 <div style="display: flex; gap: 15px; align-items: flex-end; margin-bottom: 25px;">
@@ -102,10 +98,7 @@
                         <p:inputText value="#{inventarioBeanUI.textoBusqueda}" placeholder="Ejemplo: Coca Cola 600ml" styleClass="input-busqueda"/>
                     </div>
 
-                    <!-- BOTÓN OCULTO QUE RECIBE EL ENTER Y HACE LA BÚSQUEDA -->
                     <p:commandButton id="btnBuscarOculto" action="#{inventarioBeanUI.buscarProducto}" update="tablaProductos" style="display: none;" />
-
-                    <!-- EL BOTÓN "BUSCAR" SE ELIMINÓ DE AQUÍ COMO PEDISTE -->
 
                     <p:commandButton value="Entrada" styleClass="btn-top-rojo" actionListener="#{inventarioBeanUI.abrirModalEntrada}" update=":formEntrada"/>
                     <p:commandButton value="Registro" styleClass="btn-top-rojo" type="button" onclick="PF('wvModalRegistro').show();"/>
@@ -113,33 +106,27 @@
                 </div>
 
                 <p:dataTable id="tablaProductos" var="prod" value="#{inventarioBeanUI.listaProductos}"
-                             styleClass="tabla-lidia"
-                             scrollable="true" scrollHeight="350"
+                             styleClass="tabla-lidia" scrollable="true" scrollHeight="350"
                              selectionMode="single" selection="#{inventarioBeanUI.productoSeleccionado}" rowKey="#{prod.idProducto}"
                              rowStyleClass="#{prod.cantidad le prod.umbral ? 'fila-critica' : null}">
 
                     <p:column headerText="ID" style="width: 15%;">
                         <h:outputText value="#{prod.idProducto}" />
                     </p:column>
-
                     <p:column headerText="NOMBRE" sortBy="#{prod.nombre}" style="width: 25%; text-align: left;">
                         <h:outputText value="#{prod.nombre}" />
                     </p:column>
-
                     <p:column headerText="PRECIO $" sortBy="#{prod.precio}" style="width: 15%;">
                         <h:outputText value="$#{prod.precio}">
                             <f:convertNumber pattern="#0.00" />
                         </h:outputText>
                     </p:column>
-
                     <p:column headerText="CANTIDAD" style="width: 10%;">
                         <h:outputText value="#{prod.cantidad}" />
                     </p:column>
-
                     <p:column headerText="CANT. CRITICA" style="width: 10%;">
                         <h:outputText value="#{prod.umbral}" />
                     </p:column>
-
                     <p:column headerText="ACCIONES" style="width: 25%;">
                         <p:commandButton value="MODIFICAR" styleClass="btn-pildora-rojo" type="button"/>
                         <p:commandButton value="ELIMINAR" styleClass="btn-pildora-negro" type="button"/>
@@ -160,6 +147,7 @@
     <!-- ========================================================= -->
     <p:dialog id="modalEntrada" widgetVar="wvModalEntrada" header="Entrada de Producto" styleClass="modal-estilo" modal="true" resizable="false" width="400">
         <h:form id="formEntrada">
+
             <div class="ui-fluid">
                 <div style="margin-bottom: 15px; background: #e9ecef; padding: 10px; border-radius: 8px;">
                     <h:outputText value="#{inventarioBeanUI.productoSeleccionado.nombre}" style="font-weight: bold; display:block;" />
@@ -168,7 +156,7 @@
 
                 <div class="campo-formulario">
                     <p:outputLabel for="cantIngreso" value="Cantidad nueva a ingresar:" />
-                    <p:inputNumber id="cantIngreso" value="#{inventarioBeanUI.cantidadEntrada}" decimalPlaces="0" minValue="1">
+                    <p:inputNumber id="cantIngreso" value="#{inventarioBeanUI.cantidadEntrada}" decimalPlaces="0" minValue="1" required="true" requiredMessage="Debes ingresar una cantidad válida.">
                         <p:ajax event="change" update="lblNuevoTotal" />
                     </p:inputNumber>
                 </div>
@@ -183,42 +171,66 @@
 
             <div style="display: flex; justify-content: space-between; margin-top: 20px;">
                 <p:commandButton value="CANCELAR" type="button" styleClass="ui-button-outlined ui-button-secondary" onclick="PF('wvModalEntrada').hide();" />
-                <p:commandButton value="GUARDAR" action="#{inventarioBeanUI.registrarEntrada}" styleClass="ui-button-danger" update=":frmInventario:tablaProductos" />
+
+                <!-- El botón actualiza el notificador global (el globito) -->
+                <p:commandButton value="GUARDAR" action="#{inventarioBeanUI.registrarEntrada}" styleClass="ui-button-danger" update="formEntrada :frmInventario:tablaProductos :notificacion" />
             </div>
         </h:form>
     </p:dialog>
 
     <!-- ========================================================= -->
-    <!-- MODAL DE REGISTRO -->
+    <!-- MODAL DE REGISTRO (SIN EL CUADRO ROJO INTRUSIVO)          -->
     <!-- ========================================================= -->
-    <p:dialog id="modalRegistro" widgetVar="wvModalRegistro" header="Registro de producto" styleClass="modal-estilo" modal="true" resizable="false" closeOnEscape="true" width="450" showEffect="fade" hideEffect="fade">
+    <p:dialog id="modalRegistro" widgetVar="wvModalRegistro" header="Registro de producto"
+              styleClass="modal-estilo" modal="true" resizable="false" closeOnEscape="true"
+              width="450" showEffect="fade" hideEffect="fade">
+
         <h:form id="formRegistro">
+
             <div class="ui-fluid">
                 <div class="campo-formulario">
                     <p:outputLabel for="idProd" value="ID" />
-                    <p:inputText id="idProd" value="#{productoBeanUI.idProducto}" placeholder="Ejemplo: 0001230600" maxlength="30"/>
+                    <p:inputText id="idProd" value="#{productoBeanUI.idProducto}"
+                                 placeholder="Ejemplo: 0001230600" maxlength="30" required="true" requiredMessage="El ID del producto es obligatorio."/>
                 </div>
+
                 <div class="campo-formulario">
                     <p:outputLabel for="nombreProd" value="Nombre del producto" />
-                    <p:inputText id="nombreProd" value="#{productoBeanUI.nombre}" placeholder="Ejemplo: Coca Cola 600ml" maxlength="30"/>
+                    <p:inputText id="nombreProd" value="#{productoBeanUI.nombre}"
+                                 placeholder="Ejemplo: Coca Cola 600ml" maxlength="30" required="true" requiredMessage="El nombre del producto es obligatorio."/>
                 </div>
+
                 <div class="campo-formulario">
                     <p:outputLabel for="precioProd" value="Precio ($)" />
-                    <p:inputNumber id="precioProd" value="#{productoBeanUI.precio}" symbol="$ " symbolPosition="p" decimalSeparator="." thousandSeparator="," decimalPlaces="2" placeholder="Ejemplo: 25.00" minValue="0" />
+                    <p:inputNumber id="precioProd" value="#{productoBeanUI.precio}"
+                                   symbol="$ " symbolPosition="p"
+                                   decimalSeparator="." thousandSeparator="," decimalPlaces="2"
+                                   placeholder="Ejemplo: 25.00" minValue="0" required="true" requiredMessage="El precio es obligatorio."/>
                 </div>
+
                 <div class="campo-formulario">
                     <p:outputLabel for="cantidadProd" value="Cantidad inicial en inventario" />
-                    <p:inputNumber id="cantidadProd" value="#{productoBeanUI.cantidad}" decimalPlaces="0" placeholder="Ejemplo: 50" minValue="0" />
+                    <p:inputNumber id="cantidadProd" value="#{productoBeanUI.cantidad}"
+                                   decimalPlaces="0" placeholder="Ejemplo: 50" minValue="0" required="true" requiredMessage="La cantidad inicial es obligatoria."/>
                 </div>
+
                 <div class="campo-formulario">
                     <p:outputLabel for="umbralProd" value="Cantidad crítica" />
-                    <p:inputNumber id="umbralProd" value="#{productoBeanUI.umbral}" decimalPlaces="0" placeholder="Ejemplo: 10 (mínimo antes de alerta)" minValue="0" />
+                    <p:inputNumber id="umbralProd" value="#{productoBeanUI.umbral}"
+                                   decimalPlaces="0" placeholder="Ejemplo: 10 (mínimo antes de alerta)" minValue="0" required="true" requiredMessage="La cantidad crítica es obligatoria."/>
                 </div>
             </div>
 
             <div style="display: flex; justify-content: space-between; margin-top: 25px;">
-                <p:commandButton value="CANCELAR" type="button" styleClass="ui-button-outlined ui-button-secondary" onclick="PF('wvModalRegistro').hide();" />
-                <p:commandButton value="REGISTRAR" action="#{productoBeanUI.altaProducto}" styleClass="ui-button-danger" update="formRegistro :notificacion" oncomplete="if (!args.validationFailed) { PF('wvModalRegistro').hide(); rcActualizarInventario(); }"/>
+                <p:commandButton value="CANCELAR" type="button"
+                                 styleClass="ui-button-outlined ui-button-secondary"
+                                 onclick="PF('wvModalRegistro').hide();" />
+
+                <!-- El botón actualiza el formulario (para poner los campos en rojo) y el notificador global (el globito) -->
+                <p:commandButton value="REGISTRAR" action="#{productoBeanUI.altaProducto}"
+                                 styleClass="ui-button-danger"
+                                 update="formRegistro :notificacion"
+                                 oncomplete="if (!args.validationFailed) { rcActualizarInventario(); }"/>
             </div>
         </h:form>
     </p:dialog>
