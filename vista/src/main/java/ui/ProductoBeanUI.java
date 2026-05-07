@@ -142,6 +142,39 @@ public class ProductoBeanUI implements Serializable {
         }
     }
 
+   // eliminar un producto validando que no tenga stock
+    public void eliminarProducto(){
+        try {
+            // validar si el producto tiene stock
+            if(cantidad != null && cantidad > 0){
+                // avisar que no puede eliminarse este producto
+                mostrarError("Error", "No se puede eliminar, el producto " + nombre + " tiene stock.");
+                // cerrar el modal de confirmación
+                PrimeFaces.current().executeScript("PF('wvModalEliminar').hide();");
+                return;
+            }
+
+            // si no tiene stock se crea el objeto
+            Producto productoAEliminar = new Producto();
+            productoAEliminar.setIdProducto(idProducto);
+
+            productoHelper.eliminarProducto(productoAEliminar);
+
+            // Mensaje de éxito
+            mostrarInfo("ÉXITO", "El producto " + nombre + " se eliminó correctamente.");
+
+            limpiarDatos();
+
+            // Cerrar el diálogo llamando al bean
+            PrimeFaces.current().executeScript("PF('wvModalEliminar').hide();");
+
+        } catch (Exception e) {
+            // Si la base de datos se cae o hay un error inesperado
+            mostrarError("Error crítico", "No se pudo eliminar el producto: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     // Metodo para mostrar error en la pantalla
     private void mostrarError(String titulo, String detalle) {
         FacesContext.getCurrentInstance().addMessage(null,

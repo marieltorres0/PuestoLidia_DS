@@ -5,13 +5,17 @@
       xmlns:p="http://primefaces.org/ui">
 
 <h:head>
-    <title>Gestión de Productos</title>
+    <title>Gestión de Productos - Prueba Eliminar</title>
     <style>
         .campo-formulario { margin-bottom: 15px; }
         .campo-formulario label { display: block; font-weight: bold; color: #4A4A4A; margin-bottom: 5px; }
-        .modal-estilo .ui-dialog-titlebar { background-color: #5b8df2 !important; color: white !important; text-align: center; border-bottom: 4px solid #3e4a5c; }
+
+        /* Estilo adaptado para el modal de eliminación (Rojo para advertir peligro) */
+        .modal-estilo .ui-dialog-titlebar { background-color: #d9534f !important; color: white !important; text-align: center; border-bottom: 4px solid #c9302c; }
         .modal-estilo .ui-dialog-title { float: none !important; font-size: 1.2rem; font-weight: bold; }
         .modal-estilo.ui-dialog { border-radius: 12px !important; overflow: hidden; border: 2px solid #ccc; }
+
+        .texto-confirmacion { font-size: 1.1rem; text-align: center; margin: 20px 0; color: #333; }
     </style>
 </h:head>
 
@@ -22,64 +26,47 @@
     </p:growl>
 
     <h:form id="formPrincipal">
-        <p:commandButton value="Nuevo Producto" icon="pi pi-plus"
-                         update="formRegistro" oncomplete="PF('wvModalRegistro').show();">
-            <f:setPropertyActionListener target="#{productoBeanUI.esEdicion}" value="false" />
+
+        <p:commandButton value="Probar Eliminar (CON Stock)" icon="pi pi-trash" styleClass="ui-button-danger"
+                         update="modalEliminar" oncomplete="PF('wvModalEliminar').show();">
+            <f:setPropertyActionListener target="#{productoBeanUI.idProducto}" value="001" />
+            <f:setPropertyActionListener target="#{productoBeanUI.nombre}" value="Coca Cola 600ml" />
+            <f:setPropertyActionListener target="#{productoBeanUI.cantidad}" value="50" />
         </p:commandButton>
 
-        <p:commandButton value="Probar Modificación" icon="pi pi-pencil" styleClass="ui-button-warning"
+
+
+        <p:commandButton value="Probar Eliminar (SIN Stock)" icon="pi pi-trash" styleClass="ui-button-danger"
                          style="margin-left: 15px;"
-                         action="#{productoBeanUI.prepararModificacion('0123')}"
-                         update="formRegistro" oncomplete="PF('wvModalRegistro').show();" />
+                         update="modalEliminar" oncomplete="PF('wvModalEliminar').show();">
+            <f:setPropertyActionListener target="#{productoBeanUI.idProducto}" value="002" />
+            <f:setPropertyActionListener target="#{productoBeanUI.nombre}" value="Sabritas Sal 40g" />
+            <f:setPropertyActionListener target="#{productoBeanUI.cantidad}" value="0" />
+        </p:commandButton>
+
     </h:form>
 
-    <p:dialog id="modalRegistro" widgetVar="wvModalRegistro"
-              header="#{productoBeanUI.esEdicion ? 'Modificar Producto' : 'Registro de producto'}"
+    <p:dialog id="modalEliminar" widgetVar="wvModalEliminar"
+              header="Eliminar Producto"
               styleClass="modal-estilo" modal="true" resizable="false" closeOnEscape="true"
-              width="450" showEffect="fade" hideEffect="fade">
+              width="400" showEffect="fade" hideEffect="fade">
 
-        <h:form id="formRegistro">
-            <div class="ui-fluid">
-                <div class="campo-formulario">
-                    <p:outputLabel for="idProd" value="ID" />
-                    <p:inputText id="idProd" value="#{productoBeanUI.idProducto}"
-                                 maxlength="30" readonly="#{productoBeanUI.esEdicion}"/>
-                </div>
+        <h:form id="formModalEliminar">
 
-                <div class="campo-formulario">
-                    <p:outputLabel for="nombreProd" value="Nombre del producto" />
-                    <p:inputText id="nombreProd" value="#{productoBeanUI.nombre}" maxlength="30"/>
-                </div>
-
-                <div class="campo-formulario">
-                    <p:outputLabel for="precioProd" value="Precio ($)" />
-                    <p:inputNumber id="precioProd" value="#{productoBeanUI.precio}"
-                                   symbol="$ " symbolPosition="p" decimalSeparator="."
-                                   thousandSeparator="," decimalPlaces="2" minValue="0" />
-                </div>
-
-                <div class="campo-formulario">
-                    <p:outputLabel for="cantidadProd" value="Cantidad inicial" />
-                    <p:inputNumber id="cantidadProd" value="#{productoBeanUI.cantidad}"
-                                   decimalPlaces="0" minValue="0" />
-                </div>
-
-                <div class="campo-formulario">
-                    <p:outputLabel for="umbralProd" value="Cantidad crítica" />
-                    <p:inputNumber id="umbralProd" value="#{productoBeanUI.umbral}"
-                                   decimalPlaces="0" minValue="0" />
-                </div>
+            <div class="texto-confirmacion">
+                <i class="pi pi-exclamation-triangle" style="font-size: 2rem; color: #d9534f; display: block; margin-bottom: 10px;"></i>
+                ¿Estás seguro de que deseas eliminar de forma permanente el producto <strong>#{productoBeanUI.nombre}</strong>?
             </div>
 
             <div style="display: flex; justify-content: space-between; margin-top: 25px;">
-                <p:commandButton value="CANCELAR" type="button"
+                <p:commandButton value="CANCELAR" type="button" icon="pi pi-times"
                                  styleClass="ui-button-outlined ui-button-secondary"
-                                 onclick="PF('wvModalRegistro').hide();" />
+                                 onclick="PF('wvModalEliminar').hide();" />
 
-                <p:commandButton value="#{productoBeanUI.esEdicion ? 'GUARDAR CAMBIOS' : 'REGISTRAR'}"
-                                 action="#{productoBeanUI.guardarProducto}"
-                                 styleClass="#{productoBeanUI.esEdicion ? 'ui-button-warning' : 'ui-button-danger'}"
-                                 update="formRegistro :notificacion" />
+                <p:commandButton value="SÍ, ELIMINAR" icon="pi pi-check"
+                                 action="#{productoBeanUI.eliminarProducto}"
+                                 styleClass="ui-button-danger"
+                                 update=":notificacion" />
             </div>
         </h:form>
     </p:dialog>
