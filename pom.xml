@@ -52,6 +52,7 @@
                 <artifactId>jaxb-runtime</artifactId>
                 <version>${jakarta.xml.bind.version}</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>

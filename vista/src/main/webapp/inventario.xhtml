@@ -36,19 +36,14 @@
         /* Ajustes de Tabla con Scroll y Selección   */
         /* ========================================= */
         .tabla-lidia .ui-datatable-header { background-color: transparent; border: none; padding-bottom: 15px;}
-
         .tabla-lidia .ui-datatable-scrollable-header th { background-color: #5b8df2 !important; color: white !important; text-align: center !important; border: none !important; padding: 10px !important; cursor: pointer; }
         .tabla-lidia .ui-datatable-scrollable-header th:hover { background-color: #4a75c9 !important; }
-
         .tabla-lidia .ui-datatable-scrollable-body th { padding: 0 !important; border: none !important; height: 0 !important; }
-
         .tabla-lidia td { text-align: center; font-weight: bold; color: #4a4a4a; border-bottom: 1px solid #dee2e6 !important; border-right: none !important; border-left: none !important; padding: 12px 5px !important; }
         .tabla-lidia tr:nth-child(even) { background-color: #f8f9fa !important; }
         .tabla-lidia tr:nth-child(odd) { background-color: #ffffff !important; }
-
         .fila-critica { background-color: #ffb3b3 !important; color: #cc0000 !important; }
         .fila-critica td { color: #cc0000 !important; border-bottom: 1px solid #ff9999 !important; }
-
         .tabla-lidia .ui-datatable-data tr.ui-state-highlight { background-color: #cce0ff !important; color: #000 !important; border-left: 4px solid #5b8df2 !important; }
         .tabla-lidia .ui-datatable-data tr.ui-state-highlight td { color: #000 !important; }
 
@@ -65,7 +60,6 @@
 </h:head>
 
 <h:body>
-    <!-- Notificador global en la esquina. Aquí saldrán los avisos. -->
     <p:growl id="notificacion" showDetail="true" life="4000">
         <p:autoUpdate />
     </p:growl>
@@ -102,7 +96,10 @@
 
                     <p:commandButton value="Entrada" styleClass="btn-top-rojo" actionListener="#{inventarioBeanUI.abrirModalEntrada}" update=":formEntrada"/>
                     <p:commandButton value="Registro" styleClass="btn-top-rojo" type="button" onclick="PF('wvModalRegistro').show();"/>
-                    <p:commandButton value="REPORTE" styleClass="btn-top-rojo" type="button"/>
+
+                    <p:commandButton value="DESCARGAR PDF" styleClass="btn-top-rojo" ajax="false" icon="pi pi-file-pdf">
+                        <p:dataExporter type="pdf" target="tablaOculta" fileName="Reporte_Critico_Puesto_Lidia" />
+                    </p:commandButton>
                 </div>
 
                 <p:dataTable id="tablaProductos" var="prod" value="#{inventarioBeanUI.listaProductos}"
@@ -127,11 +124,33 @@
                     <p:column headerText="CANT. CRITICA" style="width: 10%;">
                         <h:outputText value="#{prod.umbral}" />
                     </p:column>
+
                     <p:column headerText="ACCIONES" style="width: 25%;">
                         <p:commandButton value="MODIFICAR" styleClass="btn-pildora-rojo" type="button"/>
                         <p:commandButton value="ELIMINAR" styleClass="btn-pildora-negro" type="button"/>
                     </p:column>
                 </p:dataTable>
+
+                <p:dataTable id="tablaOculta" var="critico" value="#{inventarioBeanUI.listaProductosCriticos}" style="display:none;">
+                    <p:column headerText="ID">
+                        <h:outputText value="#{critico.idProducto}" />
+                    </p:column>
+                    <p:column headerText="NOMBRE">
+                        <h:outputText value="#{critico.nombre}" />
+                    </p:column>
+                    <p:column headerText="PRECIO $">
+                        <h:outputText value="$#{critico.precio}">
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="CANTIDAD">
+                        <h:outputText value="#{critico.cantidad}" />
+                    </p:column>
+                    <p:column headerText="CANT. CRITICA">
+                        <h:outputText value="#{critico.umbral}" />
+                    </p:column>
+                </p:dataTable>
+
             </h:form>
         </div>
 
@@ -142,12 +161,8 @@
         </div>
     </div>
 
-    <!-- ========================================================= -->
-    <!-- MODAL DE ENTRADA -->
-    <!-- ========================================================= -->
     <p:dialog id="modalEntrada" widgetVar="wvModalEntrada" header="Entrada de Producto" styleClass="modal-estilo" modal="true" resizable="false" width="400">
         <h:form id="formEntrada">
-
             <div class="ui-fluid">
                 <div style="margin-bottom: 15px; background: #e9ecef; padding: 10px; border-radius: 8px;">
                     <h:outputText value="#{inventarioBeanUI.productoSeleccionado.nombre}" style="font-weight: bold; display:block;" />
@@ -171,22 +186,16 @@
 
             <div style="display: flex; justify-content: space-between; margin-top: 20px;">
                 <p:commandButton value="CANCELAR" type="button" styleClass="ui-button-outlined ui-button-secondary" onclick="PF('wvModalEntrada').hide();" />
-
-                <!-- El botón actualiza el notificador global (el globito) -->
                 <p:commandButton value="GUARDAR" action="#{inventarioBeanUI.registrarEntrada}" styleClass="ui-button-danger" update="formEntrada :frmInventario:tablaProductos :notificacion" />
             </div>
         </h:form>
     </p:dialog>
 
-    <!-- ========================================================= -->
-    <!-- MODAL DE REGISTRO (SIN EL CUADRO ROJO INTRUSIVO)          -->
-    <!-- ========================================================= -->
     <p:dialog id="modalRegistro" widgetVar="wvModalRegistro" header="Registro de producto"
               styleClass="modal-estilo" modal="true" resizable="false" closeOnEscape="true"
               width="450" showEffect="fade" hideEffect="fade">
 
         <h:form id="formRegistro">
-
             <div class="ui-fluid">
                 <div class="campo-formulario">
                     <p:outputLabel for="idProd" value="ID" />
@@ -226,7 +235,6 @@
                                  styleClass="ui-button-outlined ui-button-secondary"
                                  onclick="PF('wvModalRegistro').hide();" />
 
-                <!-- El botón actualiza el formulario (para poner los campos en rojo) y el notificador global (el globito) -->
                 <p:commandButton value="REGISTRAR" action="#{productoBeanUI.altaProducto}"
                                  styleClass="ui-button-danger"
                                  update="formRegistro :notificacion"
