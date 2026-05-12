@@ -1,6 +1,7 @@
 package ui;
 
 import helper.InventarioHelper;
+import helper.ReporteHelper;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
@@ -20,6 +21,8 @@ import java.util.List;
 public class InventarioBeanUI implements Serializable {
 
     private InventarioHelper inventarioHelper;
+    // --- NUEVO HELPER PARA EL REPORTE ---
+    private ReporteHelper reporteHelper;
 
     // --- VARIABLES DE LA PANTALLA ---
     private List<Producto> listaProductos;
@@ -31,6 +34,13 @@ public class InventarioBeanUI implements Serializable {
 
     public InventarioBeanUI() {
         inventarioHelper = new InventarioHelper();
+        reporteHelper = new ReporteHelper(); // <-- 1. ¡AQUÍ INICIALIZAMOS EL HELPER DEL REPORTE!
+    }
+    // =========================================================
+    // MÉTODO PARA ALIMENTAR LA TABLA INVISIBLE DEL PDF
+    // =========================================================
+    public List<Producto> getListaProductosCriticos() {
+        return reporteHelper.obtenerReporteStockCritico();
     }
 
     @PostConstruct
@@ -52,7 +62,31 @@ public class InventarioBeanUI implements Serializable {
         }
     }
 
-    // 3. Método para preparar el modal de Entrada
+    // ==========================================
+    // 3. MÉTODO PARA REPORTE DE STOCK CRÍTICO (US6) <-- 2. ¡AQUÍ ESTÁ EL MÉTODO NUEVO!
+    // ==========================================
+    public void generarReporteCritico() {
+        // Obtenemos solo los productos en riesgo usando el nuevo Helper
+        listaProductos = reporteHelper.obtenerReporteStockCritico();
+
+        // Avisamos al administrador el resultado
+        if(listaProductos == null || listaProductos.isEmpty()) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Excelente", "No hay productos con stock crítico."));
+        } else {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN, "Atención", "Se encontraron " + listaProductos.size() + " productos para reabastecer."));
+        }
+        this.listaProductos = reporteHelper.obtenerReporteStockCritico();
+
+        if (listaProductos == null || listaProductos.isEmpty()) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Inventario Saludable", "No hay productos con stock crítico para exportar."));
+        }
+
+    }
+
+    // 4. Método para preparar el modal de Entrada
     public void abrirModalEntrada() {
         // Validar que sí hayan seleccionado una fila en la tabla
         if (productoSeleccionado == null) {
@@ -65,7 +99,7 @@ public class InventarioBeanUI implements Serializable {
         PrimeFaces.current().executeScript("PF('wvModalEntrada').show();"); // Abrir ventanita
     }
 
-    // 4. Método para guardar la Entrada en la Base de Datos
+    // 5. Método para guardar la Entrada en la Base de Datos
     public void registrarEntrada() {
         // Validar que no metan números negativos o ceros
         if (cantidadEntrada == null || cantidadEntrada <= 0) {
@@ -73,6 +107,8 @@ public class InventarioBeanUI implements Serializable {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ingresa una cantidad mayor a 0."));
             return;
         }
+
+
 
         try {
             // Hacer la suma matemática
