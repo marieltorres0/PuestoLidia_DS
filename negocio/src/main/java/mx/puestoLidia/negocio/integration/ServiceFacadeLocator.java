@@ -1,7 +1,9 @@
 package mx.puestoLidia.negocio.integration;
 
 import mx.puestoLidia.negocio.facade.FacadeProducto;
-import mx.puestoLidia.negocio.facade.FacadeInventario; // <-- NUEVO IMPORT
+import mx.puestoLidia.negocio.facade.FacadeInventario;
+import mx.puestoLidia.negocio.facade.FacadeReporte;
+import mx.puestoLidia.persistence.dao.ReporteDAO;
 
 public class ServiceFacadeLocator {
 
@@ -23,5 +25,22 @@ public class ServiceFacadeLocator {
             facadeInventario = new FacadeInventario();
         }
         return facadeInventario;
+    }
+
+    private static FacadeReporte facadeReporte;
+
+    public static FacadeReporte getInstanceFacadeReporte() {
+        if (facadeReporte == null) {
+            facadeReporte = new FacadeReporte();
+        }
+        return facadeReporte;
+    }
+    private static ReporteDAO reporteDAO;
+
+    public static ReporteDAO getInstanceReporteDAO() {
+        if (reporteDAO == null) {
+            reporteDAO = new ReporteDAO();
+        }
+        return reporteDAO;
     }
 }
