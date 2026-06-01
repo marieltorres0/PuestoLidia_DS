@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.StoredProcedureQuery;
+import mx.puestoLidia.entity.ItemVenta;
 import mx.puestoLidia.entity.Producto;
 
 import java.util.List;
@@ -154,6 +155,7 @@ public abstract class AbstractDAO<T> {
             return null;
         });
     }
+
 
     // Optional: for custom return values
     protected <R> R execute(Function<EntityManager, R> function) {
