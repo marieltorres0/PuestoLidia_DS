@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Menú Principal - Puesto Lidia</title>
+    <style>
+        /* Configuramos el body para que ocupe toda la pantalla y ordene los elementos en columna */
+        body {
+            margin: 0;
+            background-color: #f4f6f9;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Altura completa de la ventana */
+        }
+
+        /* Estilos para la franja azul de ARRIBA */
+        .franja-superior {
+            background-color: #007ad9; /* Azul estándar de PrimeFaces */
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 26px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Estilos para la franja azul de ABAJO */
+        .franja-inferior {
+            background-color: #007ad9;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 14px;
+            margin-top: auto; /* Esta línea es la que empuja la franja azul hasta el fondo */
+        }
+
+        /* Contenedor de los botones en el centro */
+        .menu-container {
+            flex-grow: 1; /* Ocupa todo el espacio sobrante entre las dos franjas */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .subtitulo {
+            color: #555;
+            margin-bottom: 40px;
+            font-size: 20px;
+        }
+
+        .botones-wrapper {
+            display: flex;
+            gap: 40px; /* Espacio entre los botones */
+        }
+
+        /* Hacemos los botones grandes y llamativos */
+        .btn-menu {
+            width: 250px;
+            height: 90px;
+            font-size: 22px !important;
+            font-weight: bold !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <!-- Franja Azul ARRIBA -->
+    <div class="franja-superior">
+         Abarrotes Puesto Lidia
+    </div>
+
+    <!-- Contenido Central (Los Botones) -->
+    <div class="menu-container">
+        <h3 class="subtitulo">Selecciona la sección a la que deseas ingresar</h3>
+
+        <div class="botones-wrapper">
+            <!-- Botón de Ventas -->
+            <p:button value="Ir a Ventas"
+                      outcome="venta"
+                      styleClass="btn-menu ui-button-success"
+                      icon="pi pi-shopping-cart" />
+
+            <!-- Botón de Inventario -->
+            <p:button value="Ir a Inventario"
+                      outcome="inventario"
+                      styleClass="btn-menu ui-button-info"
+                      icon="pi pi-box" />
+        </div>
+    </div>
+
+    <!-- Franja Azul ABAJO -->
+    <div class="franja-inferior">
+        Sistema de Punto de Venta y Control de Inventario
+    </div>
+</h:body>
+</html>

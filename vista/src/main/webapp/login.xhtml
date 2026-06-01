@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Puesto Lidia - Iniciar Sesión</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border-top: 5px solid #5b8df2;
+        }
+        .login-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #3e4a5c;
+            margin-bottom: 20px;
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="login-box">
+        <div class="login-title">PUESTO LIDIA</div>
+
+        <h:form id="formLogin">
+            <p:growl id="mensajes" showDetail="true" life="4000">
+                <p:autoUpdate />
+            </p:growl>
+
+            <div class="ui-fluid">
+                <div style="margin-bottom: 15px; text-align: left;">
+                    <p:outputLabel for="rol" value="Selecciona tu Rol:" style="font-weight: bold;" />
+                    <p:selectOneMenu id="rol" value="#{loginBeanUI.rol}" required="true" requiredMessage="Por favor selecciona un rol.">
+                        <f:selectItem itemLabel="--- Seleccionar ---" itemValue="" noSelectionOption="true"/>
+
+                        <f:selectItem itemLabel="Administrador" itemValue="admin"/>
+                        <f:selectItem itemLabel="Cajero" itemValue="cajero"/>
+                    </p:selectOneMenu>
+                </div>
+
+                <div style="margin-bottom: 25px; text-align: left;">
+                    <p:outputLabel for="pass" value="Contraseña:" style="font-weight: bold;" />
+                    <p:password id="pass" value="#{loginBeanUI.contrasena}" required="true" requiredMessage="La contraseña es obligatoria." maxlength="50" />
+                </div>
+
+                <p:commandButton value="Ingresar" action="#{loginBeanUI.autenticar}" update="mensajes"
+                                 icon="pi pi-sign-in" styleClass="ui-button-primary"
+                                 style="font-size: 1.2rem; padding: 10px;"
+                                 ajax="false" />
+            </div>
+        </h:form>
+    </div>
+</h:body>
+</html>
