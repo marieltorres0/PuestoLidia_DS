@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-
 public abstract class AbstractDAO<T> {
 
     private final Class<T> entityClass;
@@ -22,7 +21,7 @@ public abstract class AbstractDAO<T> {
 
     protected abstract EntityManager getEntityManager();
 
-      /* ========================
+    /* ========================
        Operaciones CRUD básicas
        ======================== */
 
@@ -76,11 +75,9 @@ public abstract class AbstractDAO<T> {
        Consultas personalizadas
        ======================== */
 
-
     public int executeCountQuery(String query) {
         return execute(em -> Math.toIntExact(em.createQuery(query, Long.class).getSingleResult()));
     }
-
 
     public List<T> findFromWhere(String de, String campo, String criterio) {
         String jpql = "SELECT DISTINCT a FROM " + entityClass.getCanonicalName()
@@ -139,8 +136,6 @@ public abstract class AbstractDAO<T> {
         });
     }
 
-
-
     public List<T> executeNativeQuery(String sql) {
         return execute(em ->
                 em.createNativeQuery(sql, entityClass)
@@ -148,10 +143,9 @@ public abstract class AbstractDAO<T> {
         );
     }
 
-      /* ========================
+    /* ========================
        Helpers internos
        ======================== */
-
 
     // Utility to run in transaction
     private void executeInsideTransaction(Consumer<EntityManager> action) {
@@ -175,9 +169,4 @@ public abstract class AbstractDAO<T> {
             throw e;
         }
     }
-
-
-
-
-
 }
