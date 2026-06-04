@@ -71,7 +71,7 @@
     </p:growl>
 
     <h:form>
-        <p:remoteCommand name="rcActualizarInventario" action="#{inventarioBeanUI.cargarInventario}" update=":frmInventario:tablaProductos" />
+        <p:remoteCommand name="rcActualizarInventario" action="#{productoBeanUI.cargarInventario}" update=":frmInventario:tablaProductos" />
     </h:form>
 
     <div class="pantalla-principal">
@@ -95,19 +95,19 @@
                 <div style="display: flex; gap: 15px; align-items: flex-end; margin-bottom: 25px;">
                     <div style="flex-grow: 1;">
                         <p:outputLabel value="Buscar producto" style="font-weight: bold; color: #666; display: block; margin-bottom: 5px;"/>
-                        <p:inputText value="#{inventarioBeanUI.textoBusqueda}" placeholder="Ejemplo: Coca Cola 600ml" styleClass="input-busqueda"/>
+                        <p:inputText value="#{productoBeanUI.textoBusqueda}" placeholder="Ejemplo: Coca Cola 600ml" styleClass="input-busqueda"/>
                     </div>
 
-                    <p:commandButton id="btnBuscarOculto" action="#{inventarioBeanUI.buscarProducto}" update="tablaProductos" style="display: none;" />
+                    <p:commandButton id="btnBuscarOculto" action="#{productoBeanUI.buscarProducto}" update="tablaProductos" style="display: none;" />
 
-                    <p:commandButton value="Entrada" styleClass="btn-top-rojo" actionListener="#{inventarioBeanUI.abrirModalEntrada}" update=":formEntrada"/>
+                    <p:commandButton value="Entrada" styleClass="btn-top-rojo" actionListener="#{productoBeanUI.abrirModalEntrada}" update=":formEntrada"/>
                     <p:commandButton value="Registro" styleClass="btn-top-rojo" type="button" onclick="PF('wvModalRegistro').show();"/>
                     <p:commandButton value="REPORTE" styleClass="btn-top-rojo" type="button"/>
                 </div>
 
-                <p:dataTable id="tablaProductos" var="prod" value="#{inventarioBeanUI.listaProductos}"
+                <p:dataTable id="tablaProductos" var="prod" value="#{productoBeanUI.listaProductos}"
                              styleClass="tabla-lidia" scrollable="true" scrollHeight="350"
-                             selectionMode="single" selection="#{inventarioBeanUI.productoSeleccionado}" rowKey="#{prod.idProducto}"
+                             selectionMode="single" selection="#{productoBeanUI.productoSeleccionado}" rowKey="#{prod.idProducto}"
                              rowStyleClass="#{prod.cantidad le prod.umbral ? 'fila-critica' : null}">
 
                     <p:column headerText="ID" style="width: 15%;">
@@ -150,13 +150,13 @@
 
             <div class="ui-fluid">
                 <div style="margin-bottom: 15px; background: #e9ecef; padding: 10px; border-radius: 8px;">
-                    <h:outputText value="#{inventarioBeanUI.productoSeleccionado.nombre}" style="font-weight: bold; display:block;" />
-                    <h:outputText value="Stock actual: #{inventarioBeanUI.productoSeleccionado.cantidad} unidades" />
+                    <h:outputText value="#{productoBeanUI.productoSeleccionado.nombre}" style="font-weight: bold; display:block;" />
+                    <h:outputText value="Stock actual: #{productoBeanUI.productoSeleccionado.cantidad} unidades" />
                 </div>
 
                 <div class="campo-formulario">
                     <p:outputLabel for="cantIngreso" value="Cantidad nueva a ingresar:" />
-                    <p:inputNumber id="cantIngreso" value="#{inventarioBeanUI.cantidadEntrada}" decimalPlaces="0" minValue="1" required="true" requiredMessage="Debes ingresar una cantidad válida.">
+                    <p:inputNumber id="cantIngreso" value="#{productoBeanUI.cantidadEntrada}" decimalPlaces="0" minValue="1" required="true" requiredMessage="Debes ingresar una cantidad válida.">
                         <p:ajax event="change" update="lblNuevoTotal" />
                     </p:inputNumber>
                 </div>
@@ -164,7 +164,7 @@
                 <div style="text-align: center; margin-top: 15px; background-color: #d4edda; padding: 10px; border-radius: 8px; border: 1px solid #c3e6cb;">
                     <h:outputText value="Total proyectado: " style="font-weight: bold; color: #155724;" />
                     <h:outputText id="lblNuevoTotal"
-                                  value="#{inventarioBeanUI.productoSeleccionado.cantidad + (inventarioBeanUI.cantidadEntrada == null ? 0 : inventarioBeanUI.cantidadEntrada)}"
+                                  value="#{productoBeanUI.productoSeleccionado.cantidad + (productoBeanUI.cantidadEntrada == null ? 0 : inventarioBeanUI.cantidadEntrada)}"
                                   style="font-weight: bold; font-size: 1.3rem; color: #155724;"/>
                 </div>
             </div>
@@ -173,7 +173,7 @@
                 <p:commandButton value="CANCELAR" type="button" styleClass="ui-button-outlined ui-button-secondary" onclick="PF('wvModalEntrada').hide();" />
 
                 <!-- El botón actualiza el notificador global (el globito) -->
-                <p:commandButton value="GUARDAR" action="#{inventarioBeanUI.registrarEntrada}" styleClass="ui-button-danger" update="formEntrada :frmInventario:tablaProductos :notificacion" />
+                <p:commandButton value="GUARDAR" action="#{productoBeanUI.registrarEntrada}" styleClass="ui-button-danger" update="formEntrada :frmInventario:tablaProductos :notificacion" />
             </div>
         </h:form>
     </p:dialog>
