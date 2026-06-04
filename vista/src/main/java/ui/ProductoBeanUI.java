@@ -34,6 +34,7 @@ public class ProductoBeanUI implements Serializable {
 
     public ProductoBeanUI(){
         productoHelper = new ProductoHelper();
+        cargarInventario();
     }
 
     // validar campos vacíos primero
