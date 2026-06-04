@@ -6,7 +6,7 @@ import mx.puestoLidia.persistence.persistence.HibernateUtil;
 
 public class ServiceLocator {
 
-    private  static ProductoDAO productoDAO;
+    private static ProductoDAO productoDAO;
 
     private static EntityManager getEntityManager(){
         return HibernateUtil.getEntityManager();
@@ -18,4 +18,5 @@ public class ServiceLocator {
         }
         return productoDAO;
     }
+
 }

@@ -3,6 +3,8 @@ package mx.puestoLidia.negocio.facade;
 import mx.puestoLidia.entity.Producto;
 import mx.puestoLidia.negocio.delegate.DelegateProducto;
 
+import java.util.List;
+
 public class FacadeProducto {
     private final DelegateProducto delegateProducto;
 
@@ -23,5 +25,17 @@ public class FacadeProducto {
     // modificación de un producto (actualización)
     public void modificarProducto(Producto productoModificado){
         delegateProducto.modificarProducto(productoModificado);
+    }
+
+    public List<Producto> obtenerInventarioOrdenado() {
+        return delegateProducto.obtenerInventarioOrdenado();
+    }
+
+    public List<Producto> buscarPorNombre(String filtro) {
+        return delegateProducto.buscarPorNombre(filtro);
+    }
+
+    public void actualizarProducto(Producto producto) {
+        delegateProducto.actualizarProducto(producto);
     }
 }

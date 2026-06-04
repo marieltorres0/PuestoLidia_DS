@@ -3,6 +3,7 @@ package mx.puestoLidia.negocio.integration;
 import mx.puestoLidia.negocio.facade.FacadeProducto;
 
 public class ServiceFacadeLocator {
+
     private static FacadeProducto facadeProducto;
 
     public static FacadeProducto getInstanceFacadeProducto(){
@@ -11,4 +12,5 @@ public class ServiceFacadeLocator {
         }
         return facadeProducto;
     }
+
 }

@@ -3,6 +3,8 @@ package mx.puestoLidia.negocio.delegate;
 import mx.puestoLidia.entity.Producto;
 import mx.puestoLidia.persistence.integration.ServiceLocator;
 
+import java.util.List;
+
 public class DelegateProducto {
 
     // alta de un producto
@@ -18,5 +20,18 @@ public class DelegateProducto {
     // modificación de un producto (actualizarlo)
     public void modificarProducto(Producto productoModificado){
         ServiceLocator.getInstanceProductoDAO().modificarProducto(productoModificado);
+    }
+
+    // Obtener todos los productos ordenados
+    public List<Producto> obtenerInventarioOrdenado() {
+        return ServiceLocator.getInstanceProductoDAO().obtenerInventarioOrdenado();
+    }
+
+    // Buscar productos por coincidencia de nombre
+    public List<Producto> buscarPorNombre(String filtro) {
+        return ServiceLocator.getInstanceProductoDAO().buscarPorNombre(filtro);
+    }
+    public void actualizarProducto(Producto producto) {
+        ServiceLocator.getInstanceProductoDAO().update(producto);
     }
 }
