@@ -101,7 +101,11 @@
                     <p:commandButton id="btnBuscarOculto" action="#{productoBeanUI.buscarProducto}" update="tablaProductos" style="display: none;" />
 
                     <p:commandButton value="Entrada" styleClass="btn-top-rojo" actionListener="#{productoBeanUI.abrirModalEntrada}" update=":formEntrada"/>
-                    <p:commandButton value="Registro" styleClass="btn-top-rojo" type="button" onclick="PF('wvModalRegistro').show();"/>
+                    <p:commandButton value="Registro" styleClass="btn-top-rojo"
+                                     update=":modalRegistro"
+                                     oncomplete="PF('wvModalRegistro').show();">
+                        <f:setPropertyActionListener target="#{productoBeanUI.esEdicion}" value="false" />
+                    </p:commandButton>
                     <p:commandButton value="REPORTE" styleClass="btn-top-rojo" type="button"/>
                 </div>
 
@@ -128,7 +132,10 @@
                         <h:outputText value="#{prod.umbral}" />
                     </p:column>
                     <p:column headerText="ACCIONES" style="width: 25%;">
-                        <p:commandButton value="MODIFICAR" styleClass="btn-pildora-rojo" type="button"/>
+                        <p:commandButton value="MODIFICAR" styleClass="btn-pildora-rojo"
+                                         action="#{productoBeanUI.prepararModificacion(prod.idProducto)}"
+                                         update=":modalRegistro"
+                                         oncomplete="PF('wvModalRegistro').show();"/>
                         <p:commandButton value="ELIMINAR" styleClass="btn-pildora-negro" type="button"/>
                     </p:column>
                 </p:dataTable>
@@ -155,7 +162,7 @@
                 </div>
 
                 <div class="campo-formulario">
-                    <p:outputLabel for="cantIngreso" value="Cantidad nueva a ingresar:" />
+                    <p:outputLabel for="cantIngreso" value="Cantidad a ingresar:" />
                     <p:inputNumber id="cantIngreso" value="#{productoBeanUI.cantidadEntrada}" decimalPlaces="0" minValue="1" required="true" requiredMessage="Debes ingresar una cantidad válida.">
                         <p:ajax event="change" update="lblNuevoTotal" />
                     </p:inputNumber>
@@ -179,57 +186,54 @@
     </p:dialog>
 
     <!-- MODAL DE REGISTRO -->
-    <p:dialog id="modalRegistro" widgetVar="wvModalRegistro" header="Registro de producto"
+    <p:dialog id="modalRegistro" widgetVar="wvModalRegistro"
+              header="#{productoBeanUI.esEdicion ? 'Modificar Producto' : 'Registro de producto'}"
               styleClass="modal-estilo" modal="true" resizable="false" closeOnEscape="true"
               width="450" showEffect="fade" hideEffect="fade">
+        <p:ajax event="close" listener="#{productoBeanUI.limpiarDatos()}" update="formRegistro" />
 
         <h:form id="formRegistro">
-
             <div class="ui-fluid">
-
                 <div class="campo-formulario">
                     <p:outputLabel for="idProd" value="ID" />
                     <p:inputText id="idProd" value="#{productoBeanUI.idProducto}"
-                                 placeholder="Ejemplo: 0001230600" maxlength="30"/>
+                                 maxlength="30" readonly="#{productoBeanUI.esEdicion}"/>
                 </div>
 
                 <div class="campo-formulario">
                     <p:outputLabel for="nombreProd" value="Nombre del producto" />
-                    <p:inputText id="nombreProd" value="#{productoBeanUI.nombre}"
-                                 placeholder="Ejemplo: Coca Cola 600ml" maxlength="30"/>
+                    <p:inputText id="nombreProd" value="#{productoBeanUI.nombre}" maxlength="30"/>
                 </div>
 
                 <div class="campo-formulario">
                     <p:outputLabel for="precioProd" value="Precio ($)" />
                     <p:inputNumber id="precioProd" value="#{productoBeanUI.precio}"
-                                   symbol="$ " symbolPosition="p"
-                                   decimalSeparator="." thousandSeparator="," decimalPlaces="2"
-                                   placeholder="Ejemplo: 25.00" minValue="0" />
+                                   symbol="$ " symbolPosition="p" decimalSeparator="."
+                                   thousandSeparator="," decimalPlaces="2" minValue="0" />
                 </div>
 
                 <div class="campo-formulario">
-                    <p:outputLabel for="cantidadProd" value="Cantidad inicial en inventario" />
+                    <p:outputLabel for="cantidadProd" value="Cantidad inicial" />
                     <p:inputNumber id="cantidadProd" value="#{productoBeanUI.cantidad}"
-                                   decimalPlaces="0" placeholder="Ejemplo: 50" minValue="0" />
+                                   decimalPlaces="0" minValue="0" />
                 </div>
 
                 <div class="campo-formulario">
                     <p:outputLabel for="umbralProd" value="Cantidad crítica" />
                     <p:inputNumber id="umbralProd" value="#{productoBeanUI.umbral}"
-                                   decimalPlaces="0" placeholder="Ejemplo: 10 (mínimo antes de alerta)" minValue="0" />
+                                   decimalPlaces="0" minValue="0" />
                 </div>
-
             </div>
 
             <div style="display: flex; justify-content: space-between; margin-top: 25px;">
-
                 <p:commandButton value="CANCELAR" type="button"
                                  styleClass="ui-button-outlined ui-button-secondary"
                                  onclick="PF('wvModalRegistro').hide();" />
 
-                <p:commandButton value="REGISTRAR" action="#{productoBeanUI.altaProducto}"
-                                 styleClass="ui-button-danger" update="formRegistro :notificacion" />
-
+                <p:commandButton value="#{productoBeanUI.esEdicion ? 'GUARDAR CAMBIOS' : 'REGISTRAR'}"
+                                 action="#{productoBeanUI.guardarProducto}"
+                                 styleClass="#{productoBeanUI.esEdicion ? 'ui-button-warning' : 'ui-button-danger'}"
+                                 update="formRegistro :notificacion :frmInventario:tablaProductos" />
             </div>
         </h:form>
     </p:dialog>

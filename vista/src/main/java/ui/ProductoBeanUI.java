@@ -140,6 +140,7 @@ public class ProductoBeanUI implements Serializable {
             }
 
             limpiarDatos();
+            cargarInventario();
 
             // Cerrar el diálogo llamando al bean
             PrimeFaces.current().executeScript("PF('wvModalRegistro').hide();");
@@ -164,7 +165,7 @@ public class ProductoBeanUI implements Serializable {
     }
 
     // Metodo para limpiar los atributos del producto
-    private void limpiarDatos(){
+    public void limpiarDatos(){
         this.idProducto = null;
         this.nombre = null;
         this.precio = null;
