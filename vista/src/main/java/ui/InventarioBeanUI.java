@@ -8,6 +8,7 @@ import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import mx.puestoLidia.entity.Producto;
+import mx.puestoLidia.persistence.integration.ServiceLocator;
 import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
@@ -62,7 +63,12 @@ public class InventarioBeanUI implements Serializable {
         }
     }
 
-    // ==========================================
+    public void recargarInventario() {
+        // Usamos el método que tiene el em.clear() integrado
+        this.listaProductos = ServiceLocator.getInstanceInventarioDAO().obtenerInventarioOrdenado();
+    }
+
+    // ================ ==========================
     // 3. MÉTODO PARA REPORTE DE STOCK CRÍTICO (US6) <-- 2. ¡AQUÍ ESTÁ EL MÉTODO NUEVO!
     // ==========================================
     public void generarReporteCritico() {

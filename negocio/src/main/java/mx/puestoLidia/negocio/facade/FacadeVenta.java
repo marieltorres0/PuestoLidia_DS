@@ -5,98 +5,122 @@ import mx.puestoLidia.entity.ItemVentaId;
 import mx.puestoLidia.entity.Producto;
 import mx.puestoLidia.entity.Usuario;
 import mx.puestoLidia.entity.Venta;
-import mx.puestoLidia.persistence.dao.ItemVentaDAO;
-import mx.puestoLidia.persistence.dao.ProductoDAO;
-import mx.puestoLidia.persistence.dao.VentaDAO;
+import mx.puestoLidia.persistence.persistence.HibernateUtil;
 import mx.puestoLidia.persistence.integration.ServiceLocator;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
 public class FacadeVenta {
 
-    // ==========================================
-    // FLUJO DE ALTAS (Cobrar Venta)
-    // ==========================================
-    public void procesarAltaVenta(List<ItemVenta> listaCompra, BigDecimal total, BigDecimal monto, BigDecimal cambio, boolean esCredito) throws Exception {
-        VentaDAO ventaDAO = ServiceLocator.getInstanceVentaDAO();
-        ProductoDAO productoDAO = ServiceLocator.getInstanceProductoDAO();
-        ItemVentaDAO itemVentaDAO = ServiceLocator.getInstanceItemVentaDAO();
+    public void procesarAltaVenta(List<ItemVenta> listaCompra, BigDecimal total,
+                                  BigDecimal monto, BigDecimal cambio,
+                                  boolean esCredito) throws Exception {
 
-        Venta nuevaVenta = new Venta();
-        nuevaVenta.setFechaHora(Instant.now());
-        nuevaVenta.setTotal(total);
-        nuevaVenta.setMonto(monto != null ? monto : total);
-        nuevaVenta.setCambio(cambio != null ? cambio : BigDecimal.ZERO);
-        nuevaVenta.setTipo(esCredito ? "credito" : "contado");
+        // Abrimos UNA SOLA sesión y transacción para todo el proceso
+        EntityManager em = HibernateUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
 
-        // Asignamos el usuario con ID 1 para cumplir con la regla de la base de datos
-        Usuario cajero = new Usuario();
-        cajero.setId(1);
-        nuevaVenta.setIdUsuario(cajero);
+        try {
+            tx.begin();
 
-        // 1. Guardar la Venta primero para generar el ID autoincremental
-        ventaDAO.save(nuevaVenta);
+            // 1. Crear y guardar la venta principal
+            Venta nuevaVenta = new Venta();
+            nuevaVenta.setFechaHora(Instant.now());
+            nuevaVenta.setTotal(total);
+            nuevaVenta.setMonto(monto != null ? monto : total);
+            nuevaVenta.setCambio(cambio != null ? cambio : BigDecimal.ZERO);
+            nuevaVenta.setTipo(esCredito ? "credito" : "contado");
 
-        // 2. Recorrer y procesar cada artículo del ticket de compra
-        for (ItemVenta item : listaCompra) {
-            Producto prodBD = productoDAO.find(item.getIdProducto().getIdProducto())
-                    .orElseThrow(() -> new Exception("Producto no encontrado: " + item.getIdProducto().getNombre()));
+            // Referencia al cajero sin cargar la entidad completa
+            Usuario cajero = em.getReference(Usuario.class, 1);
+            nuevaVenta.setIdUsuario(cajero);
 
-            // Validar si hay stock suficiente antes de realizar la operación
-            if (prodBD.getCantidad() < item.getCantidad()) {
-                throw new Exception("Stock insuficiente para el producto: " + prodBD.getNombre());
+            em.persist(nuevaVenta);
+            em.flush(); // Forzamos que genere el ID de la venta
+
+            // 2. Procesar cada item dentro de la MISMA sesión
+            for (ItemVenta item : listaCompra) {
+
+                String idProducto = item.getIdProducto().getIdProducto();
+
+                // Buscamos el producto dentro de esta misma sesión
+                Producto prodBD = em.find(Producto.class, idProducto);
+
+                if (prodBD == null) {
+                    throw new Exception("Producto no encontrado: " + idProducto);
+                }
+
+                if (prodBD.getCantidad() < item.getCantidad()) {
+                    throw new Exception("Stock insuficiente para: " + prodBD.getNombre());
+                }
+
+                // Restamos el inventario
+                prodBD.setCantidad(prodBD.getCantidad() - item.getCantidad());
+                // No necesitamos merge porque prodBD ya está en esta sesión (managed)
+
+                // Construir la llave compuesta
+                ItemVentaId llaveCompuesta = new ItemVentaId();
+                llaveCompuesta.setIdVenta(nuevaVenta.getId());
+                llaveCompuesta.setIdProducto(idProducto);
+
+                // Asignar y guardar el item usando el prodBD de esta misma sesión
+                item.setId(llaveCompuesta);
+                item.setIdVenta(nuevaVenta);
+                item.setIdProducto(prodBD);
+
+                em.persist(item);
             }
 
-            // Restar las unidades correspondientes del inventario
-            prodBD.setCantidad(prodBD.getCantidad() - item.getCantidad());
-            productoDAO.update(prodBD);
+            tx.commit(); // Todo sale bien, confirmamos
 
-            // Construir la llave compuesta manual (ItemVentaId)
-            ItemVentaId llaveCompuesta = new ItemVentaId();
-            llaveCompuesta.setIdVenta(nuevaVenta.getId());
-            llaveCompuesta.setIdProducto(prodBD.getIdProducto());
-
-            // Enlazar los objetos y mapear llaves foráneas en la entidad ItemVenta
-            item.setId(llaveCompuesta);
-            item.setIdVenta(nuevaVenta);
-            item.setIdProducto(prodBD);
-
-            // Persistir de forma individual cada fila del detalle
-            itemVentaDAO.save(item);
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback(); // Si algo falla, deshacemos todo
+            }
+            throw new Exception("Error al procesar la venta: " + e.getMessage());
+        } finally {
+            em.close(); // Siempre cerramos la sesión
         }
     }
 
-    // ==========================================
-    // FLUJO DE BAJAS (Cancelar Venta Completa)
-    // ==========================================
     public void procesarBajaVenta(int idVenta) throws Exception {
-        VentaDAO ventaDAO = ServiceLocator.getInstanceVentaDAO();
-        ProductoDAO productoDAO = ServiceLocator.getInstanceProductoDAO();
-        ItemVentaDAO itemVentaDAO = ServiceLocator.getInstanceItemVentaDAO();
 
-        // Buscar el registro de la venta en la base de datos
-        Venta venta = ventaDAO.find(idVenta)
-                .orElseThrow(() -> new Exception("La venta con ID " + idVenta + " no existe."));
+        EntityManager em = HibernateUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
 
-        // 1. Devolver el stock a los productos recorriendo el detalle de la venta
-        if (venta.getItemVentas() != null) {
-            for (ItemVenta item : venta.getItemVentas()) {
-                Producto prodBD = productoDAO.find(item.getIdProducto().getIdProducto()).orElse(null);
+        try {
+            tx.begin();
 
-                if (prodBD != null) {
-                    // Sumar la cantidad de vuelta al inventario
-                    prodBD.setCantidad(prodBD.getCantidad() + item.getCantidad());
-                    productoDAO.update(prodBD);
-                }
-
-                // Eliminar el registro hijo del detalle de venta
-                itemVentaDAO.delete(item);
+            Venta venta = em.find(Venta.class, idVenta);
+            if (venta == null) {
+                throw new Exception("Venta no encontrada con ID: " + idVenta);
             }
-        }
 
-        // 2. Eliminar el registro padre de la venta una vez limpio de dependencias
-        ventaDAO.delete(venta);
+            if (venta.getItemVentas() != null) {
+                for (ItemVenta item : venta.getItemVentas()) {
+                    Producto prodBD = em.find(Producto.class,
+                            item.getIdProducto().getIdProducto());
+                    if (prodBD != null) {
+                        prodBD.setCantidad(prodBD.getCantidad() + item.getCantidad());
+                    }
+                    em.remove(item);
+                }
+            }
+
+            em.remove(venta);
+            tx.commit();
+
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            throw new Exception("Error al cancelar la venta: " + e.getMessage());
+        } finally {
+            em.close();
+        }
     }
 }

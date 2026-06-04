@@ -70,31 +70,31 @@
 </h:head>
 
 <h:body>
-    <!-- Franja Azul ARRIBA -->
-    <div class="franja-superior">
-         Abarrotes Puesto Lidia
+    <div class="franja-superior" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 30px;">
+        <div style="font-size: 24px;">Abarrotes Puesto Lidia</div>
+        <div style="font-size: 18px; font-weight: normal;">
+            <i class="pi pi-user" style="margin-right: 5px;"></i> Usuario activo:
+            <h:outputText value="#{rolActual}" style="text-transform: uppercase; color: #ffeb3b; font-weight: bold;" />
+        </div>
     </div>
 
-    <!-- Contenido Central (Los Botones) -->
     <div class="menu-container">
         <h3 class="subtitulo">Selecciona la sección a la que deseas ingresar</h3>
 
         <div class="botones-wrapper">
-            <!-- Botón de Ventas -->
             <p:button value="Ir a Ventas"
                       outcome="venta"
                       styleClass="btn-menu ui-button-success"
                       icon="pi pi-shopping-cart" />
 
-            <!-- Botón de Inventario -->
             <p:button value="Ir a Inventario"
                       outcome="inventario"
                       styleClass="btn-menu ui-button-info"
-                      icon="pi pi-box" />
+                      icon="pi pi-box"
+                      rendered="#{rolActual eq 'admin'}" />
         </div>
     </div>
 
-    <!-- Franja Azul ABAJO -->
     <div class="franja-inferior">
         Sistema de Punto de Venta y Control de Inventario
     </div>

@@ -1,8 +1,8 @@
 package ui;
 
-
 import helper.LoginHelper;
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import mx.puestoLidia.entity.Usuario;
 
@@ -24,10 +24,19 @@ public class LoginBeanUI implements Serializable {
     // ==========================================
     public String autenticar() {
         // Le pasamos esta misma clase (this) al Helper para que haga su trabajo
-        return helper.autenticar(this);
+        String rutaDestino = helper.autenticar(this);
+
+        // Si el helper valida todo bien y nos manda a "seccion", guardamos el rol en la sesión
+        if (rutaDestino != null && rutaDestino.contains("seccion")) {
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("rolActual", this.rol);
+        }
+
+        return rutaDestino;
     }
 
     public String cerrarSesion() {
+        // Al cerrar sesión, limpiamos la variable para que el siguiente cajero no la vea
+        FacesContext.getCurrentInstance().getExternalContext().getSessionMap().remove("rolActual");
         return helper.cerrarSesion(this);
     }
 

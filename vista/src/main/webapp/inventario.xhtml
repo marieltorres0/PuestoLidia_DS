@@ -1,180 +1,276 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
-      xmlns:f="jakarta.faces.core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core">
 
 <h:head>
-    <title>Puesto Lidia - Venta</title>
+    <title>Inventario - Puesto Lidia</title>
     <style>
-        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #ffffff; height: 100vh; display: flex; flex-direction: column; }
-        .top-header { background-color: #5b8df2; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; font-size: 1.5rem; font-weight: bold; text-transform: uppercase; }
-        .sub-header { background-color: #3e4a5c; color: white; padding: 10px 20px; font-size: 1.2rem; font-weight: bold; }
-        .main-container { display: flex; flex: 1; padding: 15px; gap: 15px; overflow: hidden; }
-        .col-izq { flex: 6; display: flex; flex-direction: column; gap: 15px; border: 2px solid #ccc; border-radius: 10px; padding: 15px; background-color: #f9f9f9; }
-        .buscador { width: 100%; }
-        .buscador input { width: 100%; border-radius: 8px; padding: 15px; font-size: 1.2rem; border: 2px solid #ccc; box-sizing: border-box; }
-        .grid-categorias { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; flex: 1; overflow-y: auto; border: 2px solid #ccc; border-radius: 10px; padding: 10px; background-color: white; }
+        /* Fondo general */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; display: flex; justify-content: center; }
 
-        /* Ajustes para que el texto de los botones de categoría se vea bien */
-        .btn-categoria {
-            height: 80px;
-            border-radius: 10px !important;
-            background-color: white !important;
-            border: 2px solid #ccc !important;
-            color: #333 !important;
-            white-space: normal !important;
-            font-size: 0.9rem !important;
-            font-weight: bold !important;
-        }
+        /* Contenedor tipo "Ventana" con borde grueso */
+        .pantalla-principal { width: 100%; max-width: 1100px; border: 4px solid #1a1a1a; background-color: #fff; display: flex; flex-direction: column; }
 
-        .col-der { flex: 4; display: flex; flex-direction: column; gap: 10px; border: 2px solid #ccc; border-radius: 10px; padding: 15px; background-color: #f9f9f9; }
-        .caja-ticket { flex: 1; border: 2px solid #ccc; border-radius: 8px; background-color: white; overflow: auto; }
-        .panel-totales { border: 2px solid #ccc; background-color: white; padding: 15px; font-size: 1.5rem; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
-        .btn-cobrar { width: 100%; height: 60px; font-size: 1.5rem !important; font-weight: bold !important; }
-        .footer-bar { background-color: #5b8df2; padding: 10px 20px; display: flex; align-items: center; }
-        .btn-volver { background-color: transparent !important; border: none !important; color: white !important; font-size: 2rem !important; }
-        .btn-cantidad { width: 25px !important; height: 25px !important; }
+        /* Encabezados */
+        .header-azul { background-color: #5b8df2; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 1.3rem; letter-spacing: 1px; border-bottom: 2px solid #1a1a1a; }
+        .subheader-gris { background-color: #3e4a5c; color: white; padding: 10px 20px; font-weight: bold; font-size: 1.1rem; letter-spacing: 1px; }
+
+        /* Contenedor central blanco */
+        .contenedor-interior { border: 2px solid #a0a0a0; border-radius: 10px; background: white; padding: 20px 30px; margin: 15px; }
+        .titulo-consulta { text-align: center; font-size: 1.4rem; font-weight: bold; margin-bottom: 25px; color: #000; }
+
+        /* Input de búsqueda */
+        .input-busqueda { width: 350px !important; border: 2px solid #a0a0a0 !important; border-radius: 8px !important; padding: 5px 10px !important; font-size: 1rem !important; }
+
+        /* Botones Superiores */
+        .btn-top-rojo { background-color: #ff0000 !important; color: white !important; border: 3px solid #a0a0a0 !important; font-weight: bold !important; border-radius: 8px !important; padding: 2px 15px !important; box-shadow: none !important; }
+        .btn-top-rojo:hover { background-color: #cc0000 !important; }
+
+        /* Botones de Tabla */
+        .btn-pildora-rojo { background-color: #ff0000 !important; color: white !important; border: 2px solid #a0a0a0 !important; font-weight: bold !important; border-radius: 20px !important; font-size: 0.8rem !important; padding: 2px 10px !important; margin-right: 5px; }
+        .btn-pildora-negro { background-color: #000000 !important; color: white !important; border: 2px solid #a0a0a0 !important; font-weight: bold !important; border-radius: 20px !important; font-size: 0.8rem !important; padding: 2px 10px !important; }
+
+        /* ========================================= */
+        /* Ajustes de Tabla con Scroll y Selección   */
+        /* ========================================= */
+        .tabla-lidia .ui-datatable-header { background-color: transparent; border: none; padding-bottom: 15px;}
+
+        .tabla-lidia .ui-datatable-scrollable-header th { background-color: #5b8df2 !important; color: white !important; text-align: center !important; border: none !important; padding: 10px !important; cursor: pointer; }
+        .tabla-lidia .ui-datatable-scrollable-header th:hover { background-color: #4a75c9 !important; }
+
+        .tabla-lidia .ui-datatable-scrollable-body th { padding: 0 !important; border: none !important; height: 0 !important; }
+
+        .tabla-lidia td { text-align: center; font-weight: bold; color: #4a4a4a; border-bottom: 1px solid #dee2e6 !important; border-right: none !important; border-left: none !important; padding: 12px 5px !important; }
+        .tabla-lidia tr:nth-child(even) { background-color: #f8f9fa !important; }
+        .tabla-lidia tr:nth-child(odd) { background-color: #ffffff !important; }
+
+        .fila-critica { background-color: #ffb3b3 !important; color: #cc0000 !important; }
+        .fila-critica td { color: #cc0000 !important; border-bottom: 1px solid #ff9999 !important; }
+
+        .tabla-lidia .ui-datatable-data tr.ui-state-highlight { background-color: #cce0ff !important; color: #000 !important; border-left: 4px solid #5b8df2 !important; }
+        .tabla-lidia .ui-datatable-data tr.ui-state-highlight td { color: #000 !important; }
+
+        /* Barra Inferior */
+        .footer-azul { background-color: #5b8df2; height: 80px; display: flex; align-items: center; padding-left: 30px; border-top: 4px solid #1a1a1a; }
+        .flecha-regreso { color: white; font-size: 3rem; font-weight: bold; cursor: pointer; text-decoration: none; }
+
+        /* Estilos Modales */
+        .modal-estilo .ui-dialog-titlebar { background-color: #5b8df2 !important; color: white !important; text-align: center; border-bottom: 4px solid #3e4a5c; }
+        .modal-estilo.ui-dialog { border-radius: 12px !important; overflow: hidden; border: 2px solid #ccc; }
+        .campo-formulario { margin-bottom: 15px; }
+        .campo-formulario label { display: block; font-weight: bold; color: #4A4A4A; margin-bottom: 5px; }
     </style>
 </h:head>
 
 <h:body>
-    <p:growl id="mensajes" showDetail="true" life="4000">
+    <p:growl id="notificacion" showDetail="true" life="4000">
         <p:autoUpdate />
     </p:growl>
 
-    <div class="top-header">
-        <span>PUESTO LIDIA</span>
-        <span>USUARIO <i class="pi pi-user"></i></span>
-    </div>
-    <div class="sub-header">Venta</div>
-
-    <h:form id="formVenta" style="display: contents;">
-        <p:focus for="inputBusqueda" />
-        <p:hotkey bind="F1" handler="PF('wvModalCobro').show();" />
-        <p:hotkey bind="F3" action="#{ventaBean.eliminarProductoSeleccionado}" update="tablaTicket panelTotales :mensajes" />
-
-        <div class="main-container">
-            <div class="col-izq">
-                <div class="buscador">
-                    <p:inputText id="inputBusqueda" value="#{ventaBean.textoBusqueda}" placeholder="Escanea el código de barras o ingresa el nombre...">
-                        <p:ajax event="change" listener="#{ventaBean.buscarAgregarProducto}" update="tablaTicket panelTotales @this" />
-                    </p:inputText>
-                </div>
-
-                <div class="grid-categorias">
-                    <p:commandButton value="Refrescos y Bebidas" type="button" styleClass="btn-categoria" />
-                    <p:commandButton value="Snacks" type="button" styleClass="btn-categoria" />
-                    <p:commandButton value="Comida" type="button" styleClass="btn-categoria" />
-                    <p:commandButton type="button" styleClass="btn-categoria" />
-                    <p:commandButton type="button" styleClass="btn-categoria" />
-                    <p:commandButton type="button" styleClass="btn-categoria" />
-                    <p:commandButton type="button" styleClass="btn-categoria" />
-                    <p:commandButton type="button" styleClass="btn-categoria" />
-                    <p:commandButton type="button" styleClass="btn-categoria" />
-                    <p:commandButton type="button" styleClass="btn-categoria" />
-                </div>
-            </div>
-
-            <div class="col-der">
-                <div class="caja-ticket">
-                    <p:dataTable id="tablaTicket" value="#{ventaBean.listaCompra}" var="item"
-                                 selectionMode="single" selection="#{ventaBean.detalleSeleccionado}" rowKey="#{item.idProducto.idProducto}"
-                                 emptyMessage="Ticket vacío. Escanea un producto para comenzar."
-                                 scrollable="true" scrollHeight="flex">
-
-                        <p:column headerText="ID" width="60">
-                            <h:outputText value="#{item.idProducto.idProducto}" />
-                        </p:column>
-
-                        <p:column headerText="Concepto">
-                            <h:outputText value="#{item.idProducto.nombre}" />
-                        </p:column>
-
-                        <p:column headerText="Cant." width="90" style="text-align: center;">
-                            <p:commandButton icon="pi pi-minus" action="#{ventaBean.disminuirCantidad(item)}"
-                                             update=":formVenta:tablaTicket :formVenta:panelTotales"
-                                             styleClass="ui-button-danger ui-button-outlined btn-cantidad" />
-                            <h:outputText value=" #{item.cantidad} " style="font-weight: bold; margin: 0 5px;" />
-                            <p:commandButton icon="pi pi-plus" action="#{ventaBean.aumentarCantidad(item)}"
-                                             update=":formVenta:tablaTicket :formVenta:panelTotales"
-                                             styleClass="ui-button-success ui-button-outlined btn-cantidad" />
-                        </p:column>
-
-                        <p:column headerText="Precio" width="70" style="text-align: right;">
-                            <h:outputText value="#{item.precioUnitario}">
-                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
-                            </h:outputText>
-                        </p:column>
-
-                        <p:column headerText="Importe" width="70" style="text-align: right; font-weight: bold;">
-                            <h:outputText value="#{item.importe}">
-                                <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
-                            </h:outputText>
-                        </p:column>
-                    </p:dataTable>
-                </div>
-
-                <div style="padding: 5px 0;">
-                    <p:selectBooleanCheckbox value="#{ventaBean.tipoVentaCredito}" itemLabel="Marcar como Venta a Crédito" />
-                </div>
-
-                <p:outputPanel id="panelTotales" class="panel-totales">
-                    <span>TOTAL:</span>
-                    <span style="color: #d32f2f;">
-                        <h:outputText value="#{ventaBean.totalCompra}">
-                            <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
-                        </h:outputText>
-                    </span>
-                </p:outputPanel>
-
-                <p:commandButton value="COBRAR (F1)" type="button" icon="pi pi-money-bill"
-                                 styleClass="ui-button-success btn-cobrar" onclick="PF('wvModalCobro').show();" />
-            </div>
-        </div>
-
-        <div class="footer-bar">
-            <p:commandButton icon="pi pi-arrow-left" type="button" styleClass="btn-volver" />
-            <span style="color: white; margin-left: 20px;">* Usa F1 para cobrar y F3 para eliminar el producto seleccionado</span>
-        </div>
+    <h:form>
+        <p:remoteCommand name="rcActualizarInventario" action="#{inventarioBeanUI.cargarInventario}" update=":frmInventario:tablaProductos" />
     </h:form>
 
-    <p:dialog widgetVar="wvModalCobro" header="Confirmar Pago" modal="true" width="450"
-              resizable="false" closeOnEscape="true" showEffect="fade" hideEffect="fade">
-        <h:form id="formCobro">
-            <div class="ui-fluid">
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <h:outputText value="Total a pagar:" style="font-size: 1.2rem; display: block;" />
-                    <h:outputText value="#{ventaBean.totalCompra}" style="font-size: 3rem; font-weight: bold; color: #d32f2f;">
-                        <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
-                    </h:outputText>
+    <div class="pantalla-principal">
+        <div class="header-azul">
+            <span>PUESTO LIDIA</span>
+            <span style="display: flex; align-items: center; gap: 10px;">
+                USUARIO: <h:outputText value="#{rolActual}" style="color: #ffeb3b; font-weight: bold; text-transform: uppercase;" />
+                <i class="pi pi-user" style="font-size: 1.5rem; background: white; color: #5b8df2; border-radius: 50%; padding: 5px;"></i>
+            </span>
+        </div>
+        <div class="subheader-gris">
+            INVENTARIO
+        </div>
+
+        <div class="contenedor-interior">
+            <div class="titulo-consulta">Consulta de productos</div>
+
+            <h:form id="frmInventario">
+
+                <p:defaultCommand target="btnBuscarOculto" />
+
+                <div style="display: flex; gap: 15px; align-items: flex-end; margin-bottom: 25px;">
+                    <div style="flex-grow: 1;">
+                        <p:outputLabel value="Buscar producto" style="font-weight: bold; color: #666; display: block; margin-bottom: 5px;"/>
+                        <p:inputText value="#{inventarioBeanUI.textoBusqueda}" placeholder="Ejemplo: Coca Cola 600ml" styleClass="input-busqueda"/>
+                    </div>
+
+                    <p:commandButton id="btnBuscarOculto" action="#{inventarioBeanUI.buscarProducto}" update="tablaProductos" style="display: none;" />
+
+                    <p:commandButton value="Entrada" styleClass="btn-top-rojo" actionListener="#{inventarioBeanUI.abrirModalEntrada}" update=":formEntrada"/>
+                    <p:commandButton value="Registro" styleClass="btn-top-rojo" type="button" onclick="PF('wvModalRegistro').show();"/>
+
+                    <p:commandButton value="DESCARGAR PDF" styleClass="btn-top-rojo" type="button" icon="pi pi-file-pdf" onclick="PF('wvModalConfirmarPDF').show();" />
                 </div>
 
-                <div style="margin-bottom: 20px;">
-                    <p:outputLabel value="Monto Recibido:" style="font-weight: bold;" />
-                    <p:inputNumber value="#{ventaBean.montoRecibido}" symbol="$ " decimalPlaces="2"
-                                   minValue="0" style="font-size: 1.5rem;" inputStyle="font-size: 1.5rem; text-align: center;">
-                        <p:ajax event="keyup" listener="#{ventaBean.calcularCambio}" update="txtCambio" />
+                <p:dataTable id="tablaProductos" var="prod" value="#{inventarioBeanUI.listaProductos}"
+                             styleClass="tabla-lidia" scrollable="true" scrollHeight="350"
+                             selectionMode="single" selection="#{inventarioBeanUI.productoSeleccionado}" rowKey="#{prod.idProducto}"
+                             rowStyleClass="#{prod.cantidad le prod.umbral ? 'fila-critica' : null}">
+
+                    <p:column headerText="ID" style="width: 15%;">
+                        <h:outputText value="#{prod.idProducto}" />
+                    </p:column>
+                    <p:column headerText="NOMBRE" sortBy="#{prod.nombre}" style="width: 25%; text-align: left;">
+                        <h:outputText value="#{prod.nombre}" />
+                    </p:column>
+                    <p:column headerText="PRECIO $" sortBy="#{prod.precio}" style="width: 15%;">
+                        <h:outputText value="$#{prod.precio}">
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="CANTIDAD" style="width: 10%;">
+                        <h:outputText value="#{prod.cantidad}" />
+                    </p:column>
+                    <p:column headerText="CANT. CRITICA" style="width: 10%;">
+                        <h:outputText value="#{prod.umbral}" />
+                    </p:column>
+
+                    <p:column headerText="ACCIONES" style="width: 25%;">
+                        <p:commandButton value="MODIFICAR" styleClass="btn-pildora-rojo" type="button"/>
+                        <p:commandButton value="ELIMINAR" styleClass="btn-pildora-negro" type="button"/>
+                    </p:column>
+                </p:dataTable>
+
+                <p:dataTable id="tablaOculta" var="critico" value="#{inventarioBeanUI.listaProductosCriticos}" style="display:none;">
+                    <p:column headerText="ID">
+                        <h:outputText value="#{critico.idProducto}" />
+                    </p:column>
+                    <p:column headerText="NOMBRE">
+                        <h:outputText value="#{critico.nombre}" />
+                    </p:column>
+                    <p:column headerText="PRECIO $">
+                        <h:outputText value="$#{critico.precio}">
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="CANTIDAD">
+                        <h:outputText value="#{critico.cantidad}" />
+                    </p:column>
+                    <p:column headerText="CANT. CRITICA">
+                        <h:outputText value="#{critico.umbral}" />
+                    </p:column>
+                </p:dataTable>
+
+            </h:form>
+        </div>
+
+        <div class="footer-azul">
+            <h:outputLink value="#" styleClass="flecha-regreso">
+                <i class="pi pi-arrow-left" style="font-size: 2.5rem; font-weight: 900;"></i>
+            </h:outputLink>
+        </div>
+    </div>
+
+    <p:dialog id="modalEntrada" widgetVar="wvModalEntrada" header="Entrada de Producto" styleClass="modal-estilo" modal="true" resizable="false" width="400">
+        <h:form id="formEntrada">
+            <div class="ui-fluid">
+                <div style="margin-bottom: 15px; background: #e9ecef; padding: 10px; border-radius: 8px;">
+                    <h:outputText value="#{inventarioBeanUI.productoSeleccionado.nombre}" style="font-weight: bold; display:block;" />
+                    <h:outputText value="Stock actual: #{inventarioBeanUI.productoSeleccionado.cantidad} unidades" />
+                </div>
+
+                <div class="campo-formulario">
+                    <p:outputLabel for="cantIngreso" value="Cantidad nueva a ingresar:" />
+                    <p:inputNumber id="cantIngreso" value="#{inventarioBeanUI.cantidadEntrada}" decimalPlaces="0" minValue="1" required="true" requiredMessage="Debes ingresar una cantidad válida.">
+                        <p:ajax event="change" update="lblNuevoTotal" />
                     </p:inputNumber>
                 </div>
 
-                <div style="text-align: center; margin-bottom: 20px; background-color: #f1f8e9; padding: 15px; border-radius: 8px; border: 1px solid #c5e1a5;">
-                    <h:outputText value="Cambio a entregar:" style="font-size: 1.2rem; display: block;" />
-                    <h:outputText id="txtCambio" value="#{ventaBean.cambio}" style="font-size: 2.5rem; font-weight: bold; color: #388e3c;">
-                        <f:convertNumber type="currency" currencySymbol="$" maxFractionDigits="2"/>
-                    </h:outputText>
+                <div style="text-align: center; margin-top: 15px; background-color: #d4edda; padding: 10px; border-radius: 8px; border: 1px solid #c3e6cb;">
+                    <h:outputText value="Total proyectado: " style="font-weight: bold; color: #155724;" />
+                    <h:outputText id="lblNuevoTotal"
+                                  value="#{inventarioBeanUI.productoSeleccionado.cantidad + (inventarioBeanUI.cantidadEntrada == null ? 0 : inventarioBeanUI.cantidadEntrada)}"
+                                  style="font-weight: bold; font-size: 1.3rem; color: #155724;"/>
                 </div>
             </div>
 
-            <div style="display: flex; justify-content: space-between;">
-                <p:commandButton value="Cancelar" type="button" onclick="PF('wvModalCobro').hide();"
-                                 styleClass="ui-button-secondary ui-button-flat" style="width: 48%; font-weight: bold;" />
-
-                <p:commandButton value="Aceptar" action="#{ventaBean.finalizarVenta}"
-                                 update=":formVenta :mensajes" oncomplete="if (!args.validationFailed) PF('wvModalCobro').hide();"
-                                 styleClass="ui-button-success" style="width: 48%; font-weight: bold;" />
+            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                <p:commandButton value="CANCELAR" type="button" styleClass="ui-button-outlined ui-button-secondary" onclick="PF('wvModalEntrada').hide();" />
+                <p:commandButton value="GUARDAR" action="#{inventarioBeanUI.registrarEntrada}" styleClass="ui-button-danger" update="formEntrada :frmInventario:tablaProductos :notificacion" />
             </div>
         </h:form>
     </p:dialog>
+
+    <p:dialog id="modalRegistro" widgetVar="wvModalRegistro" header="Registro de producto"
+              styleClass="modal-estilo" modal="true" resizable="false" closeOnEscape="true"
+              width="450" showEffect="fade" hideEffect="fade">
+
+        <h:form id="formRegistro">
+            <div class="ui-fluid">
+                <div class="campo-formulario">
+                    <p:outputLabel for="idProd" value="ID" />
+                    <p:inputText id="idProd" value="#{productoBeanUI.idProducto}"
+                                 placeholder="Ejemplo: 0001230600" maxlength="30" required="true" requiredMessage="El ID del producto es obligatorio."/>
+                </div>
+
+                <div class="campo-formulario">
+                    <p:outputLabel for="nombreProd" value="Nombre del producto" />
+                    <p:inputText id="nombreProd" value="#{productoBeanUI.nombre}"
+                                 placeholder="Ejemplo: Coca Cola 600ml" maxlength="30" required="true" requiredMessage="El nombre del producto es obligatorio."/>
+                </div>
+
+                <div class="campo-formulario">
+                    <p:outputLabel for="precioProd" value="Precio ($)" />
+                    <p:inputNumber id="precioProd" value="#{productoBeanUI.precio}"
+                                   symbol="$ " symbolPosition="p"
+                                   decimalSeparator="." thousandSeparator="," decimalPlaces="2"
+                                   placeholder="Ejemplo: 25.00" minValue="0" required="true" requiredMessage="El precio es obligatorio."/>
+                </div>
+
+                <div class="campo-formulario">
+                    <p:outputLabel for="cantidadProd" value="Cantidad inicial en inventario" />
+                    <p:inputNumber id="cantidadProd" value="#{productoBeanUI.cantidad}"
+                                   decimalPlaces="0" placeholder="Ejemplo: 50" minValue="0" required="true" requiredMessage="La cantidad inicial es obligatoria."/>
+                </div>
+
+                <div class="campo-formulario">
+                    <p:outputLabel for="umbralProd" value="Cantidad crítica" />
+                    <p:inputNumber id="umbralProd" value="#{productoBeanUI.umbral}"
+                                   decimalPlaces="0" placeholder="Ejemplo: 10 (mínimo antes de alerta)" minValue="0" required="true" requiredMessage="La cantidad crítica es obligatoria."/>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 25px;">
+                <p:commandButton value="CANCELAR" type="button"
+                                 styleClass="ui-button-outlined ui-button-secondary"
+                                 onclick="PF('wvModalRegistro').hide();" />
+
+                <p:commandButton value="REGISTRAR" action="#{productoBeanUI.altaProducto}"
+                                 styleClass="ui-button-danger"
+                                 update="formRegistro :notificacion"
+                                 oncomplete="if (!args.validationFailed) { rcActualizarInventario(); }"/>
+            </div>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog id="modalConfirmarPDF" widgetVar="wvModalConfirmarPDF" header="Confirmar Reporte"
+              styleClass="modal-estilo" modal="true" resizable="false" width="400" closeOnEscape="true">
+        <h:form id="formConfirmarPDF">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <i class="pi pi-file-pdf" style="font-size: 3rem; color: #ff0000; margin-bottom: 15px; display: block;"></i>
+                <h:outputText value="Se va a generar un reporte con los productos en estado crítico (Faltantes)." style="font-weight: bold; display: block; margin-bottom: 10px;"/>
+                <h:outputText value="¿Estás seguro de que deseas generarlo?" style="color: #666;" />
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 25px;">
+                <p:commandButton value="CANCELAR" type="button"
+                                 styleClass="ui-button-outlined ui-button-secondary"
+                                 onclick="PF('wvModalConfirmarPDF').hide();" />
+
+                <p:commandButton value="SÍ, GENERAR"
+                                 styleClass="ui-button-danger"
+                                 ajax="false"
+                                 icon="pi pi-check"
+                                 onclick="PF('wvModalConfirmarPDF').hide();">
+                    <p:dataExporter type="pdf" target=":frmInventario:tablaOculta" fileName="Reporte_Critico_Puesto_Lidia" />
+                </p:commandButton>
+            </div>
+        </h:form>
+    </p:dialog>
+
 </h:body>
 </html>

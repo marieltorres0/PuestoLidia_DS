@@ -3,15 +3,14 @@ package mx.puestoLidia.persistence.dao;
 import jakarta.persistence.EntityManager;
 import mx.puestoLidia.entity.Producto;
 import mx.puestoLidia.persistence.persistence.AbstractDAO;
+import mx.puestoLidia.persistence.persistence.HibernateUtil; // <-- IMPORTANTE
 import java.util.List;
 
 public class InventarioDAO extends AbstractDAO<Producto> {
 
-    private final EntityManager entityManager;
-
-    public InventarioDAO(EntityManager em) {
+    // Constructor vacío (ya no pide EntityManager)
+    public InventarioDAO() {
         super(Producto.class);
-        this.entityManager = em;
     }
 
     // Obtener todos los productos ordenados de la A a la Z
@@ -34,9 +33,9 @@ public class InventarioDAO extends AbstractDAO<Producto> {
         });
     }
 
-
     @Override
     protected EntityManager getEntityManager() {
-        return entityManager;
+        // Tomamos la conexión directo de tu clase de configuración
+        return HibernateUtil.getEntityManager();
     }
 }
