@@ -39,4 +39,9 @@ public class ProductoHelper implements Serializable {
     public void actualizarProducto(Producto producto) {
         ServiceFacadeLocator.getInstanceFacadeProducto().actualizarProducto(producto);
     }
+
+    // eliminar producto
+    public void eliminarProducto(Producto productoELiminar){
+        ServiceFacadeLocator.getInstanceFacadeProducto().eliminarProducto(productoELiminar);
+    }
 }

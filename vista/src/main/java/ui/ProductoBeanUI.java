@@ -152,6 +152,61 @@ public class ProductoBeanUI implements Serializable {
         }
     }
 
+    public Producto buscarPorID(String idProducto){
+        return productoHelper.buscarProductoPorID(idProducto);
+    }
+
+    // preparar la eliminación
+    public void prepararEliminacion(String idAEliminar) {
+        Producto productoAEliminar = productoHelper.buscarProductoPorID(idAEliminar);
+
+        if(productoAEliminar != null) {
+            // Guardamos los datos en la memoria del Bean
+            this.idProducto = productoAEliminar.getIdProducto();
+            this.nombre = productoAEliminar.getNombre();
+            this.cantidad = productoAEliminar.getCantidad();
+
+            // Validar si el producto tiene stock
+            if(cantidad != null && cantidad > 0) {
+                // Hay stock: Avisamos el error y terminamos (NO abrimos el modal)
+                mostrarError("Error", "No se puede eliminar, el producto " + nombre + " tiene stock (" + cantidad + " unidades).");
+                return;
+            }
+
+            // Si llegamos aquí, es porque el stock es 0 o null.
+            // ¡Damos la orden desde Java de ABRIR el modal!
+            PrimeFaces.current().executeScript("PF('wvModalEliminar').show();");
+
+        } else {
+            mostrarError("Error", "El producto ya no existe en la base de datos.");
+        }
+    }
+
+    // Eliminar el producto definitivamente
+    public void eliminarProducto() { // <-- Ya no necesita parámetros
+        try {
+            // Creamos el objeto solo con el ID que ya tenemos en memoria
+            Producto productoAEliminar = new Producto();
+            productoAEliminar.setIdProducto(this.idProducto);
+
+            // Mandar a eliminar a la base de datos
+            productoHelper.eliminarProducto(productoAEliminar);
+
+            // Mensaje de éxito
+            mostrarInfo("ÉXITO", "El producto " + nombre + " se eliminó correctamente.");
+
+            // Limpiar memoria y refrescar la tabla de fondo
+            limpiarDatos();
+
+            // Cerrar el modal
+            PrimeFaces.current().executeScript("PF('wvModalEliminar').hide();");
+
+        } catch (Exception e) {
+            mostrarError("Error crítico", "No se pudo eliminar: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     // Metodo para mostrar error en la pantalla
     private void mostrarError(String titulo, String detalle) {
         FacesContext.getCurrentInstance().addMessage(null,

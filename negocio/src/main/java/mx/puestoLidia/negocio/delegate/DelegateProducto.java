@@ -34,4 +34,9 @@ public class DelegateProducto {
     public void actualizarProducto(Producto producto) {
         ServiceLocator.getInstanceProductoDAO().update(producto);
     }
+
+    // eliminar un producto
+    public void eliminarProducto(Producto productoEliminar){
+        ServiceLocator.getInstanceProductoDAO().eliminarProducto(productoEliminar);
+    }
 }
