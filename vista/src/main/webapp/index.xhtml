@@ -27,24 +27,13 @@
 
     <h:form id="formPrincipal">
 
-        <p:commandButton value="Probar Eliminar (CON Stock)" icon="pi pi-trash" styleClass="ui-button-danger"
-                         update="modalEliminar" oncomplete="PF('wvModalEliminar').show();">
-            <f:setPropertyActionListener target="#{productoBeanUI.idProducto}" value="001" />
-            <f:setPropertyActionListener target="#{productoBeanUI.nombre}" value="Coca Cola 600ml" />
-            <f:setPropertyActionListener target="#{productoBeanUI.cantidad}" value="50" />
-        </p:commandButton>
+        <p:commandButton value="ELIMINAR" styleClass="btn-pildora-negro"
+                         action="#{productoBeanUI.prepararEliminacion(1123)}"
+                         update=":modalEliminar :notificacion" />
 
-
-
-        <p:commandButton value="Probar Eliminar (SIN Stock)" icon="pi pi-trash" styleClass="ui-button-danger"
-                         style="margin-left: 15px;"
-                         update="modalEliminar" oncomplete="PF('wvModalEliminar').show();">
-            <f:setPropertyActionListener target="#{productoBeanUI.idProducto}" value="002" />
-            <f:setPropertyActionListener target="#{productoBeanUI.nombre}" value="Sabritas Sal 40g" />
-            <f:setPropertyActionListener target="#{productoBeanUI.cantidad}" value="0" />
-        </p:commandButton>
 
     </h:form>
+
 
     <p:dialog id="modalEliminar" widgetVar="wvModalEliminar"
               header="Eliminar Producto"
@@ -64,7 +53,7 @@
                                  onclick="PF('wvModalEliminar').hide();" />
 
                 <p:commandButton value="SÍ, ELIMINAR" icon="pi pi-check"
-                                 action="#{productoBeanUI.eliminarProducto}"
+                                 action="#{productoBeanUI.eliminarProducto()}"
                                  styleClass="ui-button-danger"
                                  update=":notificacion" />
             </div>
