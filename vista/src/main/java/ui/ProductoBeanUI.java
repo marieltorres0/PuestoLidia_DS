@@ -152,10 +152,6 @@ public class ProductoBeanUI implements Serializable {
         }
     }
 
-    public Producto buscarPorID(String idProducto){
-        return productoHelper.buscarProductoPorID(idProducto);
-    }
-
     // preparar la eliminación
     public void prepararEliminacion(String idAEliminar) {
         Producto productoAEliminar = productoHelper.buscarProductoPorID(idAEliminar);

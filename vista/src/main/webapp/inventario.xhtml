@@ -136,7 +136,9 @@
                                          action="#{productoBeanUI.prepararModificacion(prod.idProducto)}"
                                          update=":modalRegistro"
                                          oncomplete="PF('wvModalRegistro').show();"/>
-                        <p:commandButton value="ELIMINAR" styleClass="btn-pildora-negro" type="button"/>
+                        <p:commandButton value="ELIMINAR" styleClass="btn-pildora-negro"
+                                         action="#{productoBeanUI.prepararEliminacion(prod.idProducto)}"
+                                         update=":modalEliminar :notificacion" />
                     </p:column>
                 </p:dataTable>
             </h:form>
@@ -149,9 +151,7 @@
         </div>
     </div>
 
-    <!-- ========================================================= -->
     <!-- MODAL DE ENTRADA -->
-    <!-- ========================================================= -->
     <p:dialog id="modalEntrada" widgetVar="wvModalEntrada" header="Entrada de Producto" styleClass="modal-estilo" modal="true" resizable="false" width="400">
         <h:form id="formEntrada">
 
@@ -237,6 +237,36 @@
             </div>
         </h:form>
     </p:dialog>
+
+    <!-- MODAL DE ELIMINACIÓN -->
+    <p:dialog id="modalEliminar" widgetVar="wvModalEliminar"
+              header="Eliminar Producto"
+              styleClass="modal-estilo" modal="true" resizable="false" closeOnEscape="true"
+              width="400" showEffect="fade" hideEffect="fade">
+
+        <h:form id="formModalEliminar">
+
+            <div style="text-align: center; padding: 15px;">
+                <i class="pi pi-exclamation-triangle" style="font-size: 3rem; color: #d9534f; margin-bottom: 15px; display: block;"></i>
+
+                <h:outputText value="¿Estás seguro de que deseas eliminar de forma permanente el producto " style="font-size: 1.1rem;"/>
+                <h:outputText value="#{productoBeanUI.nombre}" style="font-size: 1.1rem; font-weight: bold; color: #cc0000;"/>
+                <h:outputText value="?" style="font-size: 1.1rem; display: block; margin-bottom: 15px;"/>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; margin-top: 25px;">
+                <p:commandButton value="CANCELAR" type="button" icon="pi pi-times"
+                                 styleClass="ui-button-outlined ui-button-secondary"
+                                 onclick="PF('wvModalEliminar').hide();" />
+
+                <p:commandButton value="SÍ, ELIMINAR" icon="pi pi-check"
+                                 action="#{productoBeanUI.eliminarProducto}"
+                                 styleClass="ui-button-danger"
+                                 update=":notificacion :frmInventario:tablaProductos" />
+            </div>
+        </h:form>
+    </p:dialog>
+
 
 </h:body>
 </html>
