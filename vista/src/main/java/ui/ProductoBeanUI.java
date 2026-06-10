@@ -216,7 +216,7 @@ public class ProductoBeanUI implements Serializable {
     }
 
     // Metodo para limpiar los atributos del producto
-    public void limpiarDatos(){
+    public void limpiarDatos(){ //checar esto
         this.idProducto = null;
         this.nombre = null;
         this.precio = null;
@@ -254,7 +254,7 @@ public class ProductoBeanUI implements Serializable {
         PrimeFaces.current().executeScript("PF('wvModalEntrada').show();"); // Abrir ventanita
     }
 
-    // 4. Método para guardar la Entrada en la Base de Datos
+    // Método para guardar la Entrada en la Base de Datos
     public void registrarEntrada() {
         // Validar que no metan números negativos o ceros
         if (cantidadEntrada == null || cantidadEntrada <= 0) {
@@ -284,6 +284,11 @@ public class ProductoBeanUI implements Serializable {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error crítico", "No se pudo guardar la entrada."));
             e.printStackTrace();
         }
+    }
+
+    // MÉTODO PARA ALIMENTAR LA TABLA INVISIBLE DEL PDF
+    public List<Producto> getListaProductosCriticos() {
+        return productoHelper.obtenerReporteStockCritico();
     }
 
     // ================= GETTERS Y SETTERS =================
