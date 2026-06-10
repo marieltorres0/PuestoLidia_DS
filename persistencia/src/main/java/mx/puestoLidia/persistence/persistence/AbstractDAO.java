@@ -4,11 +4,13 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.StoredProcedureQuery;
+import mx.puestoLidia.entity.Producto;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+
 
 public abstract class AbstractDAO<T> {
 
@@ -173,6 +175,9 @@ public abstract class AbstractDAO<T> {
             throw e;
         }
     }
+
+
+
 
 
 }

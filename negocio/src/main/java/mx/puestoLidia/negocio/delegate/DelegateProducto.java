@@ -39,4 +39,9 @@ public class DelegateProducto {
     public void eliminarProducto(Producto productoEliminar){
         ServiceLocator.getInstanceProductoDAO().eliminarProducto(productoEliminar);
     }
+
+    //obtener lista de los productos con umbral<=cantidad
+    public List<Producto> obtenerReporteStockCritico() {
+        return ServiceLocator.getInstanceProductoDAO().obtenerReporteStockCritico();
+    }
 }

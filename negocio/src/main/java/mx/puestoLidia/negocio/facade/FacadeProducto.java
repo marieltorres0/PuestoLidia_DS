@@ -43,4 +43,9 @@ public class FacadeProducto {
     public void eliminarProducto(Producto productoEliminar){
         delegateProducto.eliminarProducto(productoEliminar);
     }
+
+    // obtener lista de productos con umbral umbral<=cantidad
+    public List<Producto> obtenerReporteStockCritico() {
+        return delegateProducto.obtenerReporteStockCritico();
+    }
 }

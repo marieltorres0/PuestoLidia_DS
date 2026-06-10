@@ -106,7 +106,9 @@
                                      oncomplete="PF('wvModalRegistro').show();">
                         <f:setPropertyActionListener target="#{productoBeanUI.esEdicion}" value="false" />
                     </p:commandButton>
-                    <p:commandButton value="REPORTE" styleClass="btn-top-rojo" type="button"/>
+                    <p:commandButton value="DESCARGAR PDF" styleClass="btn-top-rojo" ajax="false" icon="pi pi-file-pdf">
+                        <p:dataExporter type="pdf" target="tablaOculta" fileName="Reporte_Critico_Puesto_Lidia" />
+                    </p:commandButton>
                 </div>
 
                 <p:dataTable id="tablaProductos" var="prod" value="#{productoBeanUI.listaProductos}"
@@ -131,6 +133,7 @@
                     <p:column headerText="CANT. CRITICA" style="width: 10%;">
                         <h:outputText value="#{prod.umbral}" />
                     </p:column>
+
                     <p:column headerText="ACCIONES" style="width: 25%;">
                         <p:commandButton value="MODIFICAR" styleClass="btn-pildora-rojo"
                                          action="#{productoBeanUI.prepararModificacion(prod.idProducto)}"
@@ -141,6 +144,27 @@
                                          update=":modalEliminar :notificacion" />
                     </p:column>
                 </p:dataTable>
+
+                <p:dataTable id="tablaOculta" var="critico" value="#{productoBeanUI.listaProductosCriticos}" style="display:none;">
+                    <p:column headerText="ID">
+                        <h:outputText value="#{critico.idProducto}" />
+                    </p:column>
+                    <p:column headerText="NOMBRE">
+                        <h:outputText value="#{critico.nombre}" />
+                    </p:column>
+                    <p:column headerText="PRECIO $">
+                        <h:outputText value="$#{critico.precio}">
+                            <f:convertNumber pattern="#0.00" />
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="CANTIDAD">
+                        <h:outputText value="#{critico.cantidad}" />
+                    </p:column>
+                    <p:column headerText="CANT. CRITICA">
+                        <h:outputText value="#{critico.umbral}" />
+                    </p:column>
+                </p:dataTable>
+
             </h:form>
         </div>
 
@@ -151,7 +175,9 @@
         </div>
     </div>
 
+    <!-- ========================================================= -->
     <!-- MODAL DE ENTRADA -->
+    <!-- ========================================================= -->
     <p:dialog id="modalEntrada" widgetVar="wvModalEntrada" header="Entrada de Producto" styleClass="modal-estilo" modal="true" resizable="false" width="400">
         <h:form id="formEntrada">
 
@@ -193,6 +219,7 @@
         <p:ajax event="close" listener="#{productoBeanUI.limpiarDatos()}" update="formRegistro" />
 
         <h:form id="formRegistro">
+
             <div class="ui-fluid">
                 <div class="campo-formulario">
                     <p:outputLabel for="idProd" value="ID" />

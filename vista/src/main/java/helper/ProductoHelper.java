@@ -44,4 +44,9 @@ public class ProductoHelper implements Serializable {
     public void eliminarProducto(Producto productoELiminar){
         ServiceFacadeLocator.getInstanceFacadeProducto().eliminarProducto(productoELiminar);
     }
+
+    //obtener lista de los productos con umbral<=cantidad
+    public List<Producto> obtenerReporteStockCritico() {
+        return ServiceFacadeLocator.getInstanceFacadeProducto().obtenerReporteStockCritico();
+    }
 }
