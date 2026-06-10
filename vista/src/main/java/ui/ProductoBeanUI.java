@@ -32,6 +32,7 @@ public class ProductoBeanUI implements Serializable {
     // --- VARIABLES DE LA PANTALLA ---
     private List<Producto> listaProductos;
     private String textoBusqueda;
+    private List<Producto> listaProductosCriticos;
 
     // --- VARIABLES PARA EL MODAL DE ENTRADA ---
     private Producto productoSeleccionado;
@@ -193,6 +194,7 @@ public class ProductoBeanUI implements Serializable {
 
             // Limpiar memoria y refrescar la tabla de fondo
             limpiarDatos();
+            cargarInventario();
 
             // Cerrar el modal
             PrimeFaces.current().executeScript("PF('wvModalEliminar').hide();");
@@ -216,7 +218,7 @@ public class ProductoBeanUI implements Serializable {
     }
 
     // Metodo para limpiar los atributos del producto
-    public void limpiarDatos(){
+    public void limpiarDatos(){ //checar esto
         this.idProducto = null;
         this.nombre = null;
         this.precio = null;
@@ -230,6 +232,7 @@ public class ProductoBeanUI implements Serializable {
     // 1. Método para llenar la tabla al abrir la pantalla
     public void cargarInventario() {
         listaProductos = productoHelper.obtenerInventarioOrdenado();
+        listaProductosCriticos = productoHelper.obtenerReporteStockCritico();
     }
 
     // 2. Método para la barra de búsqueda
@@ -254,7 +257,7 @@ public class ProductoBeanUI implements Serializable {
         PrimeFaces.current().executeScript("PF('wvModalEntrada').show();"); // Abrir ventanita
     }
 
-    // 4. Método para guardar la Entrada en la Base de Datos
+    // Método para guardar la Entrada en la Base de Datos
     public void registrarEntrada() {
         // Validar que no metan números negativos o ceros
         if (cantidadEntrada == null || cantidadEntrada <= 0) {
@@ -292,7 +295,11 @@ public class ProductoBeanUI implements Serializable {
     }
 
 
+
     // ================= GETTERS Y SETTERS =================
+
+    public List<Producto> getListaProductosCriticos() { return listaProductosCriticos; }
+    public void setListaProductosCriticos(List<Producto> listaProductosCriticos) { this.listaProductosCriticos = listaProductosCriticos; }
 
     public List<Producto> getListaProductos() { return listaProductos; }
     public void setListaProductos(List<Producto> listaProductos) { this.listaProductos = listaProductos; }
