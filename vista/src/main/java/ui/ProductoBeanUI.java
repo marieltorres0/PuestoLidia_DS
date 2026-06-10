@@ -262,14 +262,6 @@ public class ProductoBeanUI implements Serializable {
                     new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Ingresa una cantidad mayor a 0."));
             return;
         }
-    // =========================================================
-    // MÉTODO PARA ALIMENTAR LA TABLA INVISIBLE DEL PDF
-    // =========================================================
-    public List<Producto> getListaProductosCriticos() {
-        return productoHelper.obtenerReporteStockCritico();
-    }
-
-
         try {
             // Hacer la suma matemática
             int nuevaCantidad = productoSeleccionado.getCantidad() + cantidadEntrada;
@@ -292,6 +284,13 @@ public class ProductoBeanUI implements Serializable {
             e.printStackTrace();
         }
     }
+    // =========================================================
+    // MÉTODO PARA ALIMENTAR LA TABLA INVISIBLE DEL PDF
+    // =========================================================
+    public List<Producto> getListaProductosCriticos() {
+        return productoHelper.obtenerReporteStockCritico();
+    }
+
 
     // ================= GETTERS Y SETTERS =================
 
