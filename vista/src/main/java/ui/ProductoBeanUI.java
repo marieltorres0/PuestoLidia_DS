@@ -32,6 +32,7 @@ public class ProductoBeanUI implements Serializable {
     // --- VARIABLES DE LA PANTALLA ---
     private List<Producto> listaProductos;
     private String textoBusqueda;
+    private List<Producto> listaProductosCriticos;
 
     // --- VARIABLES PARA EL MODAL DE ENTRADA ---
     private Producto productoSeleccionado;
@@ -193,6 +194,7 @@ public class ProductoBeanUI implements Serializable {
 
             // Limpiar memoria y refrescar la tabla de fondo
             limpiarDatos();
+            cargarInventario();
 
             // Cerrar el modal
             PrimeFaces.current().executeScript("PF('wvModalEliminar').hide();");
@@ -230,6 +232,7 @@ public class ProductoBeanUI implements Serializable {
     // 1. Método para llenar la tabla al abrir la pantalla
     public void cargarInventario() {
         listaProductos = productoHelper.obtenerInventarioOrdenado();
+        listaProductosCriticos = productoHelper.obtenerReporteStockCritico();
     }
 
     // 2. Método para la barra de búsqueda
@@ -286,12 +289,11 @@ public class ProductoBeanUI implements Serializable {
         }
     }
 
-    // MÉTODO PARA ALIMENTAR LA TABLA INVISIBLE DEL PDF
-    public List<Producto> getListaProductosCriticos() {
-        return productoHelper.obtenerReporteStockCritico();
-    }
 
     // ================= GETTERS Y SETTERS =================
+
+    public List<Producto> getListaProductosCriticos() { return listaProductosCriticos; }
+    public void setListaProductosCriticos(List<Producto> listaProductosCriticos) { this.listaProductosCriticos = listaProductosCriticos; }
 
     public List<Producto> getListaProductos() { return listaProductos; }
     public void setListaProductos(List<Producto> listaProductos) { this.listaProductos = listaProductos; }
