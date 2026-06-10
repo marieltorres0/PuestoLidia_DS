@@ -36,12 +36,7 @@ public class InventarioBeanUI implements Serializable {
         inventarioHelper = new InventarioHelper();
         reporteHelper = new ReporteHelper(); // <-- 1. ¡AQUÍ INICIALIZAMOS EL HELPER DEL REPORTE!
     }
-    // =========================================================
-    // MÉTODO PARA ALIMENTAR LA TABLA INVISIBLE DEL PDF
-    // =========================================================
-    public List<Producto> getListaProductosCriticos() {
-        return reporteHelper.obtenerReporteStockCritico();
-    }
+
 
     @PostConstruct
     public void init() {

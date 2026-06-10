@@ -3,6 +3,8 @@ package mx.puestoLidia.negocio.facade;
 import mx.puestoLidia.entity.Producto;
 import mx.puestoLidia.negocio.delegate.DelegateProducto;
 
+import java.util.List;
+
 public class FacadeProducto {
     private final DelegateProducto delegateProducto;
 
@@ -18,5 +20,10 @@ public class FacadeProducto {
     // obtener un producto por su id
     public Producto buscarProductoPorID(String idBuscar){
         return delegateProducto.buscarProductoPorID(idBuscar);
+    }
+
+    // obtener lista de productos con umbral umbral<=cantidad
+    public List<Producto> obtenerReporteStockCritico() {
+        return delegateProducto.obtenerReporteStockCritico();
     }
 }

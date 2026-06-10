@@ -4,6 +4,8 @@ import jakarta.persistence.EntityManager;
 import mx.puestoLidia.entity.Producto;
 import mx.puestoLidia.persistence.persistence.AbstractDAO;
 
+import java.util.List;
+
 public class ProductoDAO extends AbstractDAO<Producto> {
 
     private final EntityManager entityManager;
@@ -28,6 +30,15 @@ public class ProductoDAO extends AbstractDAO<Producto> {
     }
 
     // aquí colocar metodos de sus diagramas (los que necesitan para su US)
+
+    public List<Producto> obtenerReporteStockCritico() {
+        String jpql = "SELECT p FROM Producto p WHERE p.cantidad <= p.umbral ORDER BY p.cantidad ASC";
+
+        return execute(em -> {
+            em.clear(); // Limpiamos caché
+            return em.createQuery(jpql, Producto.class).getResultList();
+        });
+    }
 
     @Override
     public EntityManager getEntityManager(){

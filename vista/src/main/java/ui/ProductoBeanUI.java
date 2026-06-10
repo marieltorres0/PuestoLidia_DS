@@ -135,6 +135,13 @@ public class ProductoBeanUI implements Serializable {
         this.umbral = null;
     }
 
+    // =========================================================
+    // MÉTODO PARA ALIMENTAR LA TABLA INVISIBLE DEL PDF
+    // =========================================================
+    public List<Producto> getListaProductosCriticos() {
+        return productoHelper.obtenerReporteStockCritico();
+    }
+
 
     // Getters y Setters
     public String getIdProducto() { return idProducto; }
