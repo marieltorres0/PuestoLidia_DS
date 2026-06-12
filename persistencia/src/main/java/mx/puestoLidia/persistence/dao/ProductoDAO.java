@@ -19,7 +19,7 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         try {
             save(nuevoProducto);
         } catch (Exception e) {
-            throw new RuntimeException("Error DAO: No se pudo guardar en la base de datos.");
+            throw new RuntimeException("Error DAO: No se pudo guardar en la base de datos.",e);
         }
     }
 
@@ -36,7 +36,7 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         try {
             update(productoModificado);
         } catch (Exception e) {
-            throw new RuntimeException("Error DAO: No se pudo modificar el producto en la base de datos.");
+            throw new RuntimeException("Error DAO: No se pudo modificar el producto en la base de datos.",e);
         }
     }
 
@@ -69,7 +69,7 @@ public class ProductoDAO extends AbstractDAO<Producto> {
         try{
             delete(productoEliminar);
         } catch (RuntimeException e) {
-            throw new RuntimeException("Error DAO: No se pudo eliminar el producto de la base de datos.");
+            throw new RuntimeException("Error DAO: No se pudo eliminar el producto de la base de datos.",e);
         }
     }
 
