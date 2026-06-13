@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core">
+
+<h:head>
+    <title>Punto de Venta - Puesto Lidia</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0;
+            background-color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .pantalla-principal {
+            display: flex; flex-direction: column;
+            height: 100vh; width: 100%;
+        }
+
+        .header-venta {
+            background-color: #3A4665;
+            color: white; padding: 15px 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: bold; font-size: 1.5rem; letter-spacing: 1px;
+            flex-shrink: 0;
+        }
+
+        .contenedor-interior {
+            padding: 20px 30px;
+            display: flex; flex-direction: column;
+            flex-grow: 1; min-height: 0;
+        }
+
+        .panel-busqueda {
+            display: flex; gap: 15px; margin-bottom: 20px;
+            align-items: stretch; flex-shrink: 0;
+        }
+
+        .input-busqueda-lg {
+            flex-grow: 1; font-size: 1.4rem !important;
+            padding: 12px !important; border: 2px solid #9C9C9C !important;
+            border-radius: 8px !important; color: #3A4665 !important;
+            font-weight: bold !important;
+        }
+
+        .btn-agregar-lg {
+            font-size: 1.2rem !important; padding: 10px 25px !important;
+            background-color: #5F87EE !important; border: none !important;
+            border-radius: 8px !important; color: white !important; font-weight: bold !important;
+        }
+
+        /* ================= ESTILOS DE LA TABLA ================= */
+        .contenedor-tabla {
+            flex-grow: 1; display: flex; flex-direction: column;
+            min-height: 0; overflow: hidden; margin-bottom: 20px;
+        }
+
+        .tabla-venta { flex-grow: 1; display: flex; flex-direction: column; height: 100%; }
+        .tabla-venta .ui-datatable-scrollable-body { flex-grow: 1; overflow-y: auto; }
+        .tabla-venta .ui-datatable-header { display: none; }
+
+        .tabla-venta .ui-datatable-scrollable-header th {
+            background-color: #f8f9fa !important; color: #5F87EE !important;
+            font-size: 1.1rem !important; border: none !important;
+            border-bottom: 3px solid #5F87EE !important; padding: 10px 10px !important;
+        }
+
+        .tabla-venta td {
+            font-size: 1.1rem !important; font-weight: bold; color: #3A4665 !important;
+            padding: 6px 10px !important; vertical-align: middle !important;
+            border-bottom: 1px solid #9C9C9C !important; border-right: none !important; border-left: none !important;
+        }
+
+        .btn-qty {
+            width: 32px !important; height: 32px !important;
+            font-size: 1rem !important; font-weight: bold !important;
+            background-color: #5F87EE !important; border: none !important;
+            color: white !important; border-radius: 4px !important;
+        }
+        .texto-qty {
+            display: inline-block; width: 40px; text-align: center;
+            font-size: 1.2rem; color: #3A4665;
+        }
+        .btn-basura {
+            background-color: #ff4d4d !important; color: white !important;
+            border: none !important; padding: 6px 12px !important; border-radius: 4px !important;
+        }
+
+        /* ================= ESTILOS SECCIÓN INFERIOR ================= */
+        .footer-grid {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            gap: 40px; flex-shrink: 0;
+        }
+        .panel-acciones { display: flex; gap: 20px; flex-grow: 1; }
+        .btn-cobrar-f1 {
+            background-color: #5F87EE !important; color: white !important;
+            font-size: 1.6rem !important; padding: 20px !important;
+            border-radius: 10px !important; font-weight: bold !important;
+            border: none !important; flex-grow: 2;
+        }
+        .btn-cancelar-esc {
+            background-color: white !important; color: #3A4665 !important;
+            font-size: 1.2rem !important; padding: 20px !important;
+            border-radius: 10px !important; font-weight: bold !important;
+            border: 3px solid #3A4665 !important; flex-grow: 1;
+        }
+
+        .panel-totales {
+            background-color: #f4f6f9; padding: 20px 40px;
+            border: 2px solid #9C9C9C; border-radius: 10px;
+            font-size: 2rem; font-weight: bold; color: #5F87EE;
+            text-align: right; min-width: 300px;
+        }
+
+        .footer-regreso {
+            background-color: #3A4665; height: 60px;
+            display: flex; align-items: center; padding-left: 30px;
+            border-top: 2px solid #9C9C9C; flex-shrink: 0;
+        }
+        .flecha-regreso { color: white; font-size: 2rem; font-weight: bold; cursor: pointer; text-decoration: none; }
+
+        /* ================= ESTILOS DE MODALES ================= */
+        .modal-estandar.ui-dialog { border-radius: 15px !important; overflow: hidden; border: 3px solid #3A4665; }
+        .modal-estandar .ui-dialog-titlebar { background-color: #3A4665 !important; color: white !important; }
+
+        /* Nuevos estilos para el modal de éxito para que muestre la X limpia */
+        .modal-exito .ui-dialog-titlebar { background: transparent !important; border: none !important; }
+        .modal-exito .ui-dialog-title { display: none; }
+        .modal-exito.ui-dialog { border-radius: 15px !important; overflow: hidden; border: 4px solid #5F87EE; text-align: center; }
+        .texto-cambio { font-size: 3.5rem; color: #5F87EE; font-weight: bold; margin: 15px 0; }
+
+        .input-efectivo-modal .ui-inputfield {
+            width: 100% !important; font-size: 2.5rem !important;
+            padding: 15px !important; border: 3px solid #5F87EE !important;
+            border-radius: 8px !important; color: #3A4665 !important;
+            text-align: right !important; font-weight: bold !important;
+            box-sizing: border-box;
+        }
+    </style>
+
+    <script>
+        function hacerScrollUltimoProducto() {
+            setTimeout(function() {
+                var tbody = $('.tabla-venta .ui-datatable-scrollable-body');
+                if (tbody.length > 0) {
+                    tbody.scrollTop(tbody[0].scrollHeight);
+                }
+            }, 100);
+        }
+    </script>
+</h:head>
+
+<h:body>
+    <p:growl id="notificacion" showDetail="true" life="5000">
+        <p:autoUpdate />
+    </p:growl>
+
+    <div class="pantalla-principal">
+
+        <div class="header-venta">
+            <span>PUESTO LIDIA - PUNTO DE VENTA</span>
+            <span>CAJERO: 1</span>
+        </div>
+
+        <div class="contenedor-interior">
+            <h:form id="frmVenta" style="display: flex; flex-direction: column; height: 100%; min-height: 0;">
+
+                <p:hotkey bind="esc" handler="PF('wvModalCancelar').show();" />
+                <p:hotkey bind="f1" handler="PF('wvBtnCobrar').jq.click();" />
+                <p:focus for="inputBusqueda" />
+                <p:defaultCommand target="btnAgregar" />
+
+                <div class="panel-busqueda">
+                    <p:inputText id="inputBusqueda"
+                                 value="#{ventaBeanUI.idProductoBusqueda}"
+                                 placeholder="Escanear código o teclear nombre..."
+                                 styleClass="input-busqueda-lg" autocomplete="off"/>
+
+                    <p:commandButton id="btnAgregar" value="AGREGAR (ENTER)"
+                                     action="#{ventaBeanUI.agregarProducto}"
+                                     update="frmVenta :notificacion"
+                                     styleClass="btn-agregar-lg"
+                                     oncomplete="PrimeFaces.focus('frmVenta:inputBusqueda'); hacerScrollUltimoProducto();"/>
+                </div>
+
+                <div class="contenedor-tabla">
+                    <p:dataTable id="tablaVentas" widgetVar="wvTablaVentas" var="item" value="#{ventaBeanUI.carrito}"
+                                 styleClass="tabla-venta" scrollable="true" scrollHeight="100%"
+                                 emptyMessage="El carrito está vacío.">
+
+                        <p:column headerText="CÓDIGO" style="width: 15%; text-align: center;">
+                            <h:outputText value="#{item.idProducto.idProducto}" />
+                        </p:column>
+
+                        <p:column headerText="CANTIDAD" style="width: 20%; text-align: center;">
+                            <p:commandButton icon="pi pi-minus" styleClass="btn-qty"
+                                             action="#{ventaBeanUI.disminuirCantidad(item.idProducto.idProducto)}"
+                                             update=":frmVenta:tablaVentas :frmVenta:panelTotales :frmVenta:btncancelar :frmVenta:btncobrar"
+                                             oncomplete="PrimeFaces.focus('frmVenta:inputBusqueda');"/>
+
+                            <h:outputText value="#{item.cantidad}" styleClass="texto-qty" />
+
+                            <p:commandButton icon="pi pi-plus" styleClass="btn-qty"
+                                             action="#{ventaBeanUI.aumentarCantidad(item.idProducto.idProducto)}"
+                                             update=":frmVenta:tablaVentas :frmVenta:panelTotales"
+                                             oncomplete="PrimeFaces.focus('frmVenta:inputBusqueda'); hacerScrollUltimoProducto();"/>
+                        </p:column>
+
+                        <p:column headerText="PRODUCTO" style="width: 35%; text-align: left;">
+                            <h:outputText value="#{item.idProducto.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="SUBTOTAL" style="width: 20%; text-align: right;">
+                            <h:outputText value="$ #{item.cantidad * item.idProducto.precio}">
+                                <f:convertNumber pattern="#,##0.00" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="QUITAR" style="width: 10%; text-align: center;">
+                            <p:commandButton icon="pi pi-trash" styleClass="btn-basura"
+                                             action="#{ventaBeanUI.eliminarDelCarrito(item.idProducto.idProducto)}"
+                                             update=":frmVenta:tablaVentas :frmVenta:panelTotales :frmVenta:btncancelar :frmVenta:btncobrar"
+                                             oncomplete="PrimeFaces.focus('frmVenta:inputBusqueda');"/>
+                        </p:column>
+                    </p:dataTable>
+                </div>
+
+                <div class="footer-grid">
+                    <div class="panel-acciones">
+                        <p:commandButton id="btncancelar"
+                                         value="CANCELAR VENTA (ESC)"
+                                         type="button"
+                                         onclick="PF('wvModalCancelar').show();"
+                                         styleClass="btn-cancelar-esc"
+                                         disabled="#{empty ventaBeanUI.carrito}"/>
+
+                        <p:commandButton id="btncobrar"
+                                         widgetVar="wvBtnCobrar" value="COBRAR VENTA (F1)"
+                                         actionListener="#{ventaBeanUI.prepararCobro}"
+                                         update=":frmCobro"
+                                         oncomplete="PF('wvModalCobro').show();"
+                                         styleClass="btn-cobrar-f1"
+                                         disabled="#{empty ventaBeanUI.carrito}"/>
+                    </div>
+
+                    <h:panelGroup id="panelTotales" layout="block" styleClass="panel-totales">
+                        <div>TOTAL A PAGAR</div>
+                        <h:outputText value="$ #{ventaBeanUI.total}">
+                            <f:convertNumber pattern="#,##0.00" />
+                        </h:outputText>
+                    </h:panelGroup>
+                </div>
+            </h:form>
+        </div>
+
+        <div class="footer-regreso">
+            <h:outputLink value="inicio.xhtml" styleClass="flecha-regreso">
+                <i class="pi pi-arrow-left"></i>
+            </h:outputLink>
+        </div>
+    </div>
+
+
+    <p:dialog id="modalCancelar" widgetVar="wvModalCancelar" header="Confirmar Cancelación" modal="true"
+              resizable="false" closeOnEscape="true" width="400" styleClass="modal-estandar"
+              showEffect="fade" hideEffect="fade">
+        <h:form>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h:outputText value="¿Estás seguro de cancelar la venta y vaciar el carrito?" style="font-size: 1.2rem; color: #3A4665;"/>
+            </div>
+            <div style="display: flex; justify-content: space-between; gap: 10px;">
+                <p:commandButton value="NO" type="button"
+                                 styleClass="ui-button-outlined ui-button-secondary" style="flex-grow: 1;"
+                                 onclick="PF('wvModalCancelar').hide(); PrimeFaces.focus('frmVenta:inputBusqueda');" />
+                <p:commandButton value="SÍ, CANCELAR"
+                                 action="#{ventaBeanUI.inicializarVenta}"
+                                 update=":frmVenta :notificacion"
+                                 styleClass="ui-button-danger" style="flex-grow: 1;"
+                                 oncomplete="PF('wvModalCancelar').hide(); PrimeFaces.focus('frmVenta:inputBusqueda');"/>
+            </div>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog id="modalCobro" widgetVar="wvModalCobro" header="Confirmar Pago" modal="true"
+              resizable="false" closeOnEscape="true" width="450" styleClass="modal-estandar"
+              showEffect="fade" hideEffect="fade">
+        <p:ajax event="close" oncomplete="PrimeFaces.focus('frmVenta:inputBusqueda');" />
+
+        <h:form id="frmCobro">
+            <p:focus for="inputEfectivo" />
+            <p:defaultCommand target="btnProcesarCobro" />
+
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h:outputText value="RESTANTE A COBRAR:" style="font-size: 1.2rem; color: #666; display: block;"/>
+                <h:outputText value="$ #{ventaBeanUI.total}" style="font-size: 2.5rem; color: #5F87EE; font-weight: bold;">
+                    <f:convertNumber pattern="#,##0.00" />
+                </h:outputText>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <p:outputLabel for="inputEfectivo" value="Monto Ingresado:" style="font-weight: bold; display: block; margin-bottom: 5px; color: #3A4665;"/>
+                <p:inputNumber id="inputEfectivo" value="#{ventaBeanUI.montoRecibido}"
+                               styleClass="input-efectivo-modal"
+                               symbol="$ " decimalPlaces="2" onfocus="this.select();"/>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; gap: 10px;">
+                <p:commandButton value="REGRESAR" type="button"
+                                 styleClass="ui-button-outlined ui-button-secondary" style="flex-grow: 1; padding: 10px;"
+                                 onclick="PF('wvModalCobro').hide(); PrimeFaces.focus('frmVenta:inputBusqueda');" />
+
+                <p:commandButton id="btnProcesarCobro" value="ABONAR/COBRAR (ENTER)"
+                                 action="#{ventaBeanUI.procesarCobro}"
+                                 update=":notificacion :frmCobro :frmExito"
+                                 styleClass="ui-button-primary" style="flex-grow: 1; padding: 10px; font-weight: bold;"/>
+            </div>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog id="modalExito" widgetVar="wvModalExito" modal="true"
+              resizable="false" closable="true" closeOnEscape="true" width="500" styleClass="modal-exito"
+              showEffect="bounce" hideEffect="fade">
+
+        <p:ajax event="close" listener="#{ventaBeanUI.inicializarVenta}"
+                update=":frmVenta :frmCobro"
+                oncomplete="PrimeFaces.focus('frmVenta:inputBusqueda');" />
+
+        <h:form id="frmExito">
+            <p:focus for="btnNuevaVenta" />
+            <p:defaultCommand target="btnNuevaVenta" />
+
+            <i class="pi pi-check-circle" style="font-size: 4rem; color: #5F87EE; margin-top: 20px;"></i>
+            <h2 style="font-size: 2rem; color: #3A4665; margin-bottom: 5px;">¡VENTA EXITOSA!</h2>
+            <p style="font-size: 1.4rem; color: #9C9C9C; font-weight: bold; margin: 0;">ENTREGAR CAMBIO:</p>
+
+            <div class="texto-cambio">
+                <h:outputText value="$ #{ventaBeanUI.cambio}">
+                    <f:convertNumber pattern="#,##0.00" />
+                </h:outputText>
+            </div>
+
+            <p:commandButton id="btnNuevaVenta" value="NUEVA VENTA (ENTER)"
+                             action="#{ventaBeanUI.inicializarVenta}"
+                             update=":frmVenta :frmCobro"
+                             style="font-size: 1.4rem; padding: 12px 25px; background-color: #3A4665; color: white; border-radius: 8px; margin-bottom: 20px;"
+                             onclick="PF('wvModalExito').hide();"
+                             oncomplete="PrimeFaces.focus('frmVenta:inputBusqueda');"/>
+        </h:form>
+    </p:dialog>
+
+</h:body>
+</html>
