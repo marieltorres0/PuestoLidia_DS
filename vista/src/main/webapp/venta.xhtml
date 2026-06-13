@@ -192,9 +192,6 @@
                     <p:autoComplete id="inputBusqueda"
                                     value="#{ventaBeanUI.idProductoBusqueda}"
                                     completeMethod="#{ventaBeanUI.buscarCoincidencias}"
-                                    var="prod"
-                                    itemLabel="#{prod.idProducto}"
-                                    itemValue="#{prod.idProducto}"
                                     placeholder="Escanear código o teclear nombre..."
                                     inputStyleClass="input-busqueda-lg"
                                     style="width: 100%;"
@@ -202,10 +199,6 @@
                                     minQueryLength="1"
                                     delay="300"
                                     scrollHeight="250">
-
-                        <p:column>
-                            <h:outputText value="ID: #{prod.idProducto} | #{prod.nombre} (Stock: #{prod.cantidad})" style="font-weight: bold; color: #3A4665;"/>
-                        </p:column>
 
                         <p:ajax event="itemSelect" listener="#{ventaBeanUI.agregarProducto}"
                                 update="frmVenta :notificacion"
