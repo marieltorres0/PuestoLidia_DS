@@ -24,10 +24,13 @@ public class ServiceLocator {
     }
 
     public static VentaDAO getInstanceVentaDAO(){
-        if(ventaDAO == null){
-            ventaDAO = new VentaDAO(getEntityManager());
-        }
-        return ventaDAO;
+//        if(ventaDAO == null){
+//            ventaDAO = new VentaDAO(getEntityManager());
+//        }
+//        return ventaDAO;
+        // Siempre retornamos una instancia nueva con una conexión limpia
+        // sin esto no pueden realizarse ventas consecutivas
+        return new VentaDAO(getEntityManager());
     }
 
     public static ItemVentaDAO getInstanceItemVentaDAO(){
