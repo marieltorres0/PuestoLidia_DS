@@ -5,6 +5,8 @@ import mx.puestoLidia.entity.ItemVenta;
 import mx.puestoLidia.entity.ItemVentaId;
 import mx.puestoLidia.persistence.persistence.AbstractDAO;
 
+import java.util.List;
+
 public class ItemVentaDAO extends AbstractDAO<ItemVenta> {
 
     private final EntityManager entityManager;
@@ -22,11 +24,6 @@ public class ItemVentaDAO extends AbstractDAO<ItemVenta> {
         } catch (Exception e) {
             throw new RuntimeException("Error DAO: No se pudo guardar el ItemVenta en la base de datos.",e);
         }
-    }
-    // el método heredado del abstract devuelve Optional
-    // si no existe el itemVenta con el id recibido retorna null
-    public ItemVenta buscarItemVentaPorId(ItemVentaId itemVentaId){
-        return find(itemVentaId).orElse(null);
     }
 
     // modificar (se usará ninguna o rara vez)
@@ -46,6 +43,19 @@ public class ItemVentaDAO extends AbstractDAO<ItemVenta> {
             throw new RuntimeException("Error DAO: No se pudo eliminar el ItemVenta en la base de datos.",e);
         }
     }
+
+    public List<ItemVenta> buscarItemsPorVenta(int idVentaParam){
+        try{
+            String jpql = "SELECT i FROM ItemVenta i WHERE i.idVenta.id = :idVentaParam";
+
+            return getEntityManager().createQuery(jpql,ItemVenta.class)
+                    .setParameter("idVentaParam",idVentaParam)
+                    .getResultList();
+        } catch (Exception e) {
+            throw new RuntimeException("Error DAO: No e pudieron obtener los ítems de la venta.",e);
+        }
+    }
+
     @Override
     public EntityManager getEntityManager(){
         return entityManager;
