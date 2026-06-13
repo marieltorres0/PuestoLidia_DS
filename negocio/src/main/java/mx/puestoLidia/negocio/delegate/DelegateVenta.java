@@ -61,7 +61,27 @@ public class DelegateVenta {
 
     // ==== RESTAR O QUITAR PRODUCTOS AL CARRITO ====
     public void eliminarOQuitarProductoDelCarrito(String idProducto, List<ItemVenta> carritoActual) {
-        carritoActual.removeIf(iv -> iv.getIdProducto().getIdProducto().equals(idProducto));
+        for (int i = 0; i < carritoActual.size(); i++) {
+            ItemVenta iv = carritoActual.get(i);
+
+            // Cuando encontramos el producto exacto en el carrito
+            if (iv.getIdProducto().getIdProducto().equals(idProducto)) {
+
+                // Evaluamos: si hay más de 1, solo restamos
+                if (iv.getCantidad() > 1) {
+                    iv.setCantidad(iv.getCantidad() - 1);
+
+                    // reecalcular
+                    iv.setImporte(iv.getPrecioUnitario().multiply(new java.math.BigDecimal(iv.getCantidad())));
+                } else {
+                    // Si la cantidad es 1, se elimina
+                    carritoActual.remove(i);
+                }
+
+                // Salimos del ciclo porque ya procesamos el producto
+                break;
+            }
+        }
     }
 
     // ==== CALCULAR EL TOTAL DE LA VENTA ====
