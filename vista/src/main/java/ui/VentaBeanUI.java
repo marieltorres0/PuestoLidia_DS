@@ -1,11 +1,13 @@
 package ui;
 
+import helper.ProductoHelper;
 import helper.VentaHelper;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 import mx.puestoLidia.entity.ItemVenta;
+import mx.puestoLidia.entity.Producto;
 import mx.puestoLidia.entity.Usuario;
 import mx.puestoLidia.entity.Venta;
 import org.primefaces.PrimeFaces;
@@ -21,6 +23,7 @@ import java.util.List;
 public class VentaBeanUI implements Serializable {
 
     private VentaHelper ventaHelper;
+    private ProductoHelper productoHelper;
 
     // Variables de pantalla
     private String idProductoBusqueda;
@@ -43,6 +46,8 @@ public class VentaBeanUI implements Serializable {
     // Inicializa o resetea todos los valores para comenzar una venta limpia
     public void inicializarVenta() {
         ventaHelper = new VentaHelper();
+        productoHelper = new ProductoHelper();
+
         this.idProductoBusqueda = null;
         this.carrito = new ArrayList<>();
         this.itemSeleccionado = null;
@@ -50,6 +55,14 @@ public class VentaBeanUI implements Serializable {
         this.montoRecibido = null;
         this.cambio = BigDecimal.ZERO;
         this.montoAcumulado = BigDecimal.ZERO;
+    }
+
+    // muestra las coindicencias del campo de busqueda
+    public List<Producto> buscarCoincidencias(String query){
+        if(query == null || query.trim().isEmpty()){
+            return new ArrayList<>();
+        }
+        return productoHelper.filtrarPorIdOPorNombre(query);
     }
 
     // Se ingresa el id en el campo de texto (escáner o manual)
@@ -70,14 +83,15 @@ public class VentaBeanUI implements Serializable {
 
     /**
      * Incrementa la cantidad de un producto.
-     * @param idProducto ID del producto desde el botón de la tabla, o null si proviene de un atajo de teclado (+).
+     * @param idProducto ID del producto desde el botón de la tabla, o vacío si proviene del atajo de teclado (+).
      */
     public void aumentarCantidad(String idProducto) {
-        if (idProducto == null && itemSeleccionado != null) {
+        // JSF convierte el 'null' de la vista a una cadena vacía "", por eso agregamos isEmpty()
+        if ((idProducto == null || idProducto.trim().isEmpty()) && itemSeleccionado != null) {
             idProducto = itemSeleccionado.getIdProducto().getIdProducto();
         }
 
-        if (idProducto == null) {
+        if (idProducto == null || idProducto.trim().isEmpty()) {
             mostrarInfo("Aviso", "Selecciona un producto de la lista primero.");
             return;
         }
@@ -92,14 +106,14 @@ public class VentaBeanUI implements Serializable {
 
     /**
      * Disminuye la cantidad de un producto. Si es 1, se remueve automáticamente.
-     * @param idProducto ID del producto desde el botón de la tabla, o null si proviene de un atajo de teclado (-).
+     * @param idProducto ID del producto desde el botón de la tabla, o vacío si proviene del atajo de teclado (-).
      */
     public void disminuirCantidad(String idProducto) {
-        if (idProducto == null && itemSeleccionado != null) {
+        if ((idProducto == null || idProducto.trim().isEmpty()) && itemSeleccionado != null) {
             idProducto = itemSeleccionado.getIdProducto().getIdProducto();
         }
 
-        if (idProducto == null) {
+        if (idProducto == null || idProducto.trim().isEmpty()) {
             mostrarInfo("Aviso", "Selecciona un producto de la lista primero.");
             return;
         }
@@ -119,14 +133,14 @@ public class VentaBeanUI implements Serializable {
 
     /**
      * Elimina por completo un producto del carrito sin importar su cantidad actual.
-     * @param idProducto ID del producto desde el botón de la tabla, o null si proviene de un atajo de teclado (F3).
+     * @param idProducto ID del producto desde el botón de la tabla, o vacío si proviene del atajo de teclado (F3).
      */
     public void eliminarDelCarrito(String idProducto) {
-        if (idProducto == null && itemSeleccionado != null) {
+        if ((idProducto == null || idProducto.trim().isEmpty()) && itemSeleccionado != null) {
             idProducto = itemSeleccionado.getIdProducto().getIdProducto();
         }
 
-        if (idProducto == null) {
+        if (idProducto == null || idProducto.trim().isEmpty()) {
             mostrarInfo("Aviso", "Selecciona un producto de la lista primero.");
             return;
         }

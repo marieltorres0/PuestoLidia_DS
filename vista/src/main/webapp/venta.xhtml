@@ -72,6 +72,16 @@
             font-size: 1.1rem !important; font-weight: bold; color: #3A4665 !important;
             padding: 6px 10px !important; vertical-align: middle !important;
             border-bottom: 1px solid #9C9C9C !important; border-right: none !important; border-left: none !important;
+            cursor: pointer; /* Cursor de mano para indicar que es seleccionable */
+        }
+
+        /* Resalte visual de la fila seleccionada */
+        .tabla-venta .ui-datatable-data tr.ui-state-highlight {
+            background-color: #e6f0ff !important;
+            border-left: 5px solid #5F87EE !important;
+        }
+        .tabla-venta .ui-datatable-data tr.ui-state-highlight td {
+            color: #000 !important;
         }
 
         .btn-qty {
@@ -88,6 +98,7 @@
             background-color: #ff4d4d !important; color: white !important;
             border: none !important; padding: 6px 12px !important; border-radius: 4px !important;
         }
+        .btn-basura:hover { background-color: #cc0000 !important; }
 
         /* ================= ESTILOS SECCIÓN INFERIOR ================= */
         .footer-grid {
@@ -126,7 +137,6 @@
         .modal-estandar.ui-dialog { border-radius: 15px !important; overflow: hidden; border: 3px solid #3A4665; }
         .modal-estandar .ui-dialog-titlebar { background-color: #3A4665 !important; color: white !important; }
 
-        /* Nuevos estilos para el modal de éxito para que muestre la X limpia */
         .modal-exito .ui-dialog-titlebar { background: transparent !important; border: none !important; }
         .modal-exito .ui-dialog-title { display: none; }
         .modal-exito.ui-dialog { border-radius: 15px !important; overflow: hidden; border: 4px solid #5F87EE; text-align: center; }
@@ -170,14 +180,37 @@
 
                 <p:hotkey bind="esc" handler="PF('wvModalCancelar').show();" />
                 <p:hotkey bind="f1" handler="PF('wvBtnCobrar').jq.click();" />
+
+                <p:hotkey bind="+" action="#{ventaBeanUI.aumentarCantidad(null)}" update="tablaVentas panelTotales notificacion" />
+                <p:hotkey bind="-" action="#{ventaBeanUI.disminuirCantidad(null)}" update="tablaVentas panelTotales btncancelar btncobrar notificacion" />
+                <p:hotkey bind="f3" action="#{ventaBeanUI.eliminarDelCarrito(null)}" update="tablaVentas panelTotales btncancelar btncobrar notificacion" />
+
                 <p:focus for="inputBusqueda" />
                 <p:defaultCommand target="btnAgregar" />
 
                 <div class="panel-busqueda">
-                    <p:inputText id="inputBusqueda"
-                                 value="#{ventaBeanUI.idProductoBusqueda}"
-                                 placeholder="Escanear código o teclear nombre..."
-                                 styleClass="input-busqueda-lg" autocomplete="off"/>
+                    <p:autoComplete id="inputBusqueda"
+                                    value="#{ventaBeanUI.idProductoBusqueda}"
+                                    completeMethod="#{ventaBeanUI.buscarCoincidencias}"
+                                    var="prod"
+                                    itemLabel="#{prod.idProducto}"
+                                    itemValue="#{prod.idProducto}"
+                                    placeholder="Escanear código o teclear nombre..."
+                                    inputStyleClass="input-busqueda-lg"
+                                    style="width: 100%;"
+                                    forceSelection="false"
+                                    minQueryLength="1"
+                                    delay="300"
+                                    scrollHeight="250">
+
+                        <p:column>
+                            <h:outputText value="ID: #{prod.idProducto} | #{prod.nombre} (Stock: #{prod.cantidad})" style="font-weight: bold; color: #3A4665;"/>
+                        </p:column>
+
+                        <p:ajax event="itemSelect" listener="#{ventaBeanUI.agregarProducto}"
+                                update="frmVenta :notificacion"
+                                oncomplete="PrimeFaces.focus('frmVenta:inputBusqueda'); hacerScrollUltimoProducto();" />
+                    </p:autoComplete>
 
                     <p:commandButton id="btnAgregar" value="AGREGAR (ENTER)"
                                      action="#{ventaBeanUI.agregarProducto}"
@@ -189,7 +222,10 @@
                 <div class="contenedor-tabla">
                     <p:dataTable id="tablaVentas" widgetVar="wvTablaVentas" var="item" value="#{ventaBeanUI.carrito}"
                                  styleClass="tabla-venta" scrollable="true" scrollHeight="100%"
-                                 emptyMessage="El carrito está vacío.">
+                                 emptyMessage="El carrito está vacío."
+                                 selectionMode="single" selection="#{ventaBeanUI.itemSeleccionado}" rowKey="#{item.idProducto.idProducto}">
+
+                        <p:ajax event="rowSelect" update=":notificacion" />
 
                         <p:column headerText="CÓDIGO" style="width: 15%; text-align: center;">
                             <h:outputText value="#{item.idProducto.idProducto}" />
@@ -220,7 +256,7 @@
                         </p:column>
 
                         <p:column headerText="QUITAR" style="width: 10%; text-align: center;">
-                            <p:commandButton icon="pi pi-trash" styleClass="btn-basura"
+                            <p:commandButton icon="pi pi-trash" styleClass="btn-basura" title="Quitar producto (F3)"
                                              action="#{ventaBeanUI.eliminarDelCarrito(item.idProducto.idProducto)}"
                                              update=":frmVenta:tablaVentas :frmVenta:panelTotales :frmVenta:btncancelar :frmVenta:btncobrar"
                                              oncomplete="PrimeFaces.focus('frmVenta:inputBusqueda');"/>
@@ -342,7 +378,7 @@
                 </h:outputText>
             </div>
 
-            <p:commandButton id="btnNuevaVenta" value="NUEVA VENTA (ENTER)"
+            <p:commandButton id="btnNuevaVenta" value="CERRAR VENTA (ENTER)"
                              action="#{ventaBeanUI.inicializarVenta}"
                              update=":frmVenta :frmCobro"
                              style="font-size: 1.4rem; padding: 12px 25px; background-color: #3A4665; color: white; border-radius: 8px; margin-bottom: 20px;"
