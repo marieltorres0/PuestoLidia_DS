@@ -7,40 +7,100 @@
 <h:head>
     <title>Inventario - Puesto Lidia</title>
     <style>
-        /* Fondo general */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background-color: #f8f9fa; display: flex; justify-content: center; }
+        /* ========================================= */
+        /* Ajustes Full Screen (Alto y Ancho)        */
+        /* ========================================= */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            width: 100vw;
+            background-color: #fff;
+            overflow: hidden; /* Evita doble scrollbar */
+            display: flex;
+        }
 
-        /* Contenedor tipo "Ventana" con borde grueso */
-        .pantalla-principal { width: 100%; max-width: 1100px; border: 4px solid #1a1a1a; background-color: #fff; display: flex; flex-direction: column; }
+        .pantalla-principal {
+            width: 100%;
+            height: 100%;
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+        }
 
         /* Encabezados */
         .header-azul { background-color: #5b8df2; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 1.3rem; letter-spacing: 1px; border-bottom: 2px solid #1a1a1a; }
         .subheader-gris { background-color: #3e4a5c; color: white; padding: 10px 20px; font-weight: bold; font-size: 1.1rem; letter-spacing: 1px; }
 
-        /* Contenedor central blanco */
-        .contenedor-interior { border: 2px solid #a0a0a0; border-radius: 10px; background: white; padding: 20px 30px; margin: 15px; }
+        /* Contenedor central flexible para ocupar el resto de la pantalla */
+        .contenedor-interior {
+            flex-grow: 1;
+            background: white;
+            padding: 20px 30px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
         .titulo-consulta { text-align: center; font-size: 1.4rem; font-weight: bold; margin-bottom: 25px; color: #000; }
 
         /* Input de búsqueda */
-        .input-busqueda { width: 350px !important; border: 2px solid #a0a0a0 !important; border-radius: 8px !important; padding: 5px 10px !important; font-size: 1rem !important; }
-
-        /* Botones Superiores */
-        .btn-top-rojo { background-color: #ff0000 !important; color: white !important; border: 3px solid #a0a0a0 !important; font-weight: bold !important; border-radius: 8px !important; padding: 2px 15px !important; box-shadow: none !important; }
-        .btn-top-rojo:hover { background-color: #cc0000 !important; }
-
-        /* Botones de Tabla */
-        .btn-pildora-rojo { background-color: #ff0000 !important; color: white !important; border: 2px solid #a0a0a0 !important; font-weight: bold !important; border-radius: 20px !important; font-size: 0.8rem !important; padding: 2px 10px !important; margin-right: 5px; }
-        .btn-pildora-negro { background-color: #000000 !important; color: white !important; border: 2px solid #a0a0a0 !important; font-weight: bold !important; border-radius: 20px !important; font-size: 0.8rem !important; padding: 2px 10px !important; }
+        .input-busqueda { width: 400px !important; border: 2px solid #a0a0a0 !important; border-radius: 8px !important; padding: 5px 10px !important; font-size: 1rem !important; }
 
         /* ========================================= */
-        /* Ajustes de Tabla con Scroll y Selección   */
+        /* Botones Superiores                        */
+        /* ========================================= */
+        .btn-top-rojo {
+            background-color: #4a75c9 !important;
+            color: white !important;
+            border: 2px solid #3e4a5c !important;
+            font-weight: bold !important;
+            border-radius: 8px !important;
+            padding: 4px 15px !important;
+            box-shadow: none !important;
+            transition: background-color 0.3s;
+        }
+        .btn-top-rojo:hover { background-color: #3b5f9e !important; }
+
+        /* ========================================= */
+        /* Botones de Tabla                          */
+        /* ========================================= */
+        .btn-pildora-rojo {
+            background-color: #f39c12 !important;
+            color: white !important;
+            border: 2px solid #d68910 !important;
+            font-weight: bold !important;
+            border-radius: 20px !important;
+            font-size: 0.8rem !important;
+            padding: 3px 12px !important;
+            margin-right: 5px;
+            transition: background-color 0.3s;
+        }
+        .btn-pildora-rojo:hover { background-color: #d68910 !important; }
+
+        .btn-pildora-negro {
+            background-color: #e74c3c !important;
+            color: white !important;
+            border: 2px solid #c0392b !important;
+            font-weight: bold !important;
+            border-radius: 20px !important;
+            font-size: 0.8rem !important;
+            padding: 3px 12px !important;
+            transition: background-color 0.3s;
+        }
+        .btn-pildora-negro:hover { background-color: #c0392b !important; }
+
+        /* ========================================= */
+        /* Ajustes de Tabla con Scroll Dinámico      */
         /* ========================================= */
         .tabla-lidia .ui-datatable-header { background-color: transparent; border: none; padding-bottom: 15px;}
-
         .tabla-lidia .ui-datatable-scrollable-header th { background-color: #5b8df2 !important; color: white !important; text-align: center !important; border: none !important; padding: 10px !important; cursor: pointer; }
         .tabla-lidia .ui-datatable-scrollable-header th:hover { background-color: #4a75c9 !important; }
-
         .tabla-lidia .ui-datatable-scrollable-body th { padding: 0 !important; border: none !important; height: 0 !important; }
+
+        /* Cálculo dinámico de altura para que la tabla llene el espacio disponible */
+        .tabla-lidia .ui-datatable-scrollable-body { height: calc(100vh - 360px) !important; overflow-y: auto; }
 
         .tabla-lidia td { text-align: center; font-weight: bold; color: #4a4a4a; border-bottom: 1px solid #dee2e6 !important; border-right: none !important; border-left: none !important; padding: 12px 5px !important; }
         .tabla-lidia tr:nth-child(even) { background-color: #f8f9fa !important; }
@@ -53,7 +113,7 @@
         .tabla-lidia .ui-datatable-data tr.ui-state-highlight td { color: #000 !important; }
 
         /* Barra Inferior */
-        .footer-azul { background-color: #5b8df2; height: 80px; display: flex; align-items: center; padding-left: 30px; border-top: 4px solid #1a1a1a; }
+        .footer-azul { background-color: #5b8df2; height: 80px; display: flex; align-items: center; padding-left: 30px; border-top: 4px solid #1a1a1a; margin-top: auto; }
         .flecha-regreso { color: white; font-size: 3rem; font-weight: bold; cursor: pointer; text-decoration: none; }
 
         /* Estilos Modales */
@@ -65,7 +125,6 @@
 </h:head>
 
 <h:body>
-    <!-- Notificador global en la esquina. Aquí saldrán los avisos. -->
     <p:growl id="notificacion" showDetail="true" life="4000">
         <p:autoUpdate />
     </p:growl>
@@ -88,22 +147,28 @@
         <div class="contenedor-interior">
             <div class="titulo-consulta">Consulta de productos</div>
 
-            <h:form id="frmInventario">
+            <h:form id="frmInventario" style="display: flex; flex-direction: column; flex-grow: 1;">
 
                 <p:defaultCommand target="btnBuscarOculto" />
 
                 <div style="display: flex; gap: 15px; align-items: flex-end; margin-bottom: 25px;">
                     <div style="flex-grow: 1;">
                         <p:outputLabel value="Buscar producto" style="font-weight: bold; color: #666; display: block; margin-bottom: 5px;"/>
-                        <p:inputText value="#{productoBeanUI.textoBusqueda}" placeholder="Ejemplo: Coca Cola 600ml" styleClass="input-busqueda"/>
+
+                        <p:inputText id="inputBusqueda"
+                                     value="#{productoBeanUI.textoBusqueda}"
+                                     placeholder="Escribir nombre o escanear código..."
+                                     styleClass="input-busqueda">
+
+                            <p:ajax event="keyup" delay="400" listener="#{productoBeanUI.buscarProducto}" update="tablaProductos" />
+
+                        </p:inputText>
                     </div>
 
                     <p:commandButton id="btnBuscarOculto" action="#{productoBeanUI.buscarProducto}" update="tablaProductos" style="display: none;" />
 
                     <p:commandButton value="Entrada" styleClass="btn-top-rojo" actionListener="#{productoBeanUI.abrirModalEntrada}" update=":formEntrada"/>
-                    <p:commandButton value="Registro" styleClass="btn-top-rojo"
-                                     update=":modalRegistro"
-                                     oncomplete="PF('wvModalRegistro').show();">
+                    <p:commandButton value="Registro" styleClass="btn-top-rojo" update=":modalRegistro" oncomplete="PF('wvModalRegistro').show();">
                         <f:setPropertyActionListener target="#{productoBeanUI.esEdicion}" value="false" />
                     </p:commandButton>
                     <p:commandButton value="DESCARGAR PDF" styleClass="btn-top-rojo" ajax="false" icon="pi pi-file-pdf">
@@ -112,7 +177,7 @@
                 </div>
 
                 <p:dataTable id="tablaProductos" var="prod" value="#{productoBeanUI.listaProductos}"
-                             styleClass="tabla-lidia" scrollable="true" scrollHeight="350"
+                             styleClass="tabla-lidia" scrollable="true"
                              selectionMode="single" selection="#{productoBeanUI.productoSeleccionado}" rowKey="#{prod.idProducto}"
                              rowStyleClass="#{prod.cantidad le prod.umbral ? 'fila-critica' : null}">
 
@@ -175,9 +240,6 @@
         </div>
     </div>
 
-    <!-- ========================================================= -->
-    <!-- MODAL DE ENTRADA -->
-    <!-- ========================================================= -->
     <p:dialog id="modalEntrada" widgetVar="wvModalEntrada" header="Entrada de Producto" styleClass="modal-estilo" modal="true" resizable="false" width="400">
         <h:form id="formEntrada">
 
@@ -204,14 +266,11 @@
 
             <div style="display: flex; justify-content: space-between; margin-top: 20px;">
                 <p:commandButton value="CANCELAR" type="button" styleClass="ui-button-outlined ui-button-secondary" onclick="PF('wvModalEntrada').hide();" />
-
-                <!-- El botón actualiza el notificador global (el globito) -->
                 <p:commandButton value="GUARDAR" action="#{productoBeanUI.registrarEntrada}" styleClass="ui-button-danger" update="formEntrada :frmInventario:tablaProductos :notificacion" />
             </div>
         </h:form>
     </p:dialog>
 
-    <!-- MODAL DE REGISTRO -->
     <p:dialog id="modalRegistro" widgetVar="wvModalRegistro"
               header="#{productoBeanUI.esEdicion ? 'Modificar Producto' : 'Registro de producto'}"
               styleClass="modal-estilo" modal="true" resizable="false" closeOnEscape="true"
@@ -265,7 +324,6 @@
         </h:form>
     </p:dialog>
 
-    <!-- MODAL DE ELIMINACIÓN -->
     <p:dialog id="modalEliminar" widgetVar="wvModalEliminar"
               header="Eliminar Producto"
               styleClass="modal-estilo" modal="true" resizable="false" closeOnEscape="true"
@@ -293,7 +351,5 @@
             </div>
         </h:form>
     </p:dialog>
-
-
 </h:body>
 </html>

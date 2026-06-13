@@ -31,8 +31,8 @@ public class ProductoHelper implements Serializable {
     }
 
     // Buscar productos por nombre (Para la barra de búsqueda)
-    public List<Producto> buscarPorNombre(String filtro) {
-        return ServiceFacadeLocator.getInstanceFacadeProducto().buscarPorNombre(filtro);
+    public List<Producto> filtrarPorIdOPorNombre(String filtro) {
+        return ServiceFacadeLocator.getInstanceFacadeProducto().filtrarPorIdOPorNombre(filtro);
     }
 
     // ACTUALIZAR PRODUCTO (NUEVO: Para guardar la suma cuando hagamos una Entrada)

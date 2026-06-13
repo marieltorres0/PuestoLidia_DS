@@ -31,8 +31,8 @@ public class FacadeProducto {
         return delegateProducto.obtenerInventarioOrdenado();
     }
 
-    public List<Producto> buscarPorNombre(String filtro) {
-        return delegateProducto.buscarPorNombre(filtro);
+    public List<Producto> filtrarPorIdOPorNombre(String filtro) {
+        return delegateProducto.filtrarPorIdoPorNombre(filtro);
     }
 
     public void actualizarProducto(Producto producto) {

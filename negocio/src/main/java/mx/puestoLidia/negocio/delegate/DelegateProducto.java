@@ -28,8 +28,8 @@ public class DelegateProducto {
     }
 
     // Buscar productos por coincidencia de nombre
-    public List<Producto> buscarPorNombre(String filtro) {
-        return ServiceLocator.getInstanceProductoDAO().buscarPorNombre(filtro);
+    public List<Producto> filtrarPorIdoPorNombre(String filtro) {
+        return ServiceLocator.getInstanceProductoDAO().filtrarPorIDoPorNombre(filtro);
     }
     public void actualizarProducto(Producto producto) {
         ServiceLocator.getInstanceProductoDAO().update(producto);

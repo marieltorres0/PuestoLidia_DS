@@ -236,7 +236,7 @@ public class ProductoBeanUI implements Serializable {
     // 2. Método para la barra de búsqueda
     public void buscarProducto() {
         if (textoBusqueda != null && !textoBusqueda.trim().isEmpty()) {
-            listaProductos = productoHelper.buscarPorNombre(textoBusqueda);
+            listaProductos = productoHelper.filtrarPorIdOPorNombre(textoBusqueda);
         } else {
             cargarInventario(); // Si borran el texto, vuelve a cargar todo
         }

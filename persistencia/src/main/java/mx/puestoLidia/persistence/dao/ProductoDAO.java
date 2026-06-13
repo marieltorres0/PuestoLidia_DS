@@ -52,8 +52,20 @@ public class ProductoDAO extends AbstractDAO<Producto> {
     }
 
     // Buscar productos por nombre
-    public List<Producto> buscarPorNombre(String filtro) {
-        String jpql = "SELECT p FROM Producto p WHERE LOWER(p.nombre) LIKE LOWER(:filtro) ORDER BY p.nombre ASC";
+//    public List<Producto> buscarPorNombre(String filtro) {
+//        String jpql = "SELECT p FROM Producto p WHERE LOWER(p.nombre) LIKE LOWER(:filtro) ORDER BY p.nombre ASC";
+//        return execute(em -> {
+//            em.clear(); // <-- LIMPIA LA MEMORIA AQUÍ TAMBIÉN
+//            return em.createQuery(jpql, Producto.class)
+//                    .setParameter("filtro", "%" + filtro + "%")
+//                    .getResultList();
+//        });
+//    }
+    // Buscar productos por nombre o ID
+    public List<Producto> filtrarPorIDoPorNombre(String filtro) {
+        // Agregamos la condición OR LOWER(p.idProducto) LIKE LOWER(:filtro)
+        String jpql = "SELECT p FROM Producto p WHERE LOWER(p.nombre) LIKE LOWER(:filtro) OR LOWER(p.idProducto) LIKE LOWER(:filtro) ORDER BY p.nombre ASC";
+
         return execute(em -> {
             em.clear(); // <-- LIMPIA LA MEMORIA AQUÍ TAMBIÉN
             return em.createQuery(jpql, Producto.class)
