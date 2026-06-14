@@ -178,7 +178,7 @@
         <div class="contenedor-interior">
             <h:form id="frmVenta" style="display: flex; flex-direction: column; height: 100%; min-height: 0;">
 
-                <p:hotkey bind="esc" handler="PF('wvModalCancelar').show();" />
+                <p:hotkey bind="esc" handler="if($('.ui-dialog:visible').length === 0) { PF('wvModalCancelar').show(); }" />
                 <p:hotkey bind="f1" handler="PF('wvBtnCobrar').jq.click();" />
 
                 <p:hotkey bind="+" action="#{ventaBeanUI.aumentarCantidad(null)}" update="tablaVentas panelTotales notificacion" />
@@ -242,7 +242,7 @@
                             <h:outputText value="#{item.idProducto.nombre}" />
                         </p:column>
 
-                        <p:column headerText="SUBTOTAL" style="width: 20%; text-align: right;">
+                        <p:column headerText="IMPORTE" style="width: 20%; text-align: right;">
                             <h:outputText value="$ #{item.cantidad * item.idProducto.precio}">
                                 <f:convertNumber pattern="#,##0.00" />
                             </h:outputText>
@@ -314,7 +314,7 @@
     </p:dialog>
 
     <p:dialog id="modalCobro" widgetVar="wvModalCobro" header="Confirmar Pago" modal="true"
-              resizable="false" closeOnEscape="true" width="450" styleClass="modal-estandar"
+              resizable="false" closeOnEscape="true" width="500" styleClass="modal-estandar"
               showEffect="fade" hideEffect="fade">
         <p:ajax event="close" oncomplete="PrimeFaces.focus('frmVenta:inputBusqueda');" />
 
@@ -323,18 +323,41 @@
             <p:defaultCommand target="btnProcesarCobro" />
 
             <div style="text-align: center; margin-bottom: 20px;">
-                <h:outputText value="RESTANTE A COBRAR:" style="font-size: 1.2rem; color: #666; display: block;"/>
+                <p:selectOneButton value="#{ventaBeanUI.tipoPago}" unselectable="false">
+                    <f:selectItem itemLabel="Pago en Efectivo" itemValue="efectivo" />
+                    <f:selectItem itemLabel="Venta a Crédito" itemValue="credito" />
+                    <p:ajax update="panelMetodoPago btnProcesarCobro" />
+                </p:selectOneButton>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 15px;">
+                <h:outputText value="TOTAL A COBRAR:" style="font-size: 1.2rem; color: #666; display: block;"/>
                 <h:outputText value="$ #{ventaBeanUI.total}" style="font-size: 2.5rem; color: #5F87EE; font-weight: bold;">
                     <f:convertNumber pattern="#,##0.00" />
                 </h:outputText>
             </div>
 
-            <div style="margin-bottom: 25px;">
-                <p:outputLabel for="inputEfectivo" value="Monto Ingresado:" style="font-weight: bold; display: block; margin-bottom: 5px; color: #3A4665;"/>
-                <p:inputNumber id="inputEfectivo" value="#{ventaBeanUI.montoRecibido}"
-                               styleClass="input-efectivo-modal"
-                               symbol="$ " decimalPlaces="2" onfocus="this.select();"/>
-            </div>
+            <h:panelGroup id="panelMetodoPago" layout="block" style="min-height: 100px;">
+
+                <h:panelGroup rendered="#{ventaBeanUI.tipoPago eq 'efectivo' or empty ventaBeanUI.tipoPago}" layout="block">
+                    <div style="margin-bottom: 25px;">
+                        <p:outputLabel for="inputEfectivo" value="Monto Ingresado:" style="font-weight: bold; display: block; margin-bottom: 5px; color: #3A4665;"/>
+                        <p:inputNumber id="inputEfectivo" value="#{ventaBeanUI.montoRecibido}"
+                                       styleClass="input-efectivo-modal"
+                                       symbol="$ " decimalPlaces="2" onfocus="this.select();"/>
+                    </div>
+                </h:panelGroup>
+
+                <h:panelGroup rendered="#{ventaBeanUI.tipoPago eq 'credito'}" layout="block">
+                    <div style="background-color: #f8f9fa; border: 2px dashed #9C9C9C; border-radius: 8px; padding: 20px; text-align: center; margin-bottom: 25px;">
+                        <i class="pi pi-users" style="font-size: 2.5rem; color: #9C9C9C; margin-bottom: 10px;"></i>
+                        <h:outputText value="Selección de Clientes" style="display: block; font-weight: bold; font-size: 1.2rem; color: #3A4665;"/>
+                        <h:outputText value="PROXIMAMENTE" style="display: block; color: #666; font-size: 0.95rem; margin-top: 5px;"/>
+                        <p:commandButton value="Buscar Cliente..." type="button" disabled="true" icon="pi pi-search" styleClass="ui-button-secondary ui-button-outlined" style="margin-top: 15px;"/>
+                    </div>
+                </h:panelGroup>
+
+            </h:panelGroup>
 
             <div style="display: flex; justify-content: space-between; gap: 10px;">
                 <p:commandButton value="REGRESAR" type="button"
@@ -344,6 +367,7 @@
                 <p:commandButton id="btnProcesarCobro" value="ABONAR/COBRAR (ENTER)"
                                  action="#{ventaBeanUI.procesarCobro}"
                                  update=":notificacion :frmCobro :frmExito"
+                                 disabled="#{ventaBeanUI.tipoPago eq 'credito'}"
                                  styleClass="ui-button-primary" style="flex-grow: 1; padding: 10px; font-weight: bold;"/>
             </div>
         </h:form>
