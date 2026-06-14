@@ -29,6 +29,7 @@ public class VentaBeanUI implements Serializable {
     private String idProductoBusqueda;
     private List<ItemVenta> carrito;
     private ItemVenta itemSeleccionado; // Rastrea qué fila está seleccionada en la tabla
+    private String tipoPago = "efectivo"; // por defecto
 
     // 'total' funciona dinámicamente: representa el total del carrito,
     // pero durante el cobro representa lo que "falta por pagar"
@@ -271,4 +272,7 @@ public class VentaBeanUI implements Serializable {
 
     public BigDecimal getMontoAcumulado() { return montoAcumulado; }
     public void setMontoAcumulado(BigDecimal montoAcumulado) { this.montoAcumulado = montoAcumulado; }
+
+    public String getTipoPago() {return tipoPago;}
+    public void setTipoPago(String tipoPago) {this.tipoPago = tipoPago;}
 }
