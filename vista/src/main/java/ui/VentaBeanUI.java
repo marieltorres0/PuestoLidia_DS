@@ -58,11 +58,17 @@ public class VentaBeanUI implements Serializable {
     }
 
     // muestra las coindicencias del campo de busqueda
-    public List<Producto> buscarCoincidencias(String query){
+    public List<String> buscarCoincidencias(String query){
         if(query == null || query.trim().isEmpty()){
             return new ArrayList<>();
         }
-        return productoHelper.filtrarPorIdOPorNombre(query);
+        List<Producto> productos = productoHelper.filtrarPorIdOPorNombre(query);
+        List<String> resultados = new ArrayList<>();
+
+        for(Producto p : productos){
+            resultados.add(p.getIdProducto() + " | " + p.getNombre());
+        }
+        return resultados;
     }
 
     // Se ingresa el id en el campo de texto (escáner o manual)
@@ -71,7 +77,12 @@ public class VentaBeanUI implements Serializable {
             return;
         }
         try {
-            ventaHelper.agregrarOSumarProductoEnCarrito(idProductoBusqueda, 1, carrito);
+            String idReal = idProductoBusqueda;
+            if (idProductoBusqueda.contains(" | ")) {
+                idReal = idProductoBusqueda.substring(0, idProductoBusqueda.indexOf(" | "));
+            }
+
+            ventaHelper.agregrarOSumarProductoEnCarrito(idReal.trim(), 1, carrito);
             recalcularTotalVenta();
             // Limpiamos el campo de búsqueda tanto en éxito como en error
             this.idProductoBusqueda = null;
