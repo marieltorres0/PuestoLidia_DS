@@ -4,7 +4,6 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.StoredProcedureQuery;
-import mx.puestoLidia.entity.Producto;
 
 import java.util.List;
 import java.util.Optional;
@@ -140,7 +139,6 @@ public abstract class AbstractDAO<T> {
     }
 
 
-
     public List<T> executeNativeQuery(String sql) {
         return execute(em ->
                 em.createNativeQuery(sql, entityClass)
@@ -174,10 +172,7 @@ public abstract class AbstractDAO<T> {
             if (tx.isActive()) tx.rollback();
             throw e;
         }
+
+
     }
-
-
-
-
-
 }
