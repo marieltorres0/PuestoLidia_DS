@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+
+<h:head>
+    <title>Gestión de Clientes - Puesto Lidia</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .formulario-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            border-left: 5px solid #667eea;
+        }
+
+        .formulario-section h2 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+
+        /* Ajuste para que PrimeFaces tome el estilo de tus inputs */
+        .form-group input, .form-group .ui-inputfield {
+            padding: 12px 15px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: all 0.3s;
+            background: white;
+            box-shadow: none;
+        }
+
+        .form-group input:focus, .form-group .ui-inputfield:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+            background: #f9f9f9;
+        }
+
+        .form-group input::placeholder, .form-group .ui-inputfield::placeholder {
+            color: #95a5a6;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        .botones {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5568d3 0%, #6a3a8f 100%);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 0.85em;
+        }
+
+        .search-section {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-section .ui-inputfield {
+            flex: 1;
+            min-width: 250px;
+            padding: 10px 15px;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            font-size: 1em;
+        }
+
+        .search-section .ui-inputfield:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .tabla-section {
+            margin-top: 30px;
+        }
+
+        .tabla-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .ui-datatable {
+            width: 100%;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .ui-datatable .ui-datatable-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px !important;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .ui-datatable .ui-datatable-thead > tr > th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            padding: 15px !important;
+            font-weight: 600;
+            border-bottom: 2px solid #ecf0f1;
+            text-align: left;
+        }
+
+        .ui-datatable .ui-datatable-tbody > tr {
+            border-bottom: 1px solid #ecf0f1;
+            transition: background 0.2s;
+        }
+
+        .ui-datatable .ui-datatable-tbody > tr:hover {
+            background: #f8f9fa;
+        }
+
+        .ui-datatable .ui-datatable-tbody > tr > td {
+            padding: 15px !important;
+            color: #555;
+        }
+
+        .ui-datatable .ui-datatable-footer {
+            background: #f8f9fa;
+            padding: 15px !important;
+            border-top: 2px solid #ecf0f1;
+        }
+
+        .ui-paginator {
+            background: transparent !important;
+            border: none !important;
+            padding: 10px 0 !important;
+        }
+
+        .ui-paginator .ui-paginator-page {
+            background: #667eea !important;
+            border-color: #667eea !important;
+            color: white !important;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .acciones .btn-small {
+            padding: 6px 10px;
+            font-size: 0.8em;
+            margin: 0;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #95a5a6;
+            font-size: 1.1em;
+        }
+
+        .ui-dialog .ui-dialog-titlebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .ui-dialog .ui-dialog-content {
+            padding: 25px;
+        }
+
+        .ui-dialog .ui-dialog-buttonpane {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: right;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        .ui-messages {
+            margin-bottom: 20px;
+        }
+
+        .ui-message {
+            padding: 15px 20px !important;
+            border-radius: 8px !important;
+            border-left: 4px solid !important;
+            margin-bottom: 10px !important;
+        }
+
+        .ui-message-info {
+            background: #d1ecf1 !important;
+            border-color: #0c5460 !important;
+            color: #0c5460 !important;
+        }
+
+        .ui-message-error {
+            background: #f8d7da !important;
+            border-color: #721c24 !important;
+            color: #721c24 !important;
+        }
+
+        .ui-message-success {
+            background: #d4edda !important;
+            border-color: #155724 !important;
+            color: #155724 !important;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-adeudo {
+            background: #e74c3c;
+        }
+
+        .monto {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 8px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-section {
+                flex-direction: column;
+            }
+
+            .search-section .ui-inputfield {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .botones {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .acciones {
+                flex-direction: column;
+            }
+
+            .acciones .btn-small {
+                width: 100%;
+            }
+        }
+    </style>
+</h:head>
+
+<h:body>
+    <div class="container">
+        <div class="header">
+            <h1>Gestión de Clientes</h1>
+            <p>Sistema de registro y administración de clientes - Puesto Lidia</p>
+        </div>
+
+        <div class="content">
+
+            <h:form id="clienteForm">
+                <p:messages id="messages" showSummary="true" showDetail="true" autoUpdate="true" closable="true"/>
+
+                <div class="formulario-section">
+                    <h:panelGroup rendered="#{not clienteBean.esEdicion}">
+                        <h2>Registrar Nuevo Cliente</h2>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{clienteBean.esEdicion}">
+                        <h2>Modificar Cliente</h2>
+                    </h:panelGroup>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <h:outputLabel for="nombre" value="Nombre " />
+                            <h:outputText value="*" styleClass="required" />
+
+                            <p:inputText id="nombre"
+                                         value="#{clienteBean.nombre}"
+                                         placeholder="Ej: Juan García López"
+                                         maxlength="50"
+                                         required="true"
+                                         requiredMessage="El nombre es requerido." />
+                            <small style="color: #7f8c8d; margin-top: 5px;">
+                                Máximo 50 caracteres, sin caracteres especiales
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <h:outputLabel for="telefono" value="Teléfono " />
+                            <h:outputText value="*" styleClass="required" />
+
+                            <p:inputText id="telefono"
+                                         value="#{clienteBean.telefono}"
+                                         placeholder="Ej: 6141234567"
+                                         maxlength="10"
+                                         required="true"
+                                         requiredMessage="El teléfono es requerido."
+                                         pt:inputmode="numeric"
+                                         pt:pattern="[0-9]{1,10}" />
+                            <small style="color: #7f8c8d; margin-top: 5px;">
+                                Máximo 10 dígitos, solo números, debe ser único
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="botones">
+                        <h:panelGroup rendered="#{not clienteBean.esEdicion}">
+                            <div class="btn-group">
+                                <h:commandButton value="Registrar"
+                                                 action="#{clienteBean.registrarCliente()}"
+                                                 styleClass="btn btn-primary"
+                                                 onclick="return validarFormulario();"/>
+                                <h:commandButton value="Limpiar"
+                                                 action="#{clienteBean.limpiarDatos()}"
+                                                 immediate="true"
+                                                 styleClass="btn btn-secondary"/>
+                            </div>
+                        </h:panelGroup>
+
+                        <h:panelGroup rendered="#{clienteBean.esEdicion}">
+                            <div class="btn-group">
+                                <h:commandButton value="Guardar Cambios"
+                                                 action="#{clienteBean.modificarCliente()}"
+                                                 styleClass="btn btn-success"
+                                                 onclick="return validarFormulario();"/>
+                                <h:commandButton value="Cancelar"
+                                                 action="#{clienteBean.limpiarDatos()}"
+                                                 immediate="true"
+                                                 styleClass="btn btn-secondary"/>
+                            </div>
+                        </h:panelGroup>
+                    </div>
+                </div>
+
+                <div class="search-section">
+                    <h:outputLabel for="busqueda" value="Buscar por ID, Nombre o Teléfono: " style="font-weight: 600; color: #2c3e50;"/>
+                    <p:inputText id="busqueda"
+                                 value="#{clienteBean.textoBusqueda}"
+                                 placeholder="Ingresa ID o nombre del cliente"/>
+
+                    <p:commandButton value="Buscar"
+                                     action="#{clienteBean.buscarCliente()}"
+                                     process="@this busqueda"
+                                     update="clientesTable"
+                                     styleClass="btn btn-primary btn-small"/>
+                    <p:commandButton value="Mostrar Todos"
+                                     action="#{clienteBean.cargarTodosClientes()}"
+                                     process="@this"
+                                     update="clientesTable busqueda"
+                                     styleClass="btn btn-secondary btn-small"/>
+                    <p:commandButton value="Con Adeudo"
+                                     action="#{clienteBean.cargarClientesConAdeudo()}"
+                                     process="@this"
+                                     update="clientesTable"
+                                     styleClass="btn btn-danger btn-small"/>
+                </div>
+
+                <div class="tabla-section">
+                    <h2>Lista de Clientes Registrados</h2>
+
+                    <p:dataTable value="#{clienteBean.listaClientes}"
+                                 var="cliente"
+                                 responsive="true"
+                                 paginator="true"
+                                 rows="10"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15,20"
+                                 emptyMessage="No hay clientes registrados"
+                                 styleClass="table"
+                                 id="clientesTable">
+
+                        <f:facet name="header">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span>Clientes Registrados</span>
+                                <span class="badge" style="background: #667eea;">
+                                    Total: #{empty clienteBean.listaClientes ? '0' : clienteBean.listaClientes.size()}
+                                </span>
+                            </div>
+                        </f:facet>
+
+                        <p:column headerText="ID"
+                                  sortBy="#{cliente.id}"
+                                  style="width: 80px; text-align: center;">
+                            <div style="background: #667eea; color: white; padding: 8px; border-radius: 6px; font-weight: 600;">
+                                #{cliente.id}
+                            </div>
+                        </p:column>
+
+                        <p:column headerText="Nombre"
+                                  sortBy="#{cliente.nombre}"
+                                  style="width: 280px;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span>#{cliente.nombre}</span>
+                            </div>
+                        </p:column>
+
+                        <p:column headerText="Teléfono"
+                                  sortBy="#{cliente.telefono}"
+                                  style="width: 150px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-family: 'Courier New', monospace; font-weight: 600;">
+                                    #{cliente.telefono}
+                                </span>
+                            </div>
+                        </p:column>
+
+                        <p:column headerText="Adeudo"
+                                  sortBy="#{cliente.adeudo}"
+                                  style="width: 150px; text-align: right;">
+                            <h:panelGroup rendered="#{cliente.adeudo > 0}">
+                                <span class="badge badge-adeudo monto">
+                                    <h:outputText value="#{cliente.adeudo}">
+                                        <f:convertNumber type="currency" currencySymbol="$"/>
+                                    </h:outputText>
+                                </span>
+                            </h:panelGroup>
+                            <h:panelGroup rendered="#{cliente.adeudo == 0}">
+                                <span class="badge" style="background: #27ae60;">
+                                    Al día
+                                </span>
+                            </h:panelGroup>
+                        </p:column>
+
+                        <p:column headerText="Acciones"
+                                  style="width: 220px; text-align: center;">
+                            <div class="acciones">
+                                <h:commandButton value="Editar"
+                                                 action="#{clienteBean.prepararModificacion(cliente.id)}"
+                                                 styleClass="btn btn-primary btn-small"/>
+                                <h:commandButton value="Eliminar"
+                                                 action="#{clienteBean.prepararEliminacion(cliente.id)}"
+                                                 onclick="PF('dlgConfirmarEliminar').show(); return false;"
+                                                 styleClass="btn btn-danger btn-small"/>
+                            </div>
+                        </p:column>
+
+                    </p:dataTable>
+                </div>
+
+            </h:form>
+
+            <p:dialog header="Confirmar Eliminación"
+                      widgetVar="dlgConfirmarEliminar"
+                      modal="true"
+                      showEffect="fade"
+                      hideEffect="fade"
+                      width="400px">
+
+                <h:form>
+                    <p:outputPanel id="detail">
+                        <h:panelGroup rendered="#{not empty clienteBean.clienteSeleccionado}">
+                            <div style="margin-bottom: 20px;">
+                                <p style="color: #e74c3c; font-weight: 600; margin-bottom: 15px;">
+                                    ¿Estás seguro de que deseas eliminar este cliente?
+                                </p>
+
+                                <div style="background: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                    <p style="margin-bottom: 10px;">
+                                        <strong>Nombre:</strong> #{clienteBean.clienteSeleccionado.nombre}
+                                    </p>
+                                    <p style="margin-bottom: 10px;">
+                                        <strong>Teléfono:</strong> #{clienteBean.clienteSeleccionado.telefono}
+                                    </p>
+                                    <p>
+                                        <strong>Adeudo:</strong>
+                                        <h:outputText value="#{clienteBean.clienteSeleccionado.adeudo}">
+                                            <f:convertNumber type="currency" currencySymbol="$"/>
+                                        </h:outputText>
+                                    </p>
+                                </div>
+
+                                <p style="color: #7f8c8d; font-size: 0.9em;">
+                                    Esta acción no se puede deshacer.
+                                </p>
+                            </div>
+                        </h:panelGroup>
+                    </p:outputPanel>
+
+                    <f:facet name="footer">
+                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                            <h:commandButton value="Sí, Eliminar"
+                                             action="#{clienteBean.eliminarCliente()}"
+                                             styleClass="btn btn-danger"
+                                             onclick="PF('dlgConfirmarEliminar').hide();"/>
+                            <h:commandButton value="Cancelar"
+                                             onclick="PF('dlgConfirmarEliminar').hide();"
+                                             styleClass="btn btn-secondary"
+                                             type="button"/>
+                        </div>
+                    </f:facet>
+                </h:form>
+            </p:dialog>
+
+        </div>
+
+    </div>
+
+    <script>
+        function validarFormulario() {
+            // Nota: JSF agrega el ID del form a los elementos hijos.
+            var nombreInput = document.getElementById('clienteForm:nombre');
+            var telefonoInput = document.getElementById('clienteForm:telefono');
+
+            if (!nombreInput || !telefonoInput) return true;
+
+            var nombre = nombreInput.value.trim();
+            var telefono = telefonoInput.value.trim();
+
+            if (nombre === '') {
+                alert('El nombre es requerido');
+                return false;
+            }
+
+            if (telefono === '') {
+                alert('El teléfono es requerido');
+                return false;
+            }
+
+            if (nombre.length > 50) {
+                alert('El nombre no debe exceder 50 caracteres');
+                return false;
+            }
+
+            if (!/^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]*$/.test(nombre)) {
+                alert('El nombre contiene caracteres no permitidos');
+                return false;
+            }
+
+            if (!/^[0-9]*$/.test(telefono)) {
+                alert('El teléfono solo debe contener números');
+                return false;
+            }
+
+            if (telefono.length > 10) {
+                alert('El teléfono no debe exceder 10 dígitos');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Permitir solo números en el campo de teléfono
+        var telInput = document.getElementById('clienteForm:telefono');
+        if(telInput) {
+            telInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        }
+
+        // Permitir solo caracteres alfanuméricos en el campo de nombre
+        var nomInput = document.getElementById('clienteForm:nombre');
+        if(nomInput) {
+            nomInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]/g, '');
+            });
+        }
+    </script>
+
+</h:body>
+</html>
