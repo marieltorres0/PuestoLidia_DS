@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import mx.puestoLidia.entity.*;
 import mx.puestoLidia.persistence.persistence.AbstractDAO;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class VentaDAO extends AbstractDAO<Venta> {
@@ -19,15 +20,10 @@ public class VentaDAO extends AbstractDAO<Venta> {
         EntityManager em = getEntityManager();
 
         try {
-            // 1. Iniciamos la transacción
             em.getTransaction().begin();
-
-
-
-            // 3. Guardamos la cabecera de la venta
             em.persist(nuevaVenta);
 
-            // 4. Procesamos el carrito
+            // procesar carrito
             for (ItemVenta item : carrito) {
                 if (item.getId() == null) {
                     item.setId(new ItemVentaId());
@@ -41,7 +37,7 @@ public class VentaDAO extends AbstractDAO<Venta> {
                     throw new RuntimeException("El producto con ID " + item.getIdProducto().getIdProducto() + " no existe.");
                 }
 
-                // Vinculamos el ítem con los objetos reales de esta sesión
+                // Vinculamos el ítem con los objetos reales
                 item.setIdProducto(productoReal);
                 item.setIdVenta(nuevaVenta);
 
@@ -49,12 +45,29 @@ public class VentaDAO extends AbstractDAO<Venta> {
                 em.persist(item);
 
                 // ACTUALIZAMOS EL STOCK
-                // Al modificar el objeto 'productoReal' que sacamos con em.find,
-                // Hibernate hará el UPDATE en la tabla producto automáticamente al hacer commit.
                 productoReal.setCantidad(productoReal.getCantidad() - item.getCantidad());
             }
 
-            // 5. Confirmamos la transacción (Aquí se ejecutan los INSERTS de venta/items y el UPDATE de stock)
+            // SI LA VENTA ES A CREDITO (VEN-US2)
+            if ("credito".equalsIgnoreCase(nuevaVenta.getTipo()) && nuevaVenta.getIdCliente() != null) {
+                // Buscamos al cliente en la base de datos para relacionarlo
+                Cliente clienteReal = em.find(Cliente.class, nuevaVenta.getIdCliente().getId());
+
+                if (clienteReal != null) {
+                    // calcular adeudo
+                    BigDecimal deudaGenerada = nuevaVenta.getTotal().subtract(nuevaVenta.getMonto());
+
+                    // actualizar adeudo
+                    BigDecimal nuevoAdeudo = clienteReal.getAdeudo().add(deudaGenerada);
+                    clienteReal.setAdeudo(nuevoAdeudo);
+
+                    // Al modificar 'clienteReal', Hibernate hará el UPDATE automático
+                } else {
+                    throw new RuntimeException("El cliente asignado a la venta a crédito no existe en la base de datos.");
+                }
+            }
+
+            // Confirmamos la transacción (Aquí se ejecutan los INSERTS de venta/items, UPDATE de stock y UPDATE de cliente)
             em.getTransaction().commit();
             System.out.println("¡Transacción completada con éxito en la Base de Datos!");
 
@@ -63,10 +76,6 @@ public class VentaDAO extends AbstractDAO<Venta> {
                 em.getTransaction().rollback();
             }
             throw new RuntimeException("Error DAO: No se pudo completar la transacción de la venta.", e);
-        } finally {
-            if (em.isOpen()) {
-                em.close();
-            }
         }
     }
 
@@ -79,7 +88,8 @@ public class VentaDAO extends AbstractDAO<Venta> {
             throw new RuntimeException("Error DAO: No se pudo guardar la venta en la base de datos.",e);
         }
     }
-    // el método heredado del abstract devuelve Optiona, si no existe la venta con el id recibido retorna null
+
+    // el método heredado del abstract devuelve Optional, si no existe la venta con el id recibido retorna null
     public Venta buscarVentaPorId(Integer idBuscar){
         return find(idBuscar).orElse(null);
     }
