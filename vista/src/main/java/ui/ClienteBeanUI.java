@@ -1,6 +1,5 @@
 package ui;
 
-
 import mx.puestoLidia.entity.Cliente;
 import helper.ClienteHelper;
 import jakarta.faces.application.FacesMessage;
@@ -35,6 +34,7 @@ public class ClienteBeanUI implements Serializable {
     private String nombre;
     private String telefono;
     private BigDecimal adeudo;
+    private BigDecimal montoAbono; // Nuevo atributo para manejar el abono temporal
 
     // ============ ATRIBUTOS DE CONTROL ============
     private List<Cliente> listaClientes;
@@ -73,7 +73,6 @@ public class ClienteBeanUI implements Serializable {
             mostrarError("Validación", "El nombre no debe exceder 50 caracteres");
             return false;
         }
-
 
         if (!nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]*$")) {
             mostrarError("Validación", "El nombre solo puede contener letras y espacios (sin números)");
@@ -152,7 +151,6 @@ public class ClienteBeanUI implements Serializable {
             clienteSeleccionado.setNombre(nombre.trim());
             clienteSeleccionado.setTelefono(telefono.trim());
 
-            // ¡Esta es la línea que falta para que el adeudo se actualice!
             clienteSeleccionado.setAdeudo(this.adeudo);
 
             clienteHelper.modificarCliente(clienteSeleccionado);
@@ -193,13 +191,51 @@ public class ClienteBeanUI implements Serializable {
         }
     }
 
+    // ============ OPERACIONES DE ABONO ============
+
     /**
-     * Busca cliente por ID, nombre o teléfono.
-     * Reglas:
-     * - Si la entrada son 10 dígitos: buscar por teléfono
-     * - Si la entrada es numérica y no tiene 10 dígitos: buscar por ID
-     * - Si contiene letras: buscar por nombre (LIKE %filtro%)
+     * Prepara la vista para realizar un abono
      */
+    public void prepararAbono(Integer id) {
+        try {
+            clienteSeleccionado = clienteHelper.buscarClientePorID(id);
+            montoAbono = null; // Limpiar el campo para que aparezca en blanco
+        } catch (Exception e) {
+            mostrarError("Error", "Error al cargar los datos para abono: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Realiza el descuento al saldo del cliente
+     */
+    public void abonarCliente() {
+        try {
+            if (montoAbono != null && montoAbono.compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal adeudoActual = clienteSeleccionado.getAdeudo() != null ? clienteSeleccionado.getAdeudo() : BigDecimal.ZERO;
+
+                // Restar el monto usando BigDecimal
+                BigDecimal nuevoAdeudo = adeudoActual.subtract(montoAbono);
+
+                // Si el pago es mayor al adeudo, lo dejamos en 0 para evitar saldos negativos
+                if (nuevoAdeudo.compareTo(BigDecimal.ZERO) < 0) {
+                    nuevoAdeudo = BigDecimal.ZERO;
+                }
+
+                clienteSeleccionado.setAdeudo(nuevoAdeudo);
+                clienteHelper.modificarCliente(clienteSeleccionado);
+
+                mostrarMensaje("Éxito", "Abono de $" + montoAbono + " aplicado correctamente");
+                cargarTodosClientes();
+            } else {
+                mostrarError("Error", "El monto a abonar debe ser mayor a 0");
+            }
+        } catch (Exception e) {
+            mostrarError("Error", "Error al aplicar abono: " + e.getMessage());
+        }
+    }
+
+    // ============ BÚSQUEDA ============
+
     public void buscarCliente() {
         if (textoBusqueda == null || textoBusqueda.trim().isEmpty()) {
             mostrarMensaje("Info", "Ingrese ID, nombre o teléfono para buscar, o use 'Mostrar Todos' para ver todo.");
@@ -275,6 +311,7 @@ public class ClienteBeanUI implements Serializable {
         nombre = "";
         telefono = "";
         adeudo = null;
+        montoAbono = null;
         clienteSeleccionado = null;
         textoBusqueda = "";
     }
@@ -301,6 +338,9 @@ public class ClienteBeanUI implements Serializable {
 
     public BigDecimal getAdeudo() { return adeudo; }
     public void setAdeudo(BigDecimal adeudo) { this.adeudo = adeudo; }
+
+    public BigDecimal getMontoAbono() { return montoAbono; }
+    public void setMontoAbono(BigDecimal montoAbono) { this.montoAbono = montoAbono; }
 
     public List<Cliente> getListaClientes() { return listaClientes; }
     public void setListaClientes(List<Cliente> listaClientes) { this.listaClientes = listaClientes; }
