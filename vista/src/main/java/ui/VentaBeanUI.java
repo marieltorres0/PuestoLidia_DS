@@ -1,15 +1,13 @@
 package ui;
 
+import helper.ClienteHelper;
 import helper.ProductoHelper;
 import helper.VentaHelper;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
-import mx.puestoLidia.entity.ItemVenta;
-import mx.puestoLidia.entity.Producto;
-import mx.puestoLidia.entity.Usuario;
-import mx.puestoLidia.entity.Venta;
+import mx.puestoLidia.entity.*;
 import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
@@ -24,12 +22,13 @@ public class VentaBeanUI implements Serializable {
 
     private VentaHelper ventaHelper;
     private ProductoHelper productoHelper;
+    private ClienteHelper clienteHelper;
 
     // Variables de pantalla
     private String idProductoBusqueda;
     private List<ItemVenta> carrito;
     private ItemVenta itemSeleccionado; // Rastrea qué fila está seleccionada en la tabla
-    private String tipoPago = "efectivo"; // por defecto
+    private String tipoPago = "contado"; // por defecto
 
     // 'total' funciona dinámicamente: representa el total del carrito,
     // pero durante el cobro representa lo que "falta por pagar"
@@ -40,6 +39,16 @@ public class VentaBeanUI implements Serializable {
     // Rastrea cuánto dinero en efectivo ha ingresado el cajero en total (para pagos parciales)
     private BigDecimal montoAcumulado;
 
+    // para venta a credito
+    private String clienteBusqueda;
+    private Cliente nuevoCliente;
+
+
+
+    // Solo para mostrar en el modal de éxito en venta a crédito
+    private BigDecimal adeudoGeneradoClienteCredito;
+    private String nombreClienteCredito;
+
     public VentaBeanUI() {
         inicializarVenta();
     }
@@ -48,6 +57,7 @@ public class VentaBeanUI implements Serializable {
     public void inicializarVenta() {
         ventaHelper = new VentaHelper();
         productoHelper = new ProductoHelper();
+        clienteHelper = new ClienteHelper();
 
         this.idProductoBusqueda = null;
         this.carrito = new ArrayList<>();
@@ -56,6 +66,11 @@ public class VentaBeanUI implements Serializable {
         this.montoRecibido = null;
         this.cambio = BigDecimal.ZERO;
         this.montoAcumulado = BigDecimal.ZERO;
+        this.tipoPago = "contado";
+        this.clienteBusqueda = null;
+        this.nuevoCliente = new Cliente();
+        this.adeudoGeneradoClienteCredito = BigDecimal.ZERO;
+        this.nombreClienteCredito = null;
     }
 
     // muestra las coindicencias del campo de busqueda
@@ -181,61 +196,133 @@ public class VentaBeanUI implements Serializable {
     // Se ejecuta al presionar "COBRAR VENTA (F1)" para asegurar que el input del modal empiece vacío
     public void prepararCobro() {
         this.montoRecibido = null;
+        this.clienteBusqueda = null;
+        this.nuevoCliente = new Cliente();
+        this.tipoPago = "contado";
     }
 
-    // Procesar el cobro: maneja abonos parciales y el guardado final
+    // Procesar el cobro: VALIDA LOS MONTOS Y EL CLIENTE EN CRÉDITO
     public void procesarCobro() {
         if (carrito.isEmpty()) {
             mostrarError("Operación inválida", "El carrito de ventas se encuentra vacío.");
             return;
         }
 
-        if (montoRecibido == null || montoRecibido.compareTo(BigDecimal.ZERO) <= 0) {
-            mostrarError("Monto inválido", "Ingresa una cantidad mayor a cero.");
-            return;
+        if (montoRecibido == null) { montoRecibido = BigDecimal.ZERO; }
+        BigDecimal totalRealVenta = ventaHelper.calcularTotalCarrito(carrito);
+
+        // VALIDACIONES A CRÉDITO
+        if ("credito".equals(tipoPago)) {
+            // En crédito, si el pago es menor al total, el cliente es obligatorio
+            if (montoRecibido.compareTo(totalRealVenta) < 0) {
+                if (clienteBusqueda == null || clienteBusqueda.trim().isEmpty()) {
+                    mostrarError("Error", "Debes seleccionar un cliente para ventas a crédito.");
+                    return;
+                }
+            }
+        } else {
+            // VENTA A CONTADO monto debe ser mayor a 0
+            if (montoRecibido.compareTo(BigDecimal.ZERO) <= 0) {
+                mostrarError("Monto inválido", "Ingresa una cantidad mayor a cero.");
+                return;
+            }
         }
 
-        // Caso 1: El monto recibido NO alcanza para cubrir el total restante (Pago parcial)
-        if (montoRecibido.compareTo(total) < 0) {
-            total = total.subtract(montoRecibido); // Restamos el abono al total a pagar
-            montoAcumulado = montoAcumulado.add(montoRecibido); // Guardamos cuánto nos han dado
-            montoRecibido = null; // Limpiamos el input para el siguiente pago
-            mostrarInfo("Abono registrado", "Resta cobrar: $" + total);
-            return; // Terminamos la ejecución aquí, no guardamos aún en BD
+        // Es crédito, tiene cliente y el pago es menor al total es venta directa
+        boolean esCreditoConSaldoPendiente = "credito".equals(tipoPago)
+                && (clienteBusqueda != null && !clienteBusqueda.trim().isEmpty())
+                && (montoRecibido.compareTo(totalRealVenta) < 0);
+
+        if (esCreditoConSaldoPendiente) {
+            // Registro directo de la venta
+            ejecutarVenta();
+        } else {
+            // en caso de: venta a crédito con monto >= total (con o sin cliente)
+            PrimeFaces.current().executeScript("PF('wvConfirmarVenta').show();");
+        }
+    }
+
+    // GUARDADO FINAL DE LA VENTA
+    public void ejecutarVenta() {
+        BigDecimal totalRealVenta = ventaHelper.calcularTotalCarrito(carrito);
+
+        // si el monto cubre el total, lo procesamos como contado
+        if ("credito".equals(tipoPago) && montoRecibido.compareTo(totalRealVenta) >= 0) {
+            tipoPago = "contado";
         }
 
-        // Caso 2: El monto recibido SÍ cubre el total restante (Cobro completo)
         try {
-            cambio = montoRecibido.subtract(total);
-            montoAcumulado = montoAcumulado.add(montoRecibido);
-
-            // Mock de usuario autenticado en sesión (Cajero ID = 1)
-            Usuario cajero = new Usuario();
-            cajero.setId(1);
-
             Venta nuevaVenta = new Venta();
             nuevaVenta.setFechaHora(Instant.now());
-            nuevaVenta.setIdUsuario(cajero);
-
-            // Calculamos el costo real original del carrito para la BD,
-            // ya que la variable 'total' en este punto puede estar en 0 por los abonos
-            BigDecimal totalRealVenta = ventaHelper.calcularTotalCarrito(carrito);
-
+            nuevaVenta.setIdUsuario(new Usuario()); nuevaVenta.getIdUsuario().setId(1);
             nuevaVenta.setTotal(totalRealVenta);
-            nuevaVenta.setMonto(montoAcumulado);
-            nuevaVenta.setCambio(cambio);
-            nuevaVenta.setTipo("contado");
 
-            // Persistencia del bloque transaccional completo
+            if ("contado".equals(tipoPago)) {
+                cambio = montoRecibido.subtract(totalRealVenta); // Usamos totalRealVenta en lugar de 'total' para asegurar precisión
+                nuevaVenta.setMonto(montoRecibido);
+                nuevaVenta.setCambio(cambio);
+                nuevaVenta.setTipo("contado");
+            } else {
+                // Lógica de crédito ya validada que tiene cliente
+                String nombreStr = clienteBusqueda.contains(" | ") ? clienteBusqueda.substring(0, clienteBusqueda.indexOf(" | ")).trim() : clienteBusqueda;
+                Cliente clienteReal = clienteHelper.buscarClientesPorNombre(nombreStr).get(0);
+
+                nuevaVenta.setIdCliente(clienteReal);
+                this.nombreClienteCredito = clienteReal.getNombre();
+
+                nuevaVenta.setMonto(montoRecibido);
+                nuevaVenta.setCambio(BigDecimal.ZERO);
+                nuevaVenta.setTipo("credito");
+                this.adeudoGeneradoClienteCredito = totalRealVenta.subtract(montoRecibido);
+            }
+
             ventaHelper.registrarVentaCompleta(nuevaVenta, carrito);
-
-            // Instrucción enviada al frontend para cerrar el modal de cobro y abrir el de éxito
-            // Solo se ejecuta si el bloque transaccional no lanzó excepciones
-            PrimeFaces.current().executeScript("PF('wvModalCobro').hide(); PF('wvModalExito').show();");
+            PrimeFaces.current().executeScript("PF('wvConfirmarVenta').hide(); PF('wvModalCobro').hide(); PF('wvModalExito').show();");
 
         } catch (Exception e) {
-            e.printStackTrace();
-            mostrarError("Error transaccional", "No se pudo registrar la venta: " + e.getMessage());
+            mostrarError("Error", "No se pudo registrar la venta.");
+        }
+    }
+
+    // PARA VENTA A CRÉDITO
+    // para el filtro del mini modal de los clientes
+    public List<String> buscarCoincidenciasCliente(String query){
+        // Traemos todos los clientes para poder buscar por nombre o por teléfono
+        List<Cliente> todosLosClientes = clienteHelper.obtenerTodosClientes();
+        List<String> resultados = new ArrayList<>();
+
+        // Pasar a minúsculas para evitar conflictos
+        String filtro = (query == null) ? "" : query.trim().toLowerCase();
+
+        for (Cliente c : todosLosClientes){
+            String nombre = (c.getNombre() != null) ? c.getNombre().toLowerCase() : "";
+            String telefonoReal = (c.getTelefono() != null) ? c.getTelefono() : "";
+            String telefonoMostrar = (!telefonoReal.trim().isEmpty()) ? telefonoReal : "Sin teléfono";
+
+            // Si no escribieron nada , o si el nombre coincide, o si el teléfono coincide
+            if (filtro.isEmpty() || nombre.contains(filtro) || telefonoReal.contains(filtro)) {
+                resultados.add(c.getNombre() + " | " + telefonoMostrar);
+            }
+        }
+        return resultados;
+    }
+
+    // Para registrar un cliente nuevo
+    public void registrarNuevoCliente(){
+        try {
+            nuevoCliente.setAdeudo(BigDecimal.ZERO);
+            clienteHelper.guardarCliente(nuevoCliente);
+
+            // Generamos el mismo formato "Nombre | Teléfono" para rellenar la caja automáticamente
+            String telefono = (nuevoCliente.getTelefono() != null && !nuevoCliente.getTelefono().trim().isEmpty()) ? nuevoCliente.getTelefono() : "Sin teléfono";
+            this.clienteBusqueda = nuevoCliente.getNombre() + " | " + telefono;
+
+            mostrarInfo("Cliente registrado", "El cliente se seleccionó automáticamente para esta venta.");
+            // preparamos una nueva instancia por si abren el modal de nuevo
+            this.nuevoCliente = new Cliente();
+            PrimeFaces.current().executeScript("PF('wvModalNuevoCliente').hide();");
+        } catch (Exception e) {
+            mostrarError("Error de registro", "No se pudo guardar el cliente: " + e.getMessage());
         }
     }
 
@@ -275,4 +362,16 @@ public class VentaBeanUI implements Serializable {
 
     public String getTipoPago() {return tipoPago;}
     public void setTipoPago(String tipoPago) {this.tipoPago = tipoPago;}
+
+    public String getClienteBusqueda() {return clienteBusqueda;}
+    public void setClienteBusqueda(String clienteBusqueda) {this.clienteBusqueda = clienteBusqueda;}
+
+    public Cliente getNuevoCliente() {return nuevoCliente;}
+    public void setNuevoCliente(Cliente nuevoCliente) {this.nuevoCliente = nuevoCliente;}
+
+    public BigDecimal getAdeudoGeneradoClienteCredito() {return adeudoGeneradoClienteCredito;}
+    public void setAdeudoGeneradoClienteCredito(BigDecimal adeudoGeneradoClienteCredito) {this.adeudoGeneradoClienteCredito = adeudoGeneradoClienteCredito;}
+
+    public String getNombreClienteCredito() {return nombreClienteCredito;}
+    public void setNombreClienteCredito(String nombreClienteCredito) {this.nombreClienteCredito = nombreClienteCredito;}
 }

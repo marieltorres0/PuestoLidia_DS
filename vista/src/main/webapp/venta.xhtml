@@ -72,10 +72,9 @@
             font-size: 1.1rem !important; font-weight: bold; color: #3A4665 !important;
             padding: 6px 10px !important; vertical-align: middle !important;
             border-bottom: 1px solid #9C9C9C !important; border-right: none !important; border-left: none !important;
-            cursor: pointer; /* Cursor de mano para indicar que es seleccionable */
+            cursor: pointer;
         }
 
-        /* Resalte visual de la fila seleccionada */
         .tabla-venta .ui-datatable-data tr.ui-state-highlight {
             background-color: #e6f0ff !important;
             border-left: 5px solid #5F87EE !important;
@@ -142,12 +141,21 @@
         .modal-exito.ui-dialog { border-radius: 15px !important; overflow: hidden; border: 4px solid #5F87EE; text-align: center; }
         .texto-cambio { font-size: 3.5rem; color: #5F87EE; font-weight: bold; margin: 15px 0; }
 
-        .input-efectivo-modal .ui-inputfield {
-            width: 100% !important; font-size: 2.5rem !important;
-            padding: 15px !important; border: 3px solid #5F87EE !important;
+        .input-efectivo-modal .ui-inputfield, .input-generico-modal {
+            width: 100% !important; font-size: 1.5rem !important;
+            padding: 12px !important; border: 2px solid #9C9C9C !important;
             border-radius: 8px !important; color: #3A4665 !important;
-            text-align: right !important; font-weight: bold !important;
             box-sizing: border-box;
+        }
+
+        .input-efectivo-modal .ui-inputfield {
+            font-size: 2.5rem !important; border: 3px solid #5F87EE !important;
+            text-align: right !important; font-weight: bold !important;
+        }
+
+        .autocomplete-cliente .ui-autocomplete-input {
+            width: 100% !important; font-size: 1.2rem !important;
+            padding: 10px !important; border-radius: 6px !important;
         }
     </style>
 
@@ -292,7 +300,6 @@
         </div>
     </div>
 
-
     <p:dialog id="modalCancelar" widgetVar="wvModalCancelar" header="Confirmar Cancelación" modal="true"
               resizable="false" closeOnEscape="true" width="400" styleClass="modal-estandar"
               showEffect="fade" hideEffect="fade">
@@ -314,7 +321,7 @@
     </p:dialog>
 
     <p:dialog id="modalCobro" widgetVar="wvModalCobro" header="Confirmar Pago" modal="true"
-              resizable="false" closeOnEscape="true" width="500" styleClass="modal-estandar"
+              resizable="false" closeOnEscape="true" width="550" styleClass="modal-estandar"
               showEffect="fade" hideEffect="fade">
         <p:ajax event="close" oncomplete="PrimeFaces.focus('frmVenta:inputBusqueda');" />
 
@@ -324,9 +331,9 @@
 
             <div style="text-align: center; margin-bottom: 20px;">
                 <p:selectOneButton value="#{ventaBeanUI.tipoPago}" unselectable="false">
-                    <f:selectItem itemLabel="Pago en Efectivo" itemValue="efectivo" />
+                    <f:selectItem itemLabel="Pago al Contado" itemValue="contado" />
                     <f:selectItem itemLabel="Venta a Crédito" itemValue="credito" />
-                    <p:ajax update="panelMetodoPago btnProcesarCobro" />
+                    <p:ajax update="panelMetodoPago" />
                 </p:selectOneButton>
             </div>
 
@@ -337,9 +344,9 @@
                 </h:outputText>
             </div>
 
-            <h:panelGroup id="panelMetodoPago" layout="block" style="min-height: 100px;">
+            <h:panelGroup id="panelMetodoPago" layout="block" style="min-height: 120px;">
 
-                <h:panelGroup rendered="#{ventaBeanUI.tipoPago eq 'efectivo' or empty ventaBeanUI.tipoPago}" layout="block">
+                <h:panelGroup rendered="#{ventaBeanUI.tipoPago eq 'contado' or empty ventaBeanUI.tipoPago}" layout="block">
                     <div style="margin-bottom: 25px;">
                         <p:outputLabel for="inputEfectivo" value="Monto Ingresado:" style="font-weight: bold; display: block; margin-bottom: 5px; color: #3A4665;"/>
                         <p:inputNumber id="inputEfectivo" value="#{ventaBeanUI.montoRecibido}"
@@ -349,11 +356,30 @@
                 </h:panelGroup>
 
                 <h:panelGroup rendered="#{ventaBeanUI.tipoPago eq 'credito'}" layout="block">
-                    <div style="background-color: #f8f9fa; border: 2px dashed #9C9C9C; border-radius: 8px; padding: 20px; text-align: center; margin-bottom: 25px;">
-                        <i class="pi pi-users" style="font-size: 2.5rem; color: #9C9C9C; margin-bottom: 10px;"></i>
-                        <h:outputText value="Selección de Clientes" style="display: block; font-weight: bold; font-size: 1.2rem; color: #3A4665;"/>
-                        <h:outputText value="PROXIMAMENTE" style="display: block; color: #666; font-size: 0.95rem; margin-top: 5px;"/>
-                        <p:commandButton value="Buscar Cliente..." type="button" disabled="true" icon="pi pi-search" styleClass="ui-button-secondary ui-button-outlined" style="margin-top: 15px;"/>
+                    <div style="text-align: left; margin-bottom: 15px;">
+                        <p:outputLabel value="Buscar Cliente:" style="font-weight: bold; display: block; margin-bottom: 5px; color: #3A4665;"/>
+                        <div style="display: flex; gap: 10px;">
+                            <p:autoComplete id="inputCliente" value="#{ventaBeanUI.clienteBusqueda}"
+                                            completeMethod="#{ventaBeanUI.buscarCoincidenciasCliente}"
+                                            forceSelection="false"
+                                            dropdown="true"
+                                            scrollHeight="200"
+                                            minQueryLength="0"
+                                            placeholder="Teclea nombre,teléfono o presiona la flecha..."
+                                            styleClass="autocomplete-cliente" style="flex-grow: 1;">
+                            </p:autoComplete>
+
+                            <p:commandButton icon="pi pi-user-plus" title="Nuevo Cliente"
+                                             type="button" onclick="PF('wvModalNuevoCliente').show();"
+                                             styleClass="ui-button-success" style="width: 45px; border-radius: 6px;"/>
+                        </div>
+                    </div>
+
+                    <div style="text-align: left; margin-bottom: 25px;">
+                        <p:outputLabel for="inputAbono" value="Abono Inicial (Opcional):" style="font-weight: bold; display: block; margin-bottom: 5px; color: #3A4665;"/>
+                        <p:inputNumber id="inputAbono" value="#{ventaBeanUI.montoRecibido}"
+                                       styleClass="input-efectivo-modal" placeholder="$ 0.00"
+                                       symbol="$ " decimalPlaces="2" onfocus="this.select();"/>
                     </div>
                 </h:panelGroup>
 
@@ -364,11 +390,39 @@
                                  styleClass="ui-button-outlined ui-button-secondary" style="flex-grow: 1; padding: 10px;"
                                  onclick="PF('wvModalCobro').hide(); PrimeFaces.focus('frmVenta:inputBusqueda');" />
 
-                <p:commandButton id="btnProcesarCobro" value="ABONAR/COBRAR (ENTER)"
+                <p:commandButton id="btnProcesarCobro" value="COBRAR (ENTER)"
                                  action="#{ventaBeanUI.procesarCobro}"
                                  update=":notificacion :frmCobro :frmExito"
-                                 disabled="#{ventaBeanUI.tipoPago eq 'credito'}"
-                                 styleClass="ui-button-primary" style="flex-grow: 1; padding: 10px; font-weight: bold;"/>
+                                 styleClass="ui-button-primary" style="flex-grow: 1; padding: 10px; font-weight: bold;" />
+            </div>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog id="modalNuevoCliente" widgetVar="wvModalNuevoCliente" header="Registrar Cliente Nuevo" modal="true"
+              resizable="false" closeOnEscape="true" width="400" styleClass="modal-estandar"
+              showEffect="fade" hideEffect="fade">
+        <h:form id="frmNuevoCliente">
+            <p:focus for="txtNombreCli" />
+
+            <div style="margin-bottom: 15px;">
+                <p:outputLabel for="txtNombreCli" value="Nombre Completo:" style="font-weight: bold; display: block; margin-bottom: 5px; color: #3A4665;"/>
+                <p:inputText id="txtNombreCli" value="#{ventaBeanUI.nuevoCliente.nombre}" required="true" requiredMessage="El nombre es obligatorio" styleClass="input-generico-modal"/>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <p:outputLabel for="txtTelefonoCli" value="Teléfono (Opcional):" style="font-weight: bold; display: block; margin-bottom: 5px; color: #3A4665;"/>
+                <p:inputText id="txtTelefonoCli" value="#{ventaBeanUI.nuevoCliente.telefono}" styleClass="input-generico-modal"/>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; gap: 10px;">
+                <p:commandButton value="CANCELAR" type="button"
+                                 styleClass="ui-button-outlined ui-button-secondary" style="flex-grow: 1; padding: 10px;"
+                                 onclick="PF('wvModalNuevoCliente').hide();" />
+
+                <p:commandButton value="GUARDAR"
+                                 action="#{ventaBeanUI.registrarNuevoCliente}"
+                                 update=":notificacion :frmCobro:inputCliente"
+                                 styleClass="ui-button-success" style="flex-grow: 1; padding: 10px; font-weight: bold;"/>
             </div>
         </h:form>
     </p:dialog>
@@ -387,20 +441,62 @@
 
             <i class="pi pi-check-circle" style="font-size: 4rem; color: #5F87EE; margin-top: 20px;"></i>
             <h2 style="font-size: 2rem; color: #3A4665; margin-bottom: 5px;">¡VENTA EXITOSA!</h2>
-            <p style="font-size: 1.4rem; color: #9C9C9C; font-weight: bold; margin: 0;">ENTREGAR CAMBIO:</p>
 
-            <div class="texto-cambio">
-                <h:outputText value="$ #{ventaBeanUI.cambio}">
-                    <f:convertNumber pattern="#,##0.00" />
-                </h:outputText>
-            </div>
+            <h:panelGroup rendered="#{ventaBeanUI.tipoPago eq 'contado'}" layout="block">
+                <p style="font-size: 1.4rem; color: #9C9C9C; font-weight: bold; margin: 0;">ENTREGAR CAMBIO:</p>
+                <div class="texto-cambio">
+                    <h:outputText value="$ #{ventaBeanUI.cambio}">
+                        <f:convertNumber pattern="#,##0.00" />
+                    </h:outputText>
+                </div>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{ventaBeanUI.tipoPago eq 'credito'}" layout="block" style="margin: 15px 0;">
+                <p style="font-size: 1.1rem; color: #9C9C9C; font-weight: bold; margin: 0;">AGREGADO A LA CUENTA DE:</p>
+                <h3 style="font-size: 1.6rem; color: #3A4665; margin: 5px 0;">#{ventaBeanUI.nombreClienteCredito}</h3>
+
+                <div class="texto-cambio" style="color: #D9534F; font-size: 2.8rem;">
+                    <h:outputText value=" $ #{ventaBeanUI.adeudoGeneradoClienteCredito}">
+                        <f:convertNumber pattern="#,##0.00" />
+                    </h:outputText>
+                </div>
+
+                <h:panelGroup rendered="#{ventaBeanUI.cambio > 0}" layout="block">
+                    <p style="font-size: 1.1rem; color: #9C9C9C; font-weight: bold; margin-top: 10px; margin-bottom: 0;">ENTREGAR CAMBIO:</p>
+                    <div style="font-size: 1.8rem; color: #5F87EE; font-weight: bold;">
+                        <h:outputText value="$ #{ventaBeanUI.cambio}">
+                            <f:convertNumber pattern="#,##0.00" />
+                        </h:outputText>
+                    </div>
+                </h:panelGroup>
+            </h:panelGroup>
 
             <p:commandButton id="btnNuevaVenta" value="CERRAR VENTA (ENTER)"
                              action="#{ventaBeanUI.inicializarVenta}"
                              update=":frmVenta :frmCobro"
-                             style="font-size: 1.4rem; padding: 12px 25px; background-color: #3A4665; color: white; border-radius: 8px; margin-bottom: 20px;"
+                             style="font-size: 1.4rem; padding: 12px 25px; background-color: #3A4665; color: white; border-radius: 8px; margin-bottom: 20px; margin-top: 10px;"
                              onclick="PF('wvModalExito').hide();"
                              oncomplete="PrimeFaces.focus('frmVenta:inputBusqueda');"/>
+        </h:form>
+    </p:dialog>
+
+    <p:dialog id="dialogoConfirmar" widgetVar="wvConfirmarVenta" header="Confirmación de Venta"
+              modal="true" resizable="false" showEffect="fade" hideEffect="fade" width="400" styleClass="modal-estandar">
+        <h:form>
+            <div style="text-align: center; margin-bottom: 20px; margin-top: 10px;">
+                <h:outputText value="Se realizará la venta a CONTADO, desea guardarla a contado?" style="font-size: 1.2rem; color: #3A4665;"/>
+            </div>
+            <div style="display: flex; justify-content: space-between; gap: 10px;">
+                <p:commandButton value="No, revisar" type="button"
+                                 styleClass="ui-button-outlined ui-button-secondary" style="flex-grow: 1;"
+                                 onclick="PF('wvConfirmarVenta').hide();" />
+
+                <p:commandButton value="Sí, registrar"
+                                 action="#{ventaBeanUI.ejecutarVenta}"
+                                 update=":notificacion :frmCobro :frmExito"
+                                 styleClass="ui-button-primary" style="flex-grow: 1; font-weight: bold;"
+                                 oncomplete="PF('wvConfirmarVenta').hide();" />
+            </div>
         </h:form>
     </p:dialog>
 
