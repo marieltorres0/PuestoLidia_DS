@@ -180,8 +180,17 @@ public class ClienteBeanUI implements Serializable {
     /**
      * Elimina cliente
      */
+    /**
+     * Elimina cliente (con validación de adeudo)
+     */
     public void eliminarCliente() {
         try {
+            // Validar que el cliente no tenga un adeudo pendiente
+            if (clienteSeleccionado.getAdeudo() != null && clienteSeleccionado.getAdeudo().compareTo(BigDecimal.ZERO) > 0) {
+                mostrarError("Operación denegada", "No se puede eliminar a " + clienteSeleccionado.getNombre() + " porque tiene un adeudo pendiente de $" + clienteSeleccionado.getAdeudo());
+                return; // Detiene el proceso aquí
+            }
+
             clienteHelper.eliminarCliente(clienteSeleccionado);
             mostrarMensaje("Éxito", "Cliente eliminado correctamente");
             limpiarDatos();
@@ -190,7 +199,6 @@ public class ClienteBeanUI implements Serializable {
             mostrarError("Error", "Error al eliminar: " + e.getMessage());
         }
     }
-
     // ============ OPERACIONES DE ABONO ============
 
     /**
