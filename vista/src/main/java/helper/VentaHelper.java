@@ -1,10 +1,12 @@
 package helper;
 
 import mx.puestoLidia.entity.ItemVenta;
+import mx.puestoLidia.entity.Producto;
 import mx.puestoLidia.entity.Venta;
 import mx.puestoLidia.negocio.integration.ServiceFacadeLocator;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class VentaHelper {
@@ -27,6 +29,11 @@ public class VentaHelper {
     // CALCULAR TOTAL DE LA VENTA
     public BigDecimal calcularTotalCarrito(List<ItemVenta> carritoActual){
         return ServiceFacadeLocator.getInstanceFacadeVenta().calcularTotalCarrito(carritoActual);
+    }
+
+    // EVALUAR STOCK CRÍTICO (VEN.US3)
+    public List<Producto> evaluarStockCritico(List<ItemVenta> carrito) {
+        return ServiceFacadeLocator.getInstanceFacadeVenta().evaluarStockCritico(carrito);
     }
 
     // ==== CRUD Básico ====

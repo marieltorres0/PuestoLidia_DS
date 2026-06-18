@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="jakarta.faces.html"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:f="jakarta.faces.core">
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets">
 
 <h:head>
     <title>Punto de Venta - Puesto Lidia</title>
@@ -392,7 +393,7 @@
 
                 <p:commandButton id="btnProcesarCobro" value="COBRAR (ENTER)"
                                  action="#{ventaBeanUI.procesarCobro}"
-                                 update=":notificacion :frmCobro :frmExito"
+                                 update=":notificacion :frmCobro :frmExito :frmVenta:panelTotales"
                                  styleClass="ui-button-primary" style="flex-grow: 1; padding: 10px; font-weight: bold;" />
             </div>
         </h:form>
@@ -496,6 +497,35 @@
                                  update=":notificacion :frmCobro :frmExito"
                                  styleClass="ui-button-primary" style="flex-grow: 1; font-weight: bold;"
                                  oncomplete="PF('wvConfirmarVenta').hide();" />
+            </div>
+        </h:form>
+    </p:dialog>
+
+    <!-- Diálogo de Alerta de Stock Crítico (VEN.US3) -->
+    <p:dialog id="modalAlertaStock" widgetVar="wvAlertaStock" header="Alerta de Stock Crítico"
+              modal="false" resizable="false" showEffect="fade" hideEffect="fade" width="400" styleClass="modal-estandar">
+        <h:form id="frmAlertaStock">
+            <div style="text-align: center; margin-bottom: 20px; margin-top: 10px;">
+                <h:outputText value="¡Atención! Inventario Crítico" style="font-size: 1.2rem; font-weight: bold; color: #d32f2f; display: block; margin-bottom: 10px;"/>
+
+                <ui:repeat value="#{ventaBeanUI.productosStockBajo}" var="prod">
+                    <div style="font-size: 1.05rem; color: #3A4665; margin-bottom: 6px;">
+                        <h:outputText value="[#{prod.idProducto}] #{prod.nombre} " />
+                        <br/>
+                        <h:outputText value="Stock Actual: #{prod.cantidad}" style="font-weight: bold; color: #d32f2f; font-size: 0.95rem;"/>
+                    </div>
+                </ui:repeat>
+            </div>
+
+            <!-- Contenedor Flexbox con los dos botones solicitados (Cerrar y Aceptar) -->
+            <div style="display: flex; justify-content: space-between; gap: 10px;">
+                <p:commandButton value="Cerrar" type="button"
+                                 styleClass="ui-button-outlined ui-button-secondary" style="flex-grow: 1;"
+                                 onclick="PF('wvAlertaStock').hide();" />
+
+                <p:commandButton value="Aceptar" type="button"
+                                 styleClass="ui-button-primary" style="flex-grow: 1; font-weight: bold;"
+                                 onclick="PF('wvAlertaStock').hide();" />
             </div>
         </h:form>
     </p:dialog>

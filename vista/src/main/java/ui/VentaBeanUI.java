@@ -35,6 +35,7 @@ public class VentaBeanUI implements Serializable {
     private BigDecimal total;
     private BigDecimal montoRecibido;
     private BigDecimal cambio;
+    private BigDecimal montoAcumulado;
 
     // para venta a credito
     private String clienteBusqueda;
@@ -43,6 +44,8 @@ public class VentaBeanUI implements Serializable {
     // Solo para mostrar en el modal de éxito en venta a crédito
     private BigDecimal adeudoGeneradoClienteCredito;
     private String nombreClienteCredito;
+
+    private List<Producto> productosStockBajo;
 
     public VentaBeanUI() {
         inicializarVenta();
@@ -60,11 +63,13 @@ public class VentaBeanUI implements Serializable {
         this.total = BigDecimal.ZERO;
         this.montoRecibido = null;
         this.cambio = BigDecimal.ZERO;
+        this.montoAcumulado = BigDecimal.ZERO;
         this.tipoPago = "contado";
         this.clienteBusqueda = null;
         this.nuevoCliente = new Cliente();
         this.adeudoGeneradoClienteCredito = BigDecimal.ZERO;
         this.nombreClienteCredito = null;
+        this.productosStockBajo = new ArrayList<>();
     }
 
     // muestra las coindicencias del campo de busqueda
@@ -183,6 +188,7 @@ public class VentaBeanUI implements Serializable {
     // Actualiza el total del carrito sumando subtotales
     private void recalcularTotalVenta() {
         this.total = ventaHelper.calcularTotalCarrito(carrito);
+        this.montoAcumulado = BigDecimal.ZERO;
     }
 
     // Se ejecuta al presionar "COBRAR VENTA (F1)" para asegurar que el input del modal empiece vacío
@@ -211,6 +217,10 @@ public class VentaBeanUI implements Serializable {
                     mostrarError("Error", "Debes seleccionar un cliente para ventas a crédito.");
                     return;
                 }
+                ejecutarVenta();
+            } else {
+                // Si el monto es mayor o igual al total, SIEMPRE debe pasar por confirmación
+                PrimeFaces.current().executeScript("PF('wvConfirmarVenta').show();");
             }
         } else {
             // VENTA A CONTADO monto debe ser mayor a 0
@@ -218,19 +228,18 @@ public class VentaBeanUI implements Serializable {
                 mostrarError("Monto inválido", "Ingresa una cantidad mayor a cero.");
                 return;
             }
-        }
 
-        // Es crédito, tiene cliente y el pago es menor al total es venta directa
-        boolean esCreditoConSaldoPendiente = "credito".equals(tipoPago)
-                && (clienteBusqueda != null && !clienteBusqueda.trim().isEmpty())
-                && (montoRecibido.compareTo(totalRealVenta) < 0);
-
-        if (esCreditoConSaldoPendiente) {
-            // Registro directo de la venta
-            ejecutarVenta();
-        } else {
-            // en caso de: venta a crédito con monto >= total (con o sin cliente)
-            PrimeFaces.current().executeScript("PF('wvConfirmarVenta').show();");
+            // Caso 1: El monto recibido NO alcanza para cubrir el total restante (Pago parcial)
+            if (montoRecibido.compareTo(total) < 0) {
+                total = total.subtract(montoRecibido);
+                montoAcumulado = montoAcumulado.add(montoRecibido);
+                montoRecibido = null;
+                mostrarInfo("Abono registrado", "Resta cobrar: $" + total);
+                return;
+            } else {
+                // pago completo (Termina de pagar el 'total' restante)
+                ejecutarVenta();
+            }
         }
     }
 
@@ -250,8 +259,10 @@ public class VentaBeanUI implements Serializable {
             nuevaVenta.setTotal(totalRealVenta);
 
             if ("contado".equals(tipoPago)) {
-                cambio = montoRecibido.subtract(totalRealVenta); // Usamos totalRealVenta en lugar de 'total' para asegurar precisión
-                nuevaVenta.setMonto(montoRecibido);
+                cambio = montoRecibido.subtract(total);
+                montoAcumulado = montoAcumulado.add(montoRecibido);
+
+                nuevaVenta.setMonto(montoAcumulado);
                 nuevaVenta.setCambio(cambio);
                 nuevaVenta.setTipo("contado");
             } else {
@@ -269,6 +280,7 @@ public class VentaBeanUI implements Serializable {
             }
 
             ventaHelper.registrarVentaCompleta(nuevaVenta, carrito);
+            verificarStockBajo();
             PrimeFaces.current().executeScript("PF('wvConfirmarVenta').hide(); PF('wvModalCobro').hide(); PF('wvModalExito').show();");
 
         } catch (Exception e) {
@@ -305,7 +317,7 @@ public class VentaBeanUI implements Serializable {
             nuevoCliente.setAdeudo(BigDecimal.ZERO);
             clienteHelper.guardarCliente(nuevoCliente);
 
-            // Generamos el mismo formato "Nombre | Teléfono" para rellenar la caja automáticamente
+            // ormato "Nombre | Teléfono" para rellenar la caja
             String telefono = (nuevoCliente.getTelefono() != null && !nuevoCliente.getTelefono().trim().isEmpty()) ? nuevoCliente.getTelefono() : "Sin teléfono";
             this.clienteBusqueda = nuevoCliente.getNombre() + " | " + telefono;
 
@@ -315,6 +327,16 @@ public class VentaBeanUI implements Serializable {
             PrimeFaces.current().executeScript("PF('wvModalNuevoCliente').hide();");
         } catch (Exception e) {
             mostrarError("Error de registro", "No se pudo guardar el cliente: " + e.getMessage());
+        }
+    }
+
+    // Para lanzar la alerta de stock bajo
+    public void verificarStockBajo(){
+        this.productosStockBajo = ventaHelper.evaluarStockCritico(carrito);
+
+        if(this.productosStockBajo != null && !this.productosStockBajo.isEmpty()){
+            PrimeFaces.current().ajax().update("frmAlertaStock");
+            PrimeFaces.current().executeScript("PF('wvAlertaStock').show();");
         }
     }
 
@@ -349,6 +371,9 @@ public class VentaBeanUI implements Serializable {
     public BigDecimal getCambio() { return cambio; }
     public void setCambio(BigDecimal cambio) { this.cambio = cambio; }
 
+    public BigDecimal getMontoAcumulado() { return montoAcumulado; }
+    public void setMontoAcumulado(BigDecimal montoAcumulado) { this.montoAcumulado = montoAcumulado; }
+
     public String getTipoPago() {return tipoPago;}
     public void setTipoPago(String tipoPago) {this.tipoPago = tipoPago;}
 
@@ -363,4 +388,7 @@ public class VentaBeanUI implements Serializable {
 
     public String getNombreClienteCredito() {return nombreClienteCredito;}
     public void setNombreClienteCredito(String nombreClienteCredito) {this.nombreClienteCredito = nombreClienteCredito;}
+
+    public List<Producto> getProductosStockBajo() {return productosStockBajo;}
+    public void setProductosStockBajo(List<Producto> productosStockBajo) {this.productosStockBajo = productosStockBajo;}
 }
