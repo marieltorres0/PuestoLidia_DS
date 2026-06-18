@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class ClienteHelper implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+
 
     /**
      * Guarda un nuevo cliente
