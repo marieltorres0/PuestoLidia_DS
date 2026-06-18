@@ -425,7 +425,7 @@
 <h:body>
     <div class="container">
         <div class="header">
-            <h1>👥 Gestión de Clientes</h1>
+            <h1>Gestión de Clientes</h1>
             <p>Sistema de registro y administración de clientes - Puesto Lidia</p>
         </div>
 
@@ -436,10 +436,10 @@
 
                 <div class="formulario-section">
                     <h:panelGroup rendered="#{not clienteBean.esEdicion}">
-                        <h2>➕ Registrar Nuevo Cliente</h2>
+                        <h2>Registrar Nuevo Cliente</h2>
                     </h:panelGroup>
                     <h:panelGroup rendered="#{clienteBean.esEdicion}">
-                        <h2>✏️ Modificar Cliente</h2>
+                        <h2>Modificar Cliente</h2>
                     </h:panelGroup>
 
                     <div class="form-grid">
@@ -453,8 +453,8 @@
                                          maxlength="50"
                                          required="true"
                                          requiredMessage="El nombre es requerido." />
-                            <small style="color: #7f8c8d; margin-top: 5px; display: block;">
-                                Máximo 50 caracteres, solo letras y espacios (sin números)
+                            <small style="color: #7f8c8d; margin-top: 5px;">
+                                Máximo 50 caracteres, sin caracteres especiales
                             </small>
                         </div>
 
@@ -470,7 +470,7 @@
                                          requiredMessage="El teléfono es requerido."
                                          pt:inputmode="numeric"
                                          pt:pattern="[0-9]{1,10}" />
-                            <small style="color: #7f8c8d; margin-top: 5px; display: block;">
+                            <small style="color: #7f8c8d; margin-top: 5px;">
                                 Máximo 10 dígitos, solo números, debe ser único
                             </small>
                         </div>
@@ -479,11 +479,11 @@
                     <div class="botones">
                         <h:panelGroup rendered="#{not clienteBean.esEdicion}">
                             <div class="btn-group">
-                                <h:commandButton value="➕ Registrar"
+                                <h:commandButton value="Registrar"
                                                  action="#{clienteBean.registrarCliente()}"
                                                  styleClass="btn btn-primary"
                                                  onclick="return validarFormulario();"/>
-                                <h:commandButton value="🔄 Limpiar"
+                                <h:commandButton value="Limpiar"
                                                  action="#{clienteBean.limpiarDatos()}"
                                                  immediate="true"
                                                  styleClass="btn btn-secondary"/>
@@ -492,11 +492,11 @@
 
                         <h:panelGroup rendered="#{clienteBean.esEdicion}">
                             <div class="btn-group">
-                                <h:commandButton value="💾 Guardar Cambios"
+                                <h:commandButton value="Guardar Cambios"
                                                  action="#{clienteBean.modificarCliente()}"
                                                  styleClass="btn btn-success"
                                                  onclick="return validarFormulario();"/>
-                                <h:commandButton value="❌ Cancelar"
+                                <h:commandButton value="Cancelar"
                                                  action="#{clienteBean.limpiarDatos()}"
                                                  immediate="true"
                                                  styleClass="btn btn-secondary"/>
@@ -506,22 +506,22 @@
                 </div>
 
                 <div class="search-section">
-                    <h:outputLabel for="busqueda" value="🔍 Buscar por ID, Nombre o Teléfono: " style="font-weight: 600; color: #2c3e50;"/>
+                    <h:outputLabel for="busqueda" value="Buscar por ID, Nombre o Teléfono: " style="font-weight: 600; color: #2c3e50;"/>
                     <p:inputText id="busqueda"
                                  value="#{clienteBean.textoBusqueda}"
                                  placeholder="Ingresa ID o nombre del cliente"/>
 
-                    <p:commandButton value="🔍 Buscar"
+                    <p:commandButton value="Buscar"
                                      action="#{clienteBean.buscarCliente()}"
                                      process="@this busqueda"
                                      update="clientesTable"
                                      styleClass="btn btn-primary btn-small"/>
-                    <p:commandButton value="📋 Mostrar Todos"
+                    <p:commandButton value="Mostrar Todos"
                                      action="#{clienteBean.cargarTodosClientes()}"
                                      process="@this"
                                      update="clientesTable busqueda"
                                      styleClass="btn btn-secondary btn-small"/>
-                    <p:commandButton value="💰 Con Adeudo"
+                    <p:commandButton value="Con Adeudo"
                                      action="#{clienteBean.cargarClientesConAdeudo()}"
                                      process="@this"
                                      update="clientesTable"
@@ -529,7 +529,7 @@
                 </div>
 
                 <div class="tabla-section">
-                    <h2>📊 Lista de Clientes Registrados</h2>
+                    <h2>Lista de Clientes Registrados</h2>
 
                     <p:dataTable value="#{clienteBean.listaClientes}"
                                  var="cliente"
@@ -538,7 +538,7 @@
                                  rows="10"
                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                  rowsPerPageTemplate="5,10,15,20"
-                                 emptyMessage="❌ No hay clientes registrados"
+                                 emptyMessage="No hay clientes registrados"
                                  styleClass="table"
                                  id="clientesTable">
 
@@ -552,10 +552,10 @@
                         </f:facet>
 
                         <p:column headerText="ID"
-                                  sortBy="#{cliente.idCliente}"
+                                  sortBy="#{cliente.id}"
                                   style="width: 80px; text-align: center;">
                             <div style="background: #667eea; color: white; padding: 8px; border-radius: 6px; font-weight: 600;">
-                                #{cliente.idCliente}
+                                #{cliente.id}
                             </div>
                         </p:column>
 
@@ -563,7 +563,6 @@
                                   sortBy="#{cliente.nombre}"
                                   style="width: 280px;">
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <span>👤</span>
                                 <span>#{cliente.nombre}</span>
                             </div>
                         </p:column>
@@ -572,7 +571,6 @@
                                   sortBy="#{cliente.telefono}"
                                   style="width: 150px;">
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <span>📱</span>
                                 <span style="font-family: 'Courier New', monospace; font-weight: 600;">
                                     #{cliente.telefono}
                                 </span>
@@ -591,7 +589,7 @@
                             </h:panelGroup>
                             <h:panelGroup rendered="#{cliente.adeudo == 0}">
                                 <span class="badge" style="background: #27ae60;">
-                                    ✓ Al día
+                                    Al día
                                 </span>
                             </h:panelGroup>
                         </p:column>
@@ -599,11 +597,11 @@
                         <p:column headerText="Acciones"
                                   style="width: 220px; text-align: center;">
                             <div class="acciones">
-                                <h:commandButton value="✏️ Editar"
-                                                 action="#{clienteBean.prepararModificacion(cliente.idCliente)}"
+                                <h:commandButton value="Editar"
+                                                 action="#{clienteBean.prepararModificacion(cliente.id)}"
                                                  styleClass="btn btn-primary btn-small"/>
-                                <h:commandButton value="🗑️ Eliminar"
-                                                 action="#{clienteBean.prepararEliminacion(cliente.idCliente)}"
+                                <h:commandButton value="Eliminar"
+                                                 action="#{clienteBean.prepararEliminacion(cliente.id)}"
                                                  onclick="PF('dlgConfirmarEliminar').show(); return false;"
                                                  styleClass="btn btn-danger btn-small"/>
                             </div>
@@ -614,7 +612,7 @@
 
             </h:form>
 
-            <p:dialog header="⚠️ Confirmar Eliminación"
+            <p:dialog header="Confirmar Eliminación"
                       widgetVar="dlgConfirmarEliminar"
                       modal="true"
                       showEffect="fade"
@@ -653,11 +651,11 @@
 
                     <f:facet name="footer">
                         <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                            <h:commandButton value="✓ Sí, Eliminar"
+                            <h:commandButton value="Sí, Eliminar"
                                              action="#{clienteBean.eliminarCliente()}"
                                              styleClass="btn btn-danger"
                                              onclick="PF('dlgConfirmarEliminar').hide();"/>
-                            <h:commandButton value="✗ Cancelar"
+                            <h:commandButton value="Cancelar"
                                              onclick="PF('dlgConfirmarEliminar').hide();"
                                              styleClass="btn btn-secondary"
                                              type="button"/>
@@ -682,33 +680,34 @@
             var telefono = telefonoInput.value.trim();
 
             if (nombre === '') {
-                alert('⚠️ El nombre es requerido');
+                alert('El nombre es requerido');
                 return false;
             }
 
             if (telefono === '') {
-                alert('⚠️ El teléfono es requerido');
+                alert('El teléfono es requerido');
                 return false;
             }
 
             if (nombre.length > 50) {
-                alert('⚠️ El nombre no debe exceder 50 caracteres');
+                alert('El nombre no debe exceder 50 caracteres');
                 return false;
             }
 
-            // ✅ VALIDACIÓN ACTUALIZADA: Solo letras y espacios (SIN números)
+
             if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(nombre)) {
-                alert('⚠️ El nombre solo puede contener letras y espacios (sin números)');
+                alert('El nombre solo puede contener letras y espacios (sin números)');
                 return false;
             }
+
 
             if (!/^[0-9]*$/.test(telefono)) {
-                alert('⚠️ El teléfono solo debe contener números');
+                alert('El teléfono solo debe contener números');
                 return false;
             }
 
             if (telefono.length > 10) {
-                alert('⚠️ El teléfono no debe exceder 10 dígitos');
+                alert('El teléfono no debe exceder 10 dígitos');
                 return false;
             }
 
@@ -723,15 +722,14 @@
             });
         }
 
-        // ✅ Listener actualizado: Solo acepta letras y espacios (SIN números)
+        // Permitir solo caracteres alfanuméricos en el campo de nombre// Permitir solo letras y espacios en el campo de nombre (corregido)
         var nomInput = document.getElementById('clienteForm:nombre');
         if(nomInput) {
             nomInput.addEventListener('input', function(e) {
-                this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+                this.value = this.value.replace(/[^a-zA-Z\sáéíóúÁÉÍÓÚñÑ]/g, '');
             });
         }
     </script>
 
 </h:body>
-
 </html>
