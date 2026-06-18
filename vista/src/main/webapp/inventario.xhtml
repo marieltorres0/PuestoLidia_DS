@@ -114,7 +114,8 @@
 
         /* Barra Inferior */
         .footer-azul { background-color: #5b8df2; height: 80px; display: flex; align-items: center; padding-left: 30px; border-top: 4px solid #1a1a1a; margin-top: auto; }
-        .flecha-regreso { color: white; font-size: 3rem; font-weight: bold; cursor: pointer; text-decoration: none; }
+        .flecha-regreso { color: white; font-size: 3rem; font-weight: bold; cursor: pointer; text-decoration: none; transition: transform 0.2s; }
+        .flecha-regreso:hover { transform: scale(1.1); }
 
         /* Estilos Modales */
         .modal-estilo .ui-dialog-titlebar { background-color: #5b8df2 !important; color: white !important; text-align: center; border-bottom: 4px solid #3e4a5c; }
@@ -135,6 +136,7 @@
 
     <div class="pantalla-principal">
         <div class="header-azul">
+
             <span>PUESTO LIDIA</span>
             <span style="display: flex; align-items: center; gap: 10px;">
                 USUARIO <i class="pi pi-user" style="font-size: 1.5rem; background: white; color: #5b8df2; border-radius: 50%; padding: 5px;"></i>
@@ -234,7 +236,7 @@
         </div>
 
         <div class="footer-azul">
-            <h:outputLink value="#" styleClass="flecha-regreso">
+            <h:outputLink value="index.xhtml" styleClass="flecha-regreso" title="Regresar al Menú Principal">
                 <i class="pi pi-arrow-left" style="font-size: 2.5rem; font-weight: 900;"></i>
             </h:outputLink>
         </div>

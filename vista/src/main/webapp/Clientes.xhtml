@@ -59,6 +59,25 @@
             padding: 40px;
         }
 
+        /* ----- ESTILO BOTÓN REGRESAR ----- */
+        .btn-regresar {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #2563eb;
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-regresar:hover {
+            color: #1d4ed8;
+            transform: translateX(-5px); /* Efecto de flecha hacia atrás */
+        }
+        /* --------------------------------- */
+
         .formulario-section {
             background: #f8f9fa;
             padding: 30px;
@@ -436,6 +455,10 @@
         </div>
 
         <div class="content">
+
+            <h:outputLink value="index.xhtml" styleClass="btn-regresar" title="Regresar al Menú Principal">
+                <i class="pi pi-arrow-left"></i> Regresar al Menú Principal
+            </h:outputLink>
 
             <h:form id="clienteForm">
                 <p:messages id="messages" showSummary="true" showDetail="true" autoUpdate="true" closable="true"/>

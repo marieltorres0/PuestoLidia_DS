@@ -35,6 +35,25 @@
             flex-grow: 1; min-height: 0;
         }
 
+        /* ----- ESTILO BOTÓN REGRESAR ----- */
+        .btn-regresar {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #5F87EE;
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-regresar:hover {
+            color: #3b5f9e;
+            transform: translateX(-5px); /* Efecto de flecha hacia atrás */
+        }
+        /* --------------------------------- */
+
         .panel-busqueda {
             display: flex; gap: 15px; margin-bottom: 20px;
             align-items: stretch; flex-shrink: 0;
@@ -131,7 +150,6 @@
             display: flex; align-items: center; padding-left: 30px;
             border-top: 2px solid #9C9C9C; flex-shrink: 0;
         }
-        .flecha-regreso { color: white; font-size: 2rem; font-weight: bold; cursor: pointer; text-decoration: none; }
 
         /* ================= ESTILOS DE MODALES ================= */
         .modal-estandar.ui-dialog { border-radius: 15px !important; overflow: hidden; border: 3px solid #3A4665; }
@@ -185,6 +203,11 @@
         </div>
 
         <div class="contenedor-interior">
+
+            <h:outputLink value="index.xhtml" styleClass="btn-regresar" title="Regresar al Menú Principal">
+                <i class="pi pi-arrow-left"></i> Regresar al Menú Principal
+            </h:outputLink>
+
             <h:form id="frmVenta" style="display: flex; flex-direction: column; height: 100%; min-height: 0;">
 
                 <p:hotkey bind="esc" handler="if($('.ui-dialog:visible').length === 0) { PF('wvModalCancelar').show(); }" />
@@ -294,11 +317,6 @@
             </h:form>
         </div>
 
-        <div class="footer-regreso">
-            <h:outputLink value="inicio.xhtml" styleClass="flecha-regreso">
-                <i class="pi pi-arrow-left"></i>
-            </h:outputLink>
-        </div>
     </div>
 
     <p:dialog id="modalCancelar" widgetVar="wvModalCancelar" header="Confirmar Cancelación" modal="true"
@@ -501,7 +519,6 @@
         </h:form>
     </p:dialog>
 
-    <!-- Diálogo de Alerta de Stock Crítico (VEN.US3) -->
     <p:dialog id="modalAlertaStock" widgetVar="wvAlertaStock" header="Alerta de Stock Crítico"
               modal="false" resizable="false" showEffect="fade" hideEffect="fade" width="400" styleClass="modal-estandar">
         <h:form id="frmAlertaStock">
@@ -517,7 +534,6 @@
                 </ui:repeat>
             </div>
 
-            <!-- Contenedor Flexbox con los dos botones solicitados (Cerrar y Aceptar) -->
             <div style="display: flex; justify-content: space-between; gap: 10px;">
                 <p:commandButton value="Cerrar" type="button"
                                  styleClass="ui-button-outlined ui-button-secondary" style="flex-grow: 1;"
