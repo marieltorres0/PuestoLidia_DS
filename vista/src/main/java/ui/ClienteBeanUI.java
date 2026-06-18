@@ -74,8 +74,9 @@ public class ClienteBeanUI implements Serializable {
             return false;
         }
 
-        if (!nombre.matches("^[a-zA-Z0-9\\s]*$")) {
-            mostrarError("Validación", "El nombre contiene caracteres no permitidos");
+        // ✅ VALIDACIÓN ACTUALIZADA: Solo letras y espacios (SIN números)
+        if (!nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]*$")) {
+            mostrarError("Validación", "El nombre solo puede contener letras y espacios (sin números)");
             return false;
         }
 
@@ -130,7 +131,7 @@ public class ClienteBeanUI implements Serializable {
     public void prepararModificacion(Integer id) {
         try {
             clienteSeleccionado = clienteHelper.buscarClientePorID(id);
-                        idCliente = clienteSeleccionado.getId();
+            idCliente = clienteSeleccionado.getId();
             nombre = clienteSeleccionado.getNombre();
             telefono = clienteSeleccionado.getTelefono();
             adeudo = clienteSeleccionado.getAdeudo();
@@ -167,7 +168,7 @@ public class ClienteBeanUI implements Serializable {
     public void prepararEliminacion(Integer id) {
         try {
             clienteSeleccionado = clienteHelper.buscarClientePorID(id);
-                        idCliente = clienteSeleccionado.getId();
+            idCliente = clienteSeleccionado.getId();
             nombre = clienteSeleccionado.getNombre();
             telefono = clienteSeleccionado.getTelefono();
         } catch (Exception e) {
