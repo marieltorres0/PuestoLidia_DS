@@ -1,64 +1,149 @@
-<!DOCTYPE html>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="jakarta.faces.html"
-      xmlns:f="jakarta.faces.core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
 
 <h:head>
-    <title>Gestión de Productos - Prueba Eliminar</title>
+    <title>Panel Principal - Puesto Lidia</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
     <style>
-        .campo-formulario { margin-bottom: 15px; }
-        .campo-formulario label { display: block; font-weight: bold; color: #4A4A4A; margin-bottom: 5px; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        /* Estilo adaptado para el modal de eliminación (Rojo para advertir peligro) */
-        .modal-estilo .ui-dialog-titlebar { background-color: #d9534f !important; color: white !important; text-align: center; border-bottom: 4px solid #c9302c; }
-        .modal-estilo .ui-dialog-title { float: none !important; font-size: 1.2rem; font-weight: bold; }
-        .modal-estilo.ui-dialog { border-radius: 12px !important; overflow: hidden; border: 2px solid #ccc; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5; /* Mismo fondo gris claro de tu sistema */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 60px 20px;
+        }
 
-        .texto-confirmacion { font-size: 1.1rem; text-align: center; margin: 20px 0; color: #333; }
+        .header-dashboard {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .header-dashboard h1 {
+            color: #2563eb; /* Azul principal */
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .header-dashboard p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .menu-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px 30px;
+            text-align: center;
+            text-decoration: none;
+            color: #2c3e50;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border-bottom: 5px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.15);
+            border-bottom: 5px solid #2563eb; /* Borde azul al pasar el mouse */
+        }
+
+        .icon-circle {
+            background: #e0e7ff; /* Azul muy claro */
+            color: #2563eb;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-card:hover .icon-circle {
+            background: #2563eb;
+            color: white;
+        }
+
+        .menu-card h2 {
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .menu-card p {
+            color: #7f8c8d;
+            line-height: 1.6;
+            font-size: 1em;
+        }
+
+        @media (max-width: 768px) {
+            .header-dashboard h1 {
+                font-size: 2.5em;
+            }
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </h:head>
 
-<h:body style="padding: 30px; background-color: #f4f6f9;">
+<h:body>
 
-    <p:growl id="notificacion" showDetail="true" life="4000" position="top-right">
-        <p:autoUpdate />
-    </p:growl>
+    <div class="header-dashboard">
+        <h1>Puesto Lidia</h1>
+        <p>Sistema de Gestión y Administración</p>
+    </div>
 
-    <h:form id="formPrincipal">
+    <div class="menu-grid">
 
-        <p:commandButton value="ELIMINAR" styleClass="btn-pildora-negro"
-                         action="#{productoBeanUI.prepararEliminacion(1123)}"
-                         update=":modalEliminar :notificacion" />
+        <h:link outcome="venta.xhtml" styleClass="menu-card">
+            <div class="icon-circle">PV</div>
+            <h2>Punto de Venta</h2>
+            <p>Registrar nuevas transacciones, buscar productos y procesar los cobros del negocio.</p>
+        </h:link>
 
+        <h:link outcome="inventario.xhtml" styleClass="menu-card">
+            <div class="icon-circle">IN</div>
+            <h2>Inventario</h2>
+            <p>Administrar el catálogo de productos, controlar existencias, precios y categorías.</p>
+        </h:link>
 
-    </h:form>
+        <h:link outcome="Clientes.xhtml" styleClass="menu-card">
+            <div class="icon-circle">CL</div>
+            <h2>Gestión de Clientes</h2>
+            <p>Registrar clientes, administrar sus datos de contacto y gestionar saldos o adeudos pendientes.</p>
+        </h:link>
 
-
-    <p:dialog id="modalEliminar" widgetVar="wvModalEliminar"
-              header="Eliminar Producto"
-              styleClass="modal-estilo" modal="true" resizable="false" closeOnEscape="true"
-              width="400" showEffect="fade" hideEffect="fade">
-
-        <h:form id="formModalEliminar">
-
-            <div class="texto-confirmacion">
-                <i class="pi pi-exclamation-triangle" style="font-size: 2rem; color: #d9534f; display: block; margin-bottom: 10px;"></i>
-                ¿Estás seguro de que deseas eliminar de forma permanente el producto <strong>#{productoBeanUI.nombre}</strong>?
-            </div>
-
-            <div style="display: flex; justify-content: space-between; margin-top: 25px;">
-                <p:commandButton value="CANCELAR" type="button" icon="pi pi-times"
-                                 styleClass="ui-button-outlined ui-button-secondary"
-                                 onclick="PF('wvModalEliminar').hide();" />
-
-                <p:commandButton value="SÍ, ELIMINAR" icon="pi pi-check"
-                                 action="#{productoBeanUI.eliminarProducto()}"
-                                 styleClass="ui-button-danger"
-                                 update=":notificacion" />
-            </div>
-        </h:form>
-    </p:dialog>
+    </div>
 
 </h:body>
 </html>

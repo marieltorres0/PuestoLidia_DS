@@ -8,9 +8,11 @@
       xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 
 <h:head>
+
     <title>Gestión de Clientes - Puesto Lidia</title>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
     <style>
         * {
             margin: 0;
@@ -20,7 +22,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f0f2f5;
             min-height: 100vh;
             padding: 20px;
         }
@@ -30,12 +32,12 @@
             margin: 0 auto;
             background: white;
             border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #2563eb;
             color: white;
             padding: 40px 30px;
             text-align: center;
@@ -45,7 +47,7 @@
             font-size: 2.5em;
             margin-bottom: 10px;
             font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
 
         .header p {
@@ -58,11 +60,12 @@
         }
 
         .formulario-section {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: #f8f9fa;
             padding: 30px;
             border-radius: 12px;
             margin-bottom: 40px;
-            border-left: 5px solid #667eea;
+            border-left: 5px solid #2563eb;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
 
         .formulario-section h2 {
@@ -93,7 +96,6 @@
             font-size: 0.95em;
         }
 
-        /* Ajuste para que PrimeFaces tome el estilo de tus inputs */
         .form-group input, .form-group .ui-inputfield {
             padding: 12px 15px;
             border: 2px solid #bdc3c7;
@@ -106,9 +108,9 @@
 
         .form-group input:focus, .form-group .ui-inputfield:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
-            background: #f9f9f9;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+            background: #fff;
         }
 
         .form-group input::placeholder, .form-group .ui-inputfield::placeholder {
@@ -146,7 +148,7 @@
 
         .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .btn:active {
@@ -154,21 +156,21 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #2563eb !important;
             color: white;
         }
 
         .btn-primary:hover {
-            background: linear-gradient(135deg, #5568d3 0%, #6a3a8f 100%);
+            background: #1d4ed8 !important;
         }
 
         .btn-secondary {
-            background: #95a5a6;
+            background: #60a5fa !important;
             color: white;
         }
 
         .btn-secondary:hover {
-            background: #7f8c8d;
+            background: #3b82f6 !important;
         }
 
         .btn-success {
@@ -187,6 +189,15 @@
 
         .btn-danger:hover {
             background: #c0392b;
+        }
+
+        .btn-editar {
+            background: #f39c12 !important;
+            color: white !important;
+        }
+
+        .btn-editar:hover {
+            background: #e67e22 !important;
         }
 
         .btn-small {
@@ -216,7 +227,7 @@
 
         .search-section .ui-inputfield:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #2563eb;
         }
 
         .tabla-section {
@@ -231,7 +242,7 @@
             align-items: center;
             gap: 10px;
             padding-bottom: 15px;
-            border-bottom: 3px solid #667eea;
+            border-bottom: 3px solid #2563eb;
         }
 
         .ui-datatable {
@@ -239,15 +250,16 @@
             background: white;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
 
         .ui-datatable .ui-datatable-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #2563eb !important;
             color: white;
             padding: 20px !important;
             font-weight: 600;
             font-size: 1.1em;
+            border: none !important;
         }
 
         .ui-datatable .ui-datatable-thead > tr > th {
@@ -286,8 +298,8 @@
         }
 
         .ui-paginator .ui-paginator-page {
-            background: #667eea !important;
-            border-color: #667eea !important;
+            background: #2563eb !important;
+            border-color: #2563eb !important;
             color: white !important;
         }
 
@@ -311,21 +323,15 @@
         }
 
         .ui-dialog .ui-dialog-titlebar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #2563eb !important;
+            color: white !important;
             padding: 15px;
             border-radius: 10px 10px 0 0;
+            border: none;
         }
 
         .ui-dialog .ui-dialog-content {
             padding: 25px;
-        }
-
-        .ui-dialog .ui-dialog-buttonpane {
-            background: #f8f9fa;
-            padding: 15px;
-            text-align: right;
-            border-top: 1px solid #ecf0f1;
         }
 
         .ui-messages {
@@ -359,7 +365,7 @@
 
         .badge {
             display: inline-block;
-            background: #667eea;
+            background: #2563eb;
             color: white;
             padding: 4px 12px;
             border-radius: 20px;
@@ -368,7 +374,7 @@
         }
 
         .badge-adeudo {
-            background: #e74c3c;
+            background: #f39c12 !important;
         }
 
         .monto {
@@ -435,12 +441,7 @@
                 <p:messages id="messages" showSummary="true" showDetail="true" autoUpdate="true" closable="true"/>
 
                 <div class="formulario-section">
-                    <h:panelGroup rendered="#{not clienteBean.esEdicion}">
-                        <h2>Registrar Nuevo Cliente</h2>
-                    </h:panelGroup>
-                    <h:panelGroup rendered="#{clienteBean.esEdicion}">
-                        <h2>Modificar Cliente</h2>
-                    </h:panelGroup>
+                    <h2>Registrar Nuevo Cliente</h2>
 
                     <div class="form-grid">
                         <div class="form-group">
@@ -452,7 +453,8 @@
                                          placeholder="Ej: Juan García López"
                                          maxlength="50"
                                          required="true"
-                                         requiredMessage="El nombre es requerido." />
+                                         requiredMessage="El nombre es requerido."
+                                         oninput="this.value = this.value.replace(/[^a-zA-Z\sáéíóúÁÉÍÓÚñÑ]/g, '');" />
                             <small style="color: #7f8c8d; margin-top: 5px;">
                                 Máximo 50 caracteres, sin caracteres especiales
                             </small>
@@ -469,7 +471,8 @@
                                          required="true"
                                          requiredMessage="El teléfono es requerido."
                                          pt:inputmode="numeric"
-                                         pt:pattern="[0-9]{1,10}" />
+                                         pt:pattern="[0-9]{1,10}"
+                                         oninput="this.value = this.value.replace(/[^0-9]/g, '');" />
                             <small style="color: #7f8c8d; margin-top: 5px;">
                                 Máximo 10 dígitos, solo números, debe ser único
                             </small>
@@ -477,54 +480,47 @@
                     </div>
 
                     <div class="botones">
-                        <h:panelGroup rendered="#{not clienteBean.esEdicion}">
-                            <div class="btn-group">
-                                <h:commandButton value="Registrar"
-                                                 action="#{clienteBean.registrarCliente()}"
-                                                 styleClass="btn btn-primary"
-                                                 onclick="return validarFormulario();"/>
-                                <h:commandButton value="Limpiar"
-                                                 action="#{clienteBean.limpiarDatos()}"
-                                                 immediate="true"
-                                                 styleClass="btn btn-secondary"/>
-                            </div>
-                        </h:panelGroup>
-
-                        <h:panelGroup rendered="#{clienteBean.esEdicion}">
-                            <div class="btn-group">
-                                <h:commandButton value="Guardar Cambios"
-                                                 action="#{clienteBean.modificarCliente()}"
-                                                 styleClass="btn btn-success"
-                                                 onclick="return validarFormulario();"/>
-                                <h:commandButton value="Cancelar"
-                                                 action="#{clienteBean.limpiarDatos()}"
-                                                 immediate="true"
-                                                 styleClass="btn btn-secondary"/>
-                            </div>
-                        </h:panelGroup>
+                        <div class="btn-group">
+                            <h:commandButton value="Registrar"
+                                             action="#{clienteBean.registrarCliente()}"
+                                             styleClass="btn btn-primary"
+                                             onclick="return validarFormulario();"/>
+                            <h:commandButton value="Limpiar"
+                                             action="#{clienteBean.limpiarDatos()}"
+                                             immediate="true"
+                                             styleClass="btn btn-secondary"/>
+                        </div>
                     </div>
                 </div>
 
                 <div class="search-section">
                     <h:outputLabel for="busqueda" value="Buscar por ID, Nombre o Teléfono: " style="font-weight: 600; color: #2c3e50;"/>
+
                     <p:inputText id="busqueda"
+                                 widgetVar="wvBusqueda"
                                  value="#{clienteBean.textoBusqueda}"
-                                 placeholder="Ingresa ID o nombre del cliente"/>
+                                 placeholder="Ingresa ID o nombre del cliente"
+                                 oninput="this.value = this.value.replace(/[^a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]/g, '');" />
 
                     <p:commandButton value="Buscar"
                                      action="#{clienteBean.buscarCliente()}"
                                      process="@this busqueda"
                                      update="clientesTable"
+                                     oncomplete="PF('wvBusqueda').jq.val('');"
                                      styleClass="btn btn-primary btn-small"/>
+
                     <p:commandButton value="Mostrar Todos"
                                      action="#{clienteBean.cargarTodosClientes()}"
                                      process="@this"
-                                     update="clientesTable busqueda"
+                                     update="clientesTable"
+                                     oncomplete="PF('wvBusqueda').jq.val('');"
                                      styleClass="btn btn-secondary btn-small"/>
+
                     <p:commandButton value="Con Adeudo"
                                      action="#{clienteBean.cargarClientesConAdeudo()}"
                                      process="@this"
                                      update="clientesTable"
+                                     oncomplete="PF('wvBusqueda').jq.val('');"
                                      styleClass="btn btn-danger btn-small"/>
                 </div>
 
@@ -545,7 +541,7 @@
                         <f:facet name="header">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <span>Clientes Registrados</span>
-                                <span class="badge" style="background: #667eea;">
+                                <span class="badge" style="background: #2563eb;">
                                     Total: #{empty clienteBean.listaClientes ? '0' : clienteBean.listaClientes.size()}
                                 </span>
                             </div>
@@ -553,15 +549,15 @@
 
                         <p:column headerText="ID"
                                   sortBy="#{cliente.id}"
-                                  style="width: 80px; text-align: center;">
-                            <div style="background: #667eea; color: white; padding: 8px; border-radius: 6px; font-weight: 600;">
+                                  style="width: 60px; text-align: center;">
+                            <div style="background: #2563eb; color: white; padding: 8px; border-radius: 6px; font-weight: 600;">
                                 #{cliente.id}
                             </div>
                         </p:column>
 
                         <p:column headerText="Nombre"
                                   sortBy="#{cliente.nombre}"
-                                  style="width: 280px;">
+                                  style="width: 200px;">
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <span>#{cliente.nombre}</span>
                             </div>
@@ -569,7 +565,7 @@
 
                         <p:column headerText="Teléfono"
                                   sortBy="#{cliente.telefono}"
-                                  style="width: 150px;">
+                                  style="width: 120px;">
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <span style="font-family: 'Courier New', monospace; font-weight: 600;">
                                     #{cliente.telefono}
@@ -579,7 +575,7 @@
 
                         <p:column headerText="Adeudo"
                                   sortBy="#{cliente.adeudo}"
-                                  style="width: 150px; text-align: right;">
+                                  style="width: 100px; text-align: right;">
                             <h:panelGroup rendered="#{cliente.adeudo > 0}">
                                 <span class="badge badge-adeudo monto">
                                     <h:outputText value="#{cliente.adeudo}">
@@ -595,15 +591,30 @@
                         </p:column>
 
                         <p:column headerText="Acciones"
-                                  style="width: 220px; text-align: center;">
+                                  style="width: 250px; text-align: center;">
                             <div class="acciones">
-                                <h:commandButton value="Editar"
-                                                 action="#{clienteBean.prepararModificacion(cliente.id)}"
-                                                 styleClass="btn btn-primary btn-small"/>
-                                <h:commandButton value="Eliminar"
-                                                 action="#{clienteBean.prepararEliminacion(cliente.id)}"
-                                                 onclick="PF('dlgConfirmarEliminar').show(); return false;"
-                                                 styleClass="btn btn-danger btn-small"/>
+                                <h:panelGroup rendered="#{cliente.adeudo > 0}">
+                                    <p:commandButton value="Abonar"
+                                                     actionListener="#{clienteBean.prepararAbono(cliente.id)}"
+                                                     update=":formAbonar"
+                                                     oncomplete="PF('dlgAbonar').show();"
+                                                     styleClass="btn btn-success btn-small"
+                                                     process="@this"/>
+                                </h:panelGroup>
+
+                                <p:commandButton value="Editar"
+                                                 actionListener="#{clienteBean.prepararModificacion(cliente.id)}"
+                                                 update=":formEditarCliente"
+                                                 oncomplete="PF('dlgEditar').show();"
+                                                 styleClass="btn btn-editar btn-small"
+                                                 process="@this"/>
+
+                                <p:commandButton value="Eliminar"
+                                                 actionListener="#{clienteBean.prepararEliminacion(cliente.id)}"
+                                                 update=":formConfirmarEliminar"
+                                                 oncomplete="PF('dlgConfirmarEliminar').show();"
+                                                 styleClass="btn btn-danger btn-small"
+                                                 process="@this"/>
                             </div>
                         </p:column>
 
@@ -612,6 +623,114 @@
 
             </h:form>
 
+            <p:dialog header="Abonar a Cuenta"
+                      widgetVar="dlgAbonar"
+                      modal="true"
+                      showEffect="fade"
+                      hideEffect="fade"
+                      width="400px"
+                      resizable="false">
+
+                <h:form id="formAbonar">
+                    <h:panelGroup rendered="#{not empty clienteBean.clienteSeleccionado}">
+                        <div style="background: #ecf0f1; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                            <p style="margin-bottom: 5px;">
+                                <strong>Cliente:</strong> #{clienteBean.clienteSeleccionado.nombre}
+                            </p>
+                            <p style="margin-bottom: 0;">
+                                <strong>Adeudo Actual:</strong>
+                                <h:outputText value="#{clienteBean.clienteSeleccionado.adeudo}" style="color: #e74c3c; font-weight: bold; font-size: 1.1em;">
+                                    <f:convertNumber type="currency" currencySymbol="$"/>
+                                </h:outputText>
+                            </p>
+                        </div>
+                    </h:panelGroup>
+
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <h:outputLabel for="montoAbono" value="Monto a Abonar ($) " style="font-weight: bold;" />
+                        <p:inputText id="montoAbono"
+                                     value="#{clienteBean.montoAbono}"
+                                     required="true"
+                                     requiredMessage="El monto a abonar es requerido."
+                                     style="width: 100%; margin-top: 5px;"
+                                     pt:inputmode="decimal"
+                                     oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; padding-top: 15px; border-top: 1px solid #ecf0f1;">
+                        <p:commandButton value="Aplicar Abono"
+                                         action="#{clienteBean.abonarCliente()}"
+                                         update=":clienteForm:clientesTable :clienteForm:messages"
+                                         oncomplete="if(!args.validationFailed) PF('dlgAbonar').hide();"
+                                         styleClass="btn btn-success"/>
+
+                        <p:commandButton value="Cancelar"
+                                         onclick="PF('dlgAbonar').hide();"
+                                         type="button"
+                                         styleClass="btn btn-secondary"/>
+                    </div>
+                </h:form>
+            </p:dialog>
+
+            <p:dialog header="Modificar Cliente"
+                      widgetVar="dlgEditar"
+                      modal="true"
+                      showEffect="fade"
+                      hideEffect="fade"
+                      width="500px"
+                      resizable="false">
+
+                <h:form id="formEditarCliente">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <h:outputLabel for="editNombre" value="Nombre " style="font-weight: bold;" />
+                        <p:inputText id="editNombre"
+                                     value="#{clienteBean.nombre}"
+                                     maxlength="50"
+                                     required="true"
+                                     requiredMessage="El nombre es requerido."
+                                     style="width: 100%; margin-top: 5px;"
+                                     oninput="this.value = this.value.replace(/[^a-zA-Z\sáéíóúÁÉÍÓÚñÑ]/g, '');" />
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <h:outputLabel for="editTelefono" value="Teléfono " style="font-weight: bold;" />
+                        <p:inputText id="editTelefono"
+                                     value="#{clienteBean.telefono}"
+                                     maxlength="10"
+                                     required="true"
+                                     requiredMessage="El teléfono es requerido."
+                                     style="width: 100%; margin-top: 5px;"
+                                     pt:inputmode="numeric"
+                                     oninput="this.value = this.value.replace(/[^0-9]/g, '');" />
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <h:outputLabel for="editAdeudo" value="Adeudo Total ($) " style="font-weight: bold;" />
+                        <p:inputText id="editAdeudo"
+                                     value="#{clienteBean.adeudo}"
+                                     required="true"
+                                     requiredMessage="El adeudo es requerido."
+                                     style="width: 100%; margin-top: 5px;"
+                                     pt:inputmode="decimal"
+                                     oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; padding-top: 15px; border-top: 1px solid #ecf0f1;">
+                        <p:commandButton value="Aceptar"
+                                         action="#{clienteBean.modificarCliente()}"
+                                         update=":clienteForm:clientesTable :clienteForm:messages"
+                                         oncomplete="if(!args.validationFailed) PF('dlgEditar').hide();"
+                                         styleClass="btn btn-success"/>
+
+                        <p:commandButton value="Cancelar"
+                                         onclick="PF('dlgEditar').hide();"
+                                         action="#{clienteBean.limpiarDatos()}"
+                                         type="button"
+                                         styleClass="btn btn-secondary"/>
+                    </div>
+                </h:form>
+            </p:dialog>
+
             <p:dialog header="Confirmar Eliminación"
                       widgetVar="dlgConfirmarEliminar"
                       modal="true"
@@ -619,7 +738,7 @@
                       hideEffect="fade"
                       width="400px">
 
-                <h:form>
+                <h:form id="formConfirmarEliminar">
                     <p:outputPanel id="detail">
                         <h:panelGroup rendered="#{not empty clienteBean.clienteSeleccionado}">
                             <div style="margin-bottom: 20px;">
@@ -649,18 +768,17 @@
                         </h:panelGroup>
                     </p:outputPanel>
 
-                    <f:facet name="footer">
-                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                            <h:commandButton value="Sí, Eliminar"
-                                             action="#{clienteBean.eliminarCliente()}"
-                                             styleClass="btn btn-danger"
-                                             onclick="PF('dlgConfirmarEliminar').hide();"/>
-                            <h:commandButton value="Cancelar"
-                                             onclick="PF('dlgConfirmarEliminar').hide();"
-                                             styleClass="btn btn-secondary"
-                                             type="button"/>
-                        </div>
-                    </f:facet>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px; border-top: 1px solid #ecf0f1; padding-top: 15px;">
+                        <p:commandButton value="Sí, Eliminar"
+                                         action="#{clienteBean.eliminarCliente()}"
+                                         update=":clienteForm:clientesTable :clienteForm:messages"
+                                         oncomplete="PF('dlgConfirmarEliminar').hide();"
+                                         styleClass="btn btn-danger"/>
+                        <p:commandButton value="Cancelar"
+                                         onclick="PF('dlgConfirmarEliminar').hide();"
+                                         type="button"
+                                         styleClass="btn btn-secondary"/>
+                    </div>
                 </h:form>
             </p:dialog>
 
@@ -670,7 +788,6 @@
 
     <script>
         function validarFormulario() {
-            // Nota: JSF agrega el ID del form a los elementos hijos.
             var nombreInput = document.getElementById('clienteForm:nombre');
             var telefonoInput = document.getElementById('clienteForm:telefono');
 
@@ -694,12 +811,10 @@
                 return false;
             }
 
-
             if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(nombre)) {
                 alert('El nombre solo puede contener letras y espacios (sin números)');
                 return false;
             }
-
 
             if (!/^[0-9]*$/.test(telefono)) {
                 alert('El teléfono solo debe contener números');
@@ -712,22 +827,6 @@
             }
 
             return true;
-        }
-
-        // Permitir solo números en el campo de teléfono
-        var telInput = document.getElementById('clienteForm:telefono');
-        if(telInput) {
-            telInput.addEventListener('input', function(e) {
-                this.value = this.value.replace(/[^0-9]/g, '');
-            });
-        }
-
-        // Permitir solo caracteres alfanuméricos en el campo de nombre// Permitir solo letras y espacios en el campo de nombre (corregido)
-        var nomInput = document.getElementById('clienteForm:nombre');
-        if(nomInput) {
-            nomInput.addEventListener('input', function(e) {
-                this.value = this.value.replace(/[^a-zA-Z\sáéíóúÁÉÍÓÚñÑ]/g, '');
-            });
         }
     </script>
 
