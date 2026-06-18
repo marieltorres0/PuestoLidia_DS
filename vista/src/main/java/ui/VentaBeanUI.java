@@ -36,14 +36,9 @@ public class VentaBeanUI implements Serializable {
     private BigDecimal montoRecibido;
     private BigDecimal cambio;
 
-    // Rastrea cuánto dinero en efectivo ha ingresado el cajero en total (para pagos parciales)
-    private BigDecimal montoAcumulado;
-
     // para venta a credito
     private String clienteBusqueda;
     private Cliente nuevoCliente;
-
-
 
     // Solo para mostrar en el modal de éxito en venta a crédito
     private BigDecimal adeudoGeneradoClienteCredito;
@@ -65,7 +60,6 @@ public class VentaBeanUI implements Serializable {
         this.total = BigDecimal.ZERO;
         this.montoRecibido = null;
         this.cambio = BigDecimal.ZERO;
-        this.montoAcumulado = BigDecimal.ZERO;
         this.tipoPago = "contado";
         this.clienteBusqueda = null;
         this.nuevoCliente = new Cliente();
@@ -189,8 +183,6 @@ public class VentaBeanUI implements Serializable {
     // Actualiza el total del carrito sumando subtotales
     private void recalcularTotalVenta() {
         this.total = ventaHelper.calcularTotalCarrito(carrito);
-        // Si el carrito cambia, se reinicia cualquier abono previo por seguridad
-        this.montoAcumulado = BigDecimal.ZERO;
     }
 
     // Se ejecuta al presionar "COBRAR VENTA (F1)" para asegurar que el input del modal empiece vacío
@@ -356,9 +348,6 @@ public class VentaBeanUI implements Serializable {
 
     public BigDecimal getCambio() { return cambio; }
     public void setCambio(BigDecimal cambio) { this.cambio = cambio; }
-
-    public BigDecimal getMontoAcumulado() { return montoAcumulado; }
-    public void setMontoAcumulado(BigDecimal montoAcumulado) { this.montoAcumulado = montoAcumulado; }
 
     public String getTipoPago() {return tipoPago;}
     public void setTipoPago(String tipoPago) {this.tipoPago = tipoPago;}
