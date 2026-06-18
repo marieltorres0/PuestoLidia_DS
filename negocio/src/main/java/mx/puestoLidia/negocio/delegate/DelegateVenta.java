@@ -6,6 +6,7 @@ import mx.puestoLidia.entity.Venta;
 import mx.puestoLidia.persistence.integration.ServiceLocator;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class DelegateVenta {
@@ -91,6 +92,25 @@ public class DelegateVenta {
             granTotal = granTotal.add(iv.getImporte());
         }
         return granTotal;
+    }
+
+    // PARA LANZAR ALERTA STOCK CRITICO
+    public List<Producto> evaluarStockCritico(List<ItemVenta> carrito) {
+        List<Producto> productosCriticos = new ArrayList<>();
+
+        for (ItemVenta item : carrito) {
+            String idProducto = item.getIdProducto().getIdProducto();
+
+            // Usamos tu ServiceFacadeLocator para ir por el producto actualizado
+            Producto pActualizado = ServiceLocator.getInstanceProductoDAO().buscarProductoPorID(idProducto);
+
+            // Verificamos si la cantidad real cayó al umbral o menos
+            if (pActualizado != null && pActualizado.getCantidad() <= pActualizado.getUmbral()) {
+                productosCriticos.add(pActualizado);
+            }
+        }
+
+        return productosCriticos;
     }
 
     // ==== CRUD BÁSICO ====

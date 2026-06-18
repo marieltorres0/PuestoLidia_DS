@@ -1,6 +1,7 @@
 package mx.puestoLidia.negocio.facade;
 
 import mx.puestoLidia.entity.ItemVenta;
+import mx.puestoLidia.entity.Producto;
 import mx.puestoLidia.entity.Venta;
 import mx.puestoLidia.negocio.delegate.DelegateVenta;
 
@@ -32,6 +33,11 @@ public class FacadeVenta {
     // CALCULAR TOTAL DE LA VENTA
     public BigDecimal calcularTotalCarrito(List<ItemVenta> carritoActual){
         return delegateVenta.calcularTotalCarrito(carritoActual);
+    }
+
+    // PARA LA ALERTA DE STOCK CRITICO
+    public List<Producto> evaluarStockCritico(List<ItemVenta> carrito) {
+        return delegateVenta.evaluarStockCritico(carrito);
     }
 
     // ==== CRUD Básico ====
