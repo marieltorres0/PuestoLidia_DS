@@ -22,7 +22,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f2f5; /* Fondo gris claro limpio */
+            background: #f0f2f5;
             min-height: 100vh;
             padding: 20px;
         }
@@ -37,7 +37,7 @@
         }
 
         .header {
-            background: #2563eb; /* Azul sólido profesional */
+            background: #2563eb;
             color: white;
             padding: 40px 30px;
             text-align: center;
@@ -60,11 +60,11 @@
         }
 
         .formulario-section {
-            background: #f8f9fa; /* Fondo claro sólido, sin degradado */
+            background: #f8f9fa;
             padding: 30px;
             border-radius: 12px;
             margin-bottom: 40px;
-            border-left: 5px solid #2563eb; /* Borde azul */
+            border-left: 5px solid #2563eb;
             box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
 
@@ -108,7 +108,7 @@
 
         .form-group input:focus, .form-group .ui-inputfield:focus {
             outline: none;
-            border-color: #2563eb; /* Azul al enfocar */
+            border-color: #2563eb;
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
             background: #fff;
         }
@@ -254,7 +254,7 @@
         }
 
         .ui-datatable .ui-datatable-header {
-            background: #2563eb !important; /* Azul sólido en encabezado de tabla */
+            background: #2563eb !important;
             color: white;
             padding: 20px !important;
             font-weight: 600;
@@ -298,7 +298,7 @@
         }
 
         .ui-paginator .ui-paginator-page {
-            background: #2563eb !important; /* Azul en la paginación */
+            background: #2563eb !important;
             border-color: #2563eb !important;
             color: white !important;
         }
@@ -323,7 +323,7 @@
         }
 
         .ui-dialog .ui-dialog-titlebar {
-            background: #2563eb !important; /* Azul en los modales */
+            background: #2563eb !important;
             color: white !important;
             padding: 15px;
             border-radius: 10px 10px 0 0;
@@ -365,7 +365,7 @@
 
         .badge {
             display: inline-block;
-            background: #2563eb; /* Azul para el total de clientes */
+            background: #2563eb;
             color: white;
             padding: 4px 12px;
             border-radius: 20px;
@@ -493,24 +493,32 @@
 
                 <div class="search-section">
                     <h:outputLabel for="busqueda" value="Buscar por ID, Nombre o Teléfono: " style="font-weight: 600; color: #2c3e50;"/>
+
                     <p:inputText id="busqueda"
+                                 widgetVar="wvBusqueda"
                                  value="#{clienteBean.textoBusqueda}"
-                                 placeholder="Ingresa ID o nombre del cliente"/>
+                                 placeholder="Ingresa ID o nombre del cliente"
+                                 oninput="this.value = this.value.replace(/[^a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]/g, '');" />
 
                     <p:commandButton value="Buscar"
                                      action="#{clienteBean.buscarCliente()}"
                                      process="@this busqueda"
                                      update="clientesTable"
+                                     oncomplete="PF('wvBusqueda').jq.val('');"
                                      styleClass="btn btn-primary btn-small"/>
+
                     <p:commandButton value="Mostrar Todos"
                                      action="#{clienteBean.cargarTodosClientes()}"
                                      process="@this"
-                                     update="clientesTable busqueda"
+                                     update="clientesTable"
+                                     oncomplete="PF('wvBusqueda').jq.val('');"
                                      styleClass="btn btn-secondary btn-small"/>
+
                     <p:commandButton value="Con Adeudo"
                                      action="#{clienteBean.cargarClientesConAdeudo()}"
                                      process="@this"
                                      update="clientesTable"
+                                     oncomplete="PF('wvBusqueda').jq.val('');"
                                      styleClass="btn btn-danger btn-small"/>
                 </div>
 
@@ -797,12 +805,10 @@
                 return false;
             }
 
-
             if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(nombre)) {
                 alert('El nombre solo puede contener letras y espacios (sin números)');
                 return false;
             }
-
 
             if (!/^[0-9]*$/.test(telefono)) {
                 alert('El teléfono solo debe contener números');
