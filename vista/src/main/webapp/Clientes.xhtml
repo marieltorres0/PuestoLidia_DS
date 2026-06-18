@@ -190,6 +190,15 @@
             background: #c0392b;
         }
 
+        .btn-editar {
+            background: #f39c12 !important;
+            color: white !important;
+        }
+
+        .btn-editar:hover {
+            background: #e67e22 !important;
+        }
+
         .btn-small {
             padding: 8px 12px;
             font-size: 0.85em;
@@ -362,7 +371,7 @@
         }
 
         .badge-adeudo {
-            background: #e74c3c;
+            background: #f39c12 !important;
         }
 
         .monto {
@@ -575,13 +584,15 @@
                                                  actionListener="#{clienteBean.prepararModificacion(cliente.id)}"
                                                  update=":formEditarCliente"
                                                  oncomplete="PF('dlgEditar').show();"
-                                                 styleClass="btn btn-primary btn-small"
+                                                 styleClass="btn btn-editar btn-small"
                                                  process="@this"/>
 
-                                <h:commandButton value="Eliminar"
-                                                 action="#{clienteBean.prepararEliminacion(cliente.id)}"
-                                                 onclick="PF('dlgConfirmarEliminar').show(); return false;"
-                                                 styleClass="btn btn-danger btn-small"/>
+                                <p:commandButton value="Eliminar"
+                                                 actionListener="#{clienteBean.prepararEliminacion(cliente.id)}"
+                                                 update=":formConfirmarEliminar"
+                                                 oncomplete="PF('dlgConfirmarEliminar').show();"
+                                                 styleClass="btn btn-danger btn-small"
+                                                 process="@this"/>
                             </div>
                         </p:column>
 
@@ -653,7 +664,7 @@
                       hideEffect="fade"
                       width="400px">
 
-                <h:form>
+                <h:form id="formConfirmarEliminar">
                     <p:outputPanel id="detail">
                         <h:panelGroup rendered="#{not empty clienteBean.clienteSeleccionado}">
                             <div style="margin-bottom: 20px;">
@@ -683,18 +694,17 @@
                         </h:panelGroup>
                     </p:outputPanel>
 
-                    <f:facet name="footer">
-                        <div style="display: flex; gap: 10px; justify-content: flex-end;">
-                            <h:commandButton value="Sí, Eliminar"
-                                             action="#{clienteBean.eliminarCliente()}"
-                                             styleClass="btn btn-danger"
-                                             onclick="PF('dlgConfirmarEliminar').hide();"/>
-                            <h:commandButton value="Cancelar"
-                                             onclick="PF('dlgConfirmarEliminar').hide();"
-                                             styleClass="btn btn-secondary"
-                                             type="button"/>
-                        </div>
-                    </f:facet>
+                    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px; border-top: 1px solid #ecf0f1; padding-top: 15px;">
+                        <p:commandButton value="Sí, Eliminar"
+                                         action="#{clienteBean.eliminarCliente()}"
+                                         update=":clienteForm:clientesTable :clienteForm:messages"
+                                         oncomplete="PF('dlgConfirmarEliminar').hide();"
+                                         styleClass="btn btn-danger"/>
+                        <p:commandButton value="Cancelar"
+                                         onclick="PF('dlgConfirmarEliminar').hide();"
+                                         type="button"
+                                         styleClass="btn btn-secondary"/>
+                    </div>
                 </h:form>
             </p:dialog>
 
@@ -780,7 +790,6 @@
         var editAdeudoInput = document.getElementById('formEditarCliente:editAdeudo');
         if(editAdeudoInput) {
             editAdeudoInput.addEventListener('input', function(e) {
-                // Permite números y un solo punto decimal
                 this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
             });
         }
