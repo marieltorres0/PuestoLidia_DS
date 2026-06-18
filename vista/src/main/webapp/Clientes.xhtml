@@ -95,7 +95,6 @@
             font-size: 0.95em;
         }
 
-        /* Ajuste para que PrimeFaces tome el estilo de tus inputs */
         .form-group input, .form-group .ui-inputfield {
             padding: 12px 15px;
             border: 2px solid #bdc3c7;
@@ -323,13 +322,6 @@
             padding: 25px;
         }
 
-        .ui-dialog .ui-dialog-buttonpane {
-            background: #f8f9fa;
-            padding: 15px;
-            text-align: right;
-            border-top: 1px solid #ecf0f1;
-        }
-
         .ui-messages {
             margin-bottom: 20px;
         }
@@ -437,12 +429,7 @@
                 <p:messages id="messages" showSummary="true" showDetail="true" autoUpdate="true" closable="true"/>
 
                 <div class="formulario-section">
-                    <h:panelGroup rendered="#{not clienteBean.esEdicion}">
-                        <h2>Registrar Nuevo Cliente</h2>
-                    </h:panelGroup>
-                    <h:panelGroup rendered="#{clienteBean.esEdicion}">
-                        <h2>Modificar Cliente</h2>
-                    </h:panelGroup>
+                    <h2>Registrar Nuevo Cliente</h2>
 
                     <div class="form-grid">
                         <div class="form-group">
@@ -479,31 +466,16 @@
                     </div>
 
                     <div class="botones">
-                        <h:panelGroup rendered="#{not clienteBean.esEdicion}">
-                            <div class="btn-group">
-                                <h:commandButton value="Registrar"
-                                                 action="#{clienteBean.registrarCliente()}"
-                                                 styleClass="btn btn-primary"
-                                                 onclick="return validarFormulario();"/>
-                                <h:commandButton value="Limpiar"
-                                                 action="#{clienteBean.limpiarDatos()}"
-                                                 immediate="true"
-                                                 styleClass="btn btn-secondary"/>
-                            </div>
-                        </h:panelGroup>
-
-                        <h:panelGroup rendered="#{clienteBean.esEdicion}">
-                            <div class="btn-group">
-                                <h:commandButton value="Guardar Cambios"
-                                                 action="#{clienteBean.modificarCliente()}"
-                                                 styleClass="btn btn-success"
-                                                 onclick="return validarFormulario();"/>
-                                <h:commandButton value="Cancelar"
-                                                 action="#{clienteBean.limpiarDatos()}"
-                                                 immediate="true"
-                                                 styleClass="btn btn-secondary"/>
-                            </div>
-                        </h:panelGroup>
+                        <div class="btn-group">
+                            <h:commandButton value="Registrar"
+                                             action="#{clienteBean.registrarCliente()}"
+                                             styleClass="btn btn-primary"
+                                             onclick="return validarFormulario();"/>
+                            <h:commandButton value="Limpiar"
+                                             action="#{clienteBean.limpiarDatos()}"
+                                             immediate="true"
+                                             styleClass="btn btn-secondary"/>
+                        </div>
                     </div>
                 </div>
 
@@ -599,9 +571,13 @@
                         <p:column headerText="Acciones"
                                   style="width: 220px; text-align: center;">
                             <div class="acciones">
-                                <h:commandButton value="Editar"
-                                                 action="#{clienteBean.prepararModificacion(cliente.id)}"
-                                                 styleClass="btn btn-primary btn-small"/>
+                                <p:commandButton value="Editar"
+                                                 actionListener="#{clienteBean.prepararModificacion(cliente.id)}"
+                                                 update=":formEditarCliente"
+                                                 oncomplete="PF('dlgEditar').show();"
+                                                 styleClass="btn btn-primary btn-small"
+                                                 process="@this"/>
+
                                 <h:commandButton value="Eliminar"
                                                  action="#{clienteBean.prepararEliminacion(cliente.id)}"
                                                  onclick="PF('dlgConfirmarEliminar').show(); return false;"
@@ -613,6 +589,62 @@
                 </div>
 
             </h:form>
+
+            <p:dialog header="Modificar Cliente"
+                      widgetVar="dlgEditar"
+                      modal="true"
+                      showEffect="fade"
+                      hideEffect="fade"
+                      width="500px"
+                      resizable="false">
+
+                <h:form id="formEditarCliente">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <h:outputLabel for="editNombre" value="Nombre " style="font-weight: bold;" />
+                        <p:inputText id="editNombre"
+                                     value="#{clienteBean.nombre}"
+                                     maxlength="50"
+                                     required="true"
+                                     requiredMessage="El nombre es requerido."
+                                     style="width: 100%; margin-top: 5px;" />
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <h:outputLabel for="editTelefono" value="Teléfono " style="font-weight: bold;" />
+                        <p:inputText id="editTelefono"
+                                     value="#{clienteBean.telefono}"
+                                     maxlength="10"
+                                     required="true"
+                                     requiredMessage="El teléfono es requerido."
+                                     style="width: 100%; margin-top: 5px;"
+                                     pt:inputmode="numeric" />
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <h:outputLabel for="editAdeudo" value="Adeudo ($) " style="font-weight: bold;" />
+                        <p:inputText id="editAdeudo"
+                                     value="#{clienteBean.adeudo}"
+                                     required="true"
+                                     requiredMessage="El adeudo es requerido."
+                                     style="width: 100%; margin-top: 5px;"
+                                     pt:inputmode="decimal" />
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; padding-top: 15px; border-top: 1px solid #ecf0f1;">
+                        <p:commandButton value="Aceptar"
+                                         action="#{clienteBean.modificarCliente()}"
+                                         update=":clienteForm:clientesTable :clienteForm:messages"
+                                         oncomplete="if(!args.validationFailed) PF('dlgEditar').hide();"
+                                         styleClass="btn btn-success"/>
+
+                        <p:commandButton value="Cancelar"
+                                         onclick="PF('dlgEditar').hide();"
+                                         action="#{clienteBean.limpiarDatos()}"
+                                         type="button"
+                                         styleClass="btn btn-secondary"/>
+                    </div>
+                </h:form>
+            </p:dialog>
 
             <p:dialog header="Confirmar Eliminación"
                       widgetVar="dlgConfirmarEliminar"
@@ -672,7 +704,6 @@
 
     <script>
         function validarFormulario() {
-            // Nota: JSF agrega el ID del form a los elementos hijos.
             var nombreInput = document.getElementById('clienteForm:nombre');
             var telefonoInput = document.getElementById('clienteForm:telefono');
 
@@ -716,7 +747,6 @@
             return true;
         }
 
-        // Permitir solo números en el campo de teléfono
         var telInput = document.getElementById('clienteForm:telefono');
         if(telInput) {
             telInput.addEventListener('input', function(e) {
@@ -724,14 +754,36 @@
             });
         }
 
-        // Permitir solo caracteres alfanuméricos en el campo de nombre// Permitir solo letras y espacios en el campo de nombre (corregido)
         var nomInput = document.getElementById('clienteForm:nombre');
         if(nomInput) {
             nomInput.addEventListener('input', function(e) {
                 this.value = this.value.replace(/[^a-zA-Z\sáéíóúÁÉÍÓÚñÑ]/g, '');
             });
         }
-        /* Ya cuenta con busqueda y odrdenamiento */
+
+        /* Validaciones para el modal de edición */
+        var editTelInput = document.getElementById('formEditarCliente:editTelefono');
+        if(editTelInput) {
+            editTelInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        }
+
+        var editNomInput = document.getElementById('formEditarCliente:editNombre');
+        if(editNomInput) {
+            editNomInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^a-zA-Z\sáéíóúÁÉÍÓÚñÑ]/g, '');
+            });
+        }
+
+        /* Validación para el nuevo campo de adeudo (solo números y un punto) */
+        var editAdeudoInput = document.getElementById('formEditarCliente:editAdeudo');
+        if(editAdeudoInput) {
+            editAdeudoInput.addEventListener('input', function(e) {
+                // Permite números y un solo punto decimal
+                this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+            });
+        }
     </script>
 
 </h:body>

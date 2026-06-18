@@ -152,6 +152,9 @@ public class ClienteBeanUI implements Serializable {
             clienteSeleccionado.setNombre(nombre.trim());
             clienteSeleccionado.setTelefono(telefono.trim());
 
+            // ¡Esta es la línea que falta para que el adeudo se actualice!
+            clienteSeleccionado.setAdeudo(this.adeudo);
+
             clienteHelper.modificarCliente(clienteSeleccionado);
             mostrarMensaje("Éxito", "Cliente modificado correctamente");
             limpiarDatos();
