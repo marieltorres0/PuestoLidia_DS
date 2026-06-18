@@ -694,10 +694,12 @@
                 return false;
             }
 
-            if (!/^[a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]*$/.test(nombre)) {
-                alert('El nombre contiene caracteres no permitidos');
+
+            if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/.test(nombre)) {
+                alert('El nombre solo puede contener letras y espacios (sin números)');
                 return false;
             }
+
 
             if (!/^[0-9]*$/.test(telefono)) {
                 alert('El teléfono solo debe contener números');
@@ -720,11 +722,11 @@
             });
         }
 
-        // Permitir solo caracteres alfanuméricos en el campo de nombre
+        // Permitir solo caracteres alfanuméricos en el campo de nombre// Permitir solo letras y espacios en el campo de nombre (corregido)
         var nomInput = document.getElementById('clienteForm:nombre');
         if(nomInput) {
             nomInput.addEventListener('input', function(e) {
-                this.value = this.value.replace(/[^a-zA-Z0-9\sáéíóúÁÉÍÓÚñÑ]/g, '');
+                this.value = this.value.replace(/[^a-zA-Z\sáéíóúÁÉÍÓÚñÑ]/g, '');
             });
         }
     </script>
