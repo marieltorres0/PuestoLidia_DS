@@ -74,7 +74,7 @@ public class ClienteBeanUI implements Serializable {
             return false;
         }
 
-        // ✅ VALIDACIÓN ACTUALIZADA: Solo letras y espacios (SIN números)
+
         if (!nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]*$")) {
             mostrarError("Validación", "El nombre solo puede contener letras y espacios (sin números)");
             return false;
